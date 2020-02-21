@@ -1,7 +1,9 @@
 div.A {
-    width: 50%;
-    height: 20%;
-    position: relative;
+    left: 10%;
+    top: 10%;
+    width: 40%;
+    height: 30%;
+    position: absolute;
 
     background-color: yellow;
     border: red;
@@ -11,8 +13,10 @@ div.A {
     text-align: center;
 }
 div.B {
-    width: 50%;
-    height: 20%;
+    left: 50%;
+    top: 50%;
+    width: 40%;
+    height: 30%;
     position: absolute;
 
     background-color: whitesmoke;
