@@ -1,0 +1,40 @@
+#menu {
+  top: 0;
+  padding: 7px;
+  width: 100%;
+  -ms-flex-line-pack: center;
+      align-content: center;
+  text-align: center;
+  position: fixed;
+  background-color: #dde9ec;
+  border-top: 1px solid lightgrey;
+  border-left: groove lightgrey;
+  border-bottom: 3px solid;
+}
+
+#menu .el_menu {
+  padding: 3px;
+  border: 1px solid;
+  border-top: rgba(224, 255, 255, 0.5);
+  border-bottom: 1px solid;
+  border-left: rgba(224, 255, 255, 0.5);
+  border-right: 1px solid;
+}
+
+#menu .el_menu a {
+  color: brown;
+  text-decoration: none;
+}
+
+#menu .el_menu:hover {
+  background-color: white;
+  border-top: rgba(224, 255, 255, 0.5);
+  border-bottom: rgba(224, 255, 255, 0.5);
+  border-left: rgba(224, 255, 255, 0.5);
+  border-right: rgba(224, 255, 255, 0.5);
+}
+
+#tresc {
+  background-color: rgba(224, 255, 255, 0.5);
+}
+/*# sourceMappingURL=zad_02.css.map */
