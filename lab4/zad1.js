@@ -3,9 +3,9 @@ const telefon = (tab) => {
         throw "Parameter is not an array";
     }
 
-    var str = tab.join("");
+    let str = tab.join("");
 
-    if(!str.match(/^.{0,1}\d+$/)) {
+    if(!str.match(/.{0,1}\d+/)) {
         throw "Invalid array element";
     }
 
@@ -13,11 +13,13 @@ const telefon = (tab) => {
         throw "Invalid number of elements";
     }
 
-    var chunks = str.match(/.{3}/g);
+    let chunks = str.match(/.{3}/g);
 
-    var result = "+48 "
+    let result = "+48 "
 
     result += chunks.join("-");
-    console.log(result);
+
+    return result;
 }
-telefon([1,2,3,4,5,6,7,8,9]);
+
+console.log(telefon([1,2,3,4,5,6,7,8,9]));
