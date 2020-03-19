@@ -5,16 +5,17 @@
     align-content: center;
     text-align: center;
     position: fixed;
-    background-color: rgb(221, 233, 236);
-    border-top: 1px solid lightgrey;
-    border-left: groove lightgrey;
-    border-bottom: 3px solid;
+
+    background-color: rgb(237, 239, 235);
+    border-top: 4px solid rgb(155, 155, 155);
+    border-left: 3px solid rgb(155, 155, 155);
+    border-bottom: 3px groove black;
     .el_menu {
         padding: 3px;
         border: 1px solid;
-        border-top: rgba(224, 255, 255, .5);
+        border-top: 1px solid rgb(172, 172, 172);
         border-bottom: 1px solid;
-        border-left: rgba(224, 255, 255, .5);
+        border-left: 1px solid rgb(172, 172, 172);
         border-right: 1px solid;
         a {
             color: brown;
@@ -22,13 +23,13 @@
         }
         &:hover {
             background-color: white;
-            border-top: rgba(224, 255, 255, .5);
-            border-bottom: rgba(224, 255, 255, .5);
-            border-left: rgba(224, 255, 255, .5);
-            border-right: rgba(224, 255, 255, .5);
+            border-top: 1px solid;
+            border-bottom: 1px solid grey;
+            border-left: 1px solid;
+            border-right: 1px solid grey;
         }
     }
 }
 #tresc {
-    background-color: rgba(224, 255, 255, .5);
+    background-color: rgb(210, 212, 209);
 }
