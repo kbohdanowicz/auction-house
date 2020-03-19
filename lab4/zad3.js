@@ -1,5 +1,5 @@
 String.prototype.nbsp = function() {
-    return this.replace(/ [a|i|o|u|w|z] /gm, function(word) {
+    return this.replace(/\s[a|i|o|u|w|z]\s/gm, function(word) {
         return " " + word.trim() + "&nbsp;";
     })
 };
