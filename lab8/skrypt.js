@@ -8,4 +8,14 @@ const zadanie1 = () => {
     fourthItem.innerText = "Wsparcie telefoniczne 24/7";
 };
 
+const zadanie2 = () => {
+    const cardDeck = document.getElementsByClassName("card-deck").item(0);
 
+    const proPlan = document.getElementById("pro-plan")
+
+    const proPlanDeepClone = proPlan.cloneNode(true);
+
+    cardDeck.removeChild(proPlan);
+
+    cardDeck.appendChild(proPlanDeepClone);
+};
