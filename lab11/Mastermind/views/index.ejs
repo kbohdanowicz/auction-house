@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mastermind</title>
+    <link rel='stylesheet' href='/css/style.css'/>
+  </head>
+  <body>
+    <div id="ui">
+      <h1 id="title-mmind">M A S T E R&nbsp;&nbsp;M I N D</h1>
+      <hr>
+      <div id="welcome-container">
+        <p>
+          Welcome <%= user.username %>
+        </p>
+        <p>
+          <a href="/logout"><button>Log out</button></a>
+        </p>
+        <p>
+          <a href="/mmind"><button>Play</button></a>
+        </p>
+        <p>
+          <a href="/game-history"><button>Game history</button></a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>
