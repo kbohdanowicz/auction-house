@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Mastermind</title>
+    <link rel='stylesheet' href='/css/style.css'/>
+    </head>
+  <body>
+    <div id="ui">
+      <h1 id="room-name"><%= room.name %></h1>
+      <hr>
+      <div id="chat-window">
+        <p>
+          <a href="/"><button>Back to main page</button></a>
+        </p>
+          <input id="message-content" type="text" placeholder="Content"></input>
+        </p>
+        <p>
+          <div>Messages: </div>
+        </p>
+        <p>
+          <button id="btn-send">Send</button>
+        </p>
+        <% room.messages.forEach((msg) => {%>
+        <p>
+          <strong><%= msg.handle %>:&nbsp;</strong><%= msg.content %>
+        </p>
+        <% }); %>
+        <div id="last-message"></div>
+     </div>
+    </div>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.dev.js'></script>
+    <script src='/lib/axios.min.js'></script>
+    <script src='/js/chat.js'></script>
+  </body>
+</html>
