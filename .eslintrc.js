@@ -15,24 +15,26 @@ module.exports = {
         "indent": [
             "error",
             4
-        ],
-        "linebreak-style": [
-            "error",
-            "unix"
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "no-console": [
-            "off"
-        ],
-        "brace-style": [
-            "error"
-        ]
+          ],
+          "linebreak-style": [
+              "error",
+              "windows"
+          ],
+          "quotes": [
+              "error",
+              "double"
+          ],
+          "semi": [
+              "error",
+              "always"
+          ],
+          "no-console": [
+              "off"
+          ],
+          "brace-style": [
+              "error",
+              "1tbs"
+          ]
+        }
     }
 };
