@@ -5,11 +5,11 @@ const bcrypt = require("../bcrypt");
 const messageSchema = new Schema({
     handle: {
         type: String,
-        required: true,
+        required: true
     },
     content: {
         type: String,
-        required: true,
+        required: true
     }
 });
 
@@ -36,14 +36,39 @@ const userSchema = new Schema({
 });
 
 const auctionSchema = new Schema({
-    name:{
+    name: {
+        type: String,
+        required: true,
+        minlength: 3,
+        trim: true
+    },
+    description: {
         type: String,
         required: true,
         minlength: 3
     },
     price: {
-        type: Number, //number or double?
-        required: true,
+        type: Number,
+        required: true
+    },
+    category: {
+        type: String,
+        required: true
+    },
+    seller: {
+        type: userSchema,
+        required: true
+    },
+    buyer: {
+        type: userSchema
+    },
+    timeLeft: {
+        type: Number,
+        required: true
+    },
+    isFinished: {
+        type: Boolean,
+        required: true
     }
 });
 
@@ -62,11 +87,10 @@ const ChatRoom = mongoose.model("ChatRoom", chatRoomSchema, "chatRooms");
 const User = mongoose.model("User", userSchema);
 const Auction = mongoose.model("Auction", auctionSchema);
 
-const errorHandler = {};
 // mały „postprocessing” błędów mongoosowych
-errorHandler.processErrors = (err) => {
-    let msg = {};
-    for (let key in err.errors) {
+const processErrors = (err) => {
+    const msg = {};
+    for (const key in err.errors) {
         msg[key] = err.errors[key].message;
     }
     return msg;
@@ -77,4 +101,4 @@ module.exports.chatRoom = ChatRoom;
 module.exports.user = User;
 module.exports.auction = Auction;
 
-module.exports.errorHandler = errorHandler;
+module.exports.processErrors = processErrors;

@@ -43,12 +43,11 @@ passport.deserializeUser((id, done) => {
             done(null, {
                 id: user._id,
                 username: user.username,
-                password: user.password,
-                gameHistory: user.gameHistory
+                password: user.password
             });
         } else {
             done({
-                msg: "Nieznany ID"
+                msg: "Invalid ID"
             });
         }
     });
