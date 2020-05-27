@@ -91,40 +91,140 @@ router
     })
     .all(rejectMethod);
 
-router
-    .route("/api/auctions")
-    .get(async (req, res) => {
-        try {
-            var arr = [];
-            for await (const doc of Auction.find()) {
-                arr.push(doc);
-                console.log(doc);
+router.route("/auction/id=:id")
+    .get((req, res) => { // authenticate,
+        Auction.findOne({ _id: req.params.id }, (err, doc) => {
+            if (err) {
+                res.status(500).json(model.processErrors(err));
+            } else {
+                res.json(doc);
             }
-            console.log(arr);
-            return res.send(arr);
-        } catch (err) {
-            return res.status(400).json({
-                error: err.message
-            });
-        }
+        });
     })
+    .patch((req, res) => { // authenticate,
+        const filter = req.params.id;
+        const update = {};
+        let oldBidders;
+        Auction.findById(filter, (err, data) => {
+            if (err) {
+                res.status(500).json(model.processErrors(err));
+            } else {
+                oldBidders = data.bidders;
+            }
+        });
+
+        const body = req.body;
+        if (body.name) {
+            update.name = body.name;
+        }
+        if (body.price) {
+            update.price = body.price;
+        }
+        if (body.type) {
+            update.type = body.type;
+        }
+        if (body.status) {
+            update.status = body.status;
+        }
+        if (body.duration) {
+            update.duration = body.duration;
+        }
+
+        if (body.bidders) {
+            const newBidders = body.bidders;
+            if (!oldBidders.includes(newBidders[0])) {
+                const updatedBidders = oldBidders.push(newBidders[0]);
+                update.bidders = updatedBidders;
+            };
+        };
+
+        console.log("Update:" + update);
+        Auction.findByIdAndUpdate(filter, update,
+            (err, doc) => {
+                if (err) {
+                    res.code(500);
+                } else {
+                    res.json(doc);
+                }
+            }
+        );
+    })
+    .all(rejectMethod);
+
+router.route("/auction")
     .post(authenticate, async (req, res) => {
         try {
             const user = req.user;
             const body = req.body;
-            const auction = new Auction({
-                name: body.name,
-                description: body.description,
-                price: body.price,
-                type: body.type,
-                seller: user,
-                buyer: null,
-                timeLeft: body.timeLeft,
-                isSold: false
-            });
+            let auction = {};
+            // TODO try auction.timeLeft = body.timeLeft;
+            if (req.body.type === "Bid") {
+                auction = new Auction({
+                    name: body.name,
+                    price: body.price,
+                    type: body.type,
+                    seller: user.username,
+                    bidders: [],
+                    duration: body.duration,
+                    status: body.status
+                });
+            } else {
+                auction = new Auction({
+                    name: body.name,
+                    price: body.price,
+                    type: body.type,
+                    seller: user.username,
+                    status: body.status
+                });
+            }
             const doc = await auction.save();
             res.json(doc);
-            console.log("Auction posted");
+        } catch (err) {
+            console.log(err);
+            res.status(422).json(model.processErrors(err));
+        }
+    })
+    .all(rejectMethod);
+
+router
+    .route("/api/auctions")
+    .get(async (req, res) => {
+        try {
+            const docs = [];
+            for await (const doc of Auction.find()) {
+                docs.push(doc);
+            }
+            // docs = await Auction.find();
+            return res.json(docs);
+        } catch (err) {
+            console.log(err);
+            res.status(422).json(model.processErrors(err));
+        }
+    })
+    .all(rejectMethod);
+
+router.route("/api/my-auctions")
+    .get(authenticate, async (req, res) => {
+        try {
+            const docs = await Auction.find({
+                bidders: req.user.username, status: "OnSale"
+            });
+            return res.json(docs);
+        } catch (err) {
+            console.log(err);
+            res.status(422).json(model.processErrors(err));
+        }
+    })
+    .all(rejectMethod);
+
+router.route("/api/my-history")
+    .get(authenticate, async (req, res) => {
+        try {
+            const docs = await Auction.find({
+                $or: [{ buyer: req.user.username, status: "Sold" },
+                    { bidders: req.user.username, status: "Sold" }]
+            });
+            return res.json(docs);
         } catch (err) {
             console.log(err);
             res.status(422).json(model.processErrors(err));

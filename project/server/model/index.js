@@ -41,14 +41,9 @@ const auctionSchema = new Schema({
         minlength: 3,
         trim: true
     },
-    description: {
-        type: String,
-        required: true,
-        minlength: 3
-    },
     price: {
         type: Number,
-        min: [0.01],
+        min: 0.01,
         required: true
     },
     type: {
@@ -56,18 +51,21 @@ const auctionSchema = new Schema({
         enum: ["Bid", "Buy"]
     },
     seller: {
-        type: userSchema,
+        type: String,
         required: true
     },
     buyer: {
-        type: userSchema
+        type: String,
+        default: ""
     },
-    timeLeft: {
-        type: Number
+    bidders: [{ type: String }],
+    duration: {
+        type: Number,
+        min: 1
     },
-    isSold: {
-        type: Boolean,
-        required: true
+    status: {
+        type: String,
+        enum: ["New", "OnSale", "Sold", "Ignored"]
     }
 });
 

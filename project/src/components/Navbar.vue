@@ -12,7 +12,7 @@
             <router-link to="/my-auctions">My auctions</router-link>
           </li>
           <li class="nav-item">
-            <router-link to="/auctions-history">My History</router-link>
+            <router-link to="/my-history">My History</router-link>
           </li>
           <li class="nav-item">
              <router-link to="/logout">Log out</router-link>
@@ -34,9 +34,6 @@
 
 export default {
     name: "Navbar",
-    components: {
-        // Navbar
-    },
     data () {
         return {
             isAuthenticated: {

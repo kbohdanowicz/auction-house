@@ -4,6 +4,8 @@ import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import MyAuctions from "../views/MyAuctions.vue";
+import Auction from "../views/Auction.vue";
+import AuctionForm from "../views/AuctionForm.vue";
 
 Vue.use(VueRouter);
 
@@ -37,6 +39,16 @@ const routes = [
         component: function () {
             return import("../views/AuctionsHistory.vue");
         }
+    },
+    {
+        path: "/auction/:id",
+        name: "Auction",
+        component: Auction
+    },
+    {
+        path: "/auction",
+        name: "AuctionForm",
+        component: AuctionForm
     }
 ];
 
