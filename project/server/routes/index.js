@@ -2,10 +2,10 @@ const express = require("express");
 const router = express.Router();
 
 const model = require("../model");
-const User = model.user;
-const Auction = model.auction;
+const User = model.User;
+const Auction = model.Auction;
 // eslint-disable-next-line no-unused-vars
-const ChatRoom = model.chatRoom;
+const ChatRoom = model.ChatRoom;
 
 // Passport.js i narzędzie do szyfrowania haseł
 const passport = require("../passport");
@@ -49,7 +49,6 @@ router
     .route("/api/logout")
     .get((req, res) => {
         req.logout();
-        res.redirect("/");
     })
     .all(rejectMethod);
 
@@ -117,11 +116,11 @@ router
                 name: body.name,
                 description: body.description,
                 price: body.price,
-                category: body.category,
+                type: body.type,
                 seller: user,
                 buyer: null,
                 timeLeft: body.timeLeft,
-                isFinished: false
+                isSold: false
             });
             const doc = await auction.save();
             res.json(doc);

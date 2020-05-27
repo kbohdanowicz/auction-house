@@ -3,9 +3,27 @@
     <header>
       <nav>
         <ul>
-          <li><router-link to="/">Home</router-link></li>
-          <!-- v-if isAuthorised-->
-          <li><router-link to="/login">Log in</router-link></li>
+          <li>
+            <!-- all auctions -->
+            <router-link to="/">Home</router-link>
+          </li>
+          <!-- v-if isAuthenticated -->
+          <li class="nav-item">
+            <router-link to="/my-auctions">My auctions</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/auctions-history">My History</router-link>
+          </li>
+          <li class="nav-item">
+             <router-link to="/logout">Log out</router-link>
+          </li>
+          <!-- v-else -->
+          <li class="nav-item">
+            <router-link to="/login">Log in</router-link>
+          </li>
+          <li class="nav-item">
+            <router-link to="/register">Register</router-link>
+          </li>
         </ul>
       </nav>
     </header>
@@ -17,11 +35,20 @@
 export default {
     name: "Navbar",
     components: {
+        // Navbar
+    },
+    data () {
+        return {
+            isAuthenticated: {
+                type: Boolean,
+                default: false
+            }
+        };
     }
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
 * {
     //box-sizing: border-box;
     margin: 0;
@@ -54,6 +81,6 @@ header {
     //display: flex;
     //justify-content: space-between;
     //align-items: center;
-    padding: 20px 10%;
+    padding: 20px 5%;
 }
 </style>

@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <Navbar/>
-    <router-view/>
+    <div class="content-page">
+      <router-view/>
+    </div>
   </div>
 </template>
 
@@ -14,5 +16,10 @@ export default {
 };
 </script>
 
-<style scoped lang="scss">
+<style lang="scss" scoped>
+.content-page {
+  height: 100%;
+  width: 100%;
+  position: fixed;
+}
 </style>

@@ -16,8 +16,7 @@ const messageSchema = new Schema({
 const chatRoomSchema = new Schema({
     name: {
         type: String,
-        required: true,
-        unique: true
+        required: true
     },
     messages: [messageSchema]
 });
@@ -49,11 +48,12 @@ const auctionSchema = new Schema({
     },
     price: {
         type: Number,
+        min: [0.01],
         required: true
     },
-    category: {
+    type: {
         type: String,
-        required: true
+        enum: ["Bid", "Buy"]
     },
     seller: {
         type: userSchema,
@@ -63,10 +63,9 @@ const auctionSchema = new Schema({
         type: userSchema
     },
     timeLeft: {
-        type: Number,
-        required: true
+        type: Number
     },
-    isFinished: {
+    isSold: {
         type: Boolean,
         required: true
     }
@@ -96,9 +95,10 @@ const processErrors = (err) => {
     return msg;
 };
 
-module.exports.message = Message;
-module.exports.chatRoom = ChatRoom;
-module.exports.user = User;
-module.exports.auction = Auction;
-
-module.exports.processErrors = processErrors;
+module.exports = {
+    Message,
+    ChatRoom,
+    User,
+    Auction,
+    processErrors
+};

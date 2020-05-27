@@ -62,7 +62,7 @@ app.use((_, res) => {
 // Serwer HTTPS
 // openssl req -x509 -nodes -days 365 -newkey rsa:1024 -out my.crt -keyout my.key
 const server = require("./https")(app);
-const port = process.env.port;
+const port = process.env.PORT;
 
 // Model
 const model = require("./model");
@@ -70,48 +70,49 @@ const ChatRoom = model.chatRoom;
 const Message = model.message;
 
 // Socket.io
-const socketio = require("socket.io");
-const passportSocketIo = require("passport.socketio");
-const io = socketio(server);
 
-io.use(passportSocketIo.authorize({
-    key: "connect.sid",
-    secret: process.env.APP_SECRET,
-    store: sessionStore,
-    passport: passport,
-    cookieParser: cookieParser
-}));
+// const socketio = require("socket.io");
+// const passportSocketIo = require("passport.socketio");
+// const io = socketio(server);
 
-io.on("error", (err) => {
-    console.log("Socket.IO Error");
-    console.log(err.stack);
-});
+// io.use(passportSocketIo.authorize({
+//     key: "connect.sid",
+//     secret: process.env.APP_SECRET,
+//     store: sessionStore,
+//     passport: passport,
+//     cookieParser: cookieParser
+// }));
 
-io.on("connection", (socket) => {
-    console.log(`Made socket connection: ${socket.id}`);
-    socket.on("chatMessage", (data) => {
-        // User data from the socket.io passport middleware
-        if (socket.request.user && socket.request.user.logged_in) {
-            const modifiedData = {
-                handle: socket.request.user.username,
-                content: data.content
-            };
+// io.on("error", (err) => {
+//     console.log("Socket.IO Error");
+//     console.log(err.stack);
+// });
 
-            const message = new Message({
-                handle: socket.request.user.username,
-                content: data.content
-            });
+// io.on("connection", (socket) => {
+//     console.log(`Made socket connection: ${socket.id}`);
+//     socket.on("chatMessage", (data) => {
+//         // User data from the socket.io passport middleware
+//         if (socket.request.user && socket.request.user.logged_in) {
+//             const modifiedData = {
+//                 handle: socket.request.user.username,
+//                 content: data.content
+//             };
 
-            ChatRoom.findOneAndUpdate(
-                { name: data.roomName },
-                { $push: { messages: message } },
-                () => {}
-            );
+//             const message = new Message({
+//                 handle: socket.request.user.username,
+//                 content: data.content
+//             });
 
-            io.sockets.emit("chatMessage", modifiedData);
-        };
-    });
-});
+//             ChatRoom.findOneAndUpdate(
+//                 { name: data.roomName },
+//                 { $push: { messages: message } },
+//                 () => {}
+//             );
+
+//             io.sockets.emit("chatMessage", modifiedData);
+//         };
+//     });
+// });
 
 server.listen(port, () => {
     console.log(`Serwer działa pod adresem: https://localhost:${port}`);
