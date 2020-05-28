@@ -4,12 +4,12 @@
     <hr>
     <!-- @submit handles any form of submission. -->
     <!-- .prevent keeps the event from bubbling around and doing anything else. -->
-    <form @submit.prevent="handleSubmit">
+    <form @submit.prevent="handleSubmit()">
       <input v-model="user.username" type="text" name="username" id="username"
-      placeholder="Username">
+      placeholder="Username" required="">
       <br><br>
-      <input v-model="user.passowrd" type="password" name="password" id="password"
-      placeholder="Password">
+      <input v-model="user.password" type="password" name="password" id="password"
+      placeholder="Password" required="">
       <br><br>
       <!-- confirm password
           <input v-model="password" type="password" name="password" id="password" placeholder="Password"><br><br>
@@ -21,6 +21,7 @@
 
 <script>
 import api from "../modules/api";
+import router from "../router";
 
 export default {
     name: "Register",
@@ -35,9 +36,9 @@ export default {
     methods: {
         handleSubmit () {
             api()
-                .post("/api/register", this.user)
+                .post("/register", this.user)
                 .then(() => {
-                    window.location.href = "/";
+                    router.push("/login");
                 });
         }
     }

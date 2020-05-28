@@ -91,7 +91,7 @@ router
     })
     .all(rejectMethod);
 
-router.route("/auction/id=:id")
+router.route("/api/auction/id=:id")
     .get((req, res) => { // authenticate,
         Auction.findOne({ _id: req.params.id }, (err, doc) => {
             if (err) {
@@ -113,6 +113,8 @@ router.route("/auction/id=:id")
             }
         });
 
+        // this or maybe a put method?
+        // patch is needed to update: price, duration, and status
         const body = req.body;
         if (body.name) {
             update.name = body.name;
@@ -151,7 +153,7 @@ router.route("/auction/id=:id")
     })
     .all(rejectMethod);
 
-router.route("/auction")
+router.route("/api/auction")
     .post(authenticate, async (req, res) => {
         try {
             const user = req.user;

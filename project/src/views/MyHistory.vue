@@ -9,7 +9,7 @@ import api from "../modules/api";
 import AuctionList from "@/components/AuctionList";
 
 export default {
-    name: "MyAuctions",
+    name: "MyHistory",
     components: {
         AuctionList
     },
@@ -20,7 +20,7 @@ export default {
     },
     created () { // or beforecreated
         api()
-            .get("/my-auctions")
+            .get("/my-history")
             .then((resp) => {
                 this.auctions = resp.data;
             });

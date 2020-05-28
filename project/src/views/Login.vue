@@ -2,28 +2,38 @@
   <div class="login">
     <h2>Log in</h2>
     <hr>
-      <form action="/api/login" method="POST">
-        <input ref="username-input" type="text" name="username" id="username" placeholder="Username"><br><br>
-        <input ref="password-input" type="password" name="password" id="password" placeholder="Password"><br><br>
+      <form @submit.prevent="handleSubmit()">
+        <input v-model="user.username" type="text" name="username" id="username"
+        placeholder="Username" minLength="3" required="">
+        <br><br>
+        <input v-model="user.password" type="password" name="password" id="password"
+        placeholder="Password" required="">
+        <br><br>
         <input type="submit" value="Log in">
       </form>
   </div>
 </template>
 
 <script>
-import axios from "@/../node_modules/axios/dist/axios.min.js";
+import api from "../modules/api";
+import router from "../router";
 
 export default {
     name: "Login",
+    data () {
+        return {
+            user: {
+                username: "",
+                password: ""
+            }
+        };
+    },
     methods: {
-        login () {
-            var user = {
-                username: this.$refs[""].value,
-                password: this.$refs["password-input"].value
-            };
-            axios.post("/api/login", user)
+        handleSubmit () {
+            api()
+                .post("/login", this.user)
                 .then(() => {
-                    window.location.href = "/";
+                    router.push("/");
                 });
         }
     }
@@ -36,7 +46,7 @@ h2 {
     text-align: center;
 }
 
-input {
+// input {
 
-}
+// }
 </style>

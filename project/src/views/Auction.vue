@@ -32,9 +32,7 @@ export default {
         };
     },
     methods: {
-        reveseIsEdit () {
-            this.isEdit = !this.isEdit;
-        }
+
     },
     beforeCreate () {
         const id = window.location.href.split("id=")[1];

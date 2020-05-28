@@ -31,13 +31,13 @@ const routes = [
         component: MyAuctions
     },
     {
-        path: "/auctions-history",
-        name: "AuctionsHistory",
+        path: "/my-history",
+        name: "MyHistory",
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route
         // which is lazy-loaded when the route is visited.
         component: function () {
-            return import("../views/AuctionsHistory.vue");
+            return import("../views/MyHistory.vue");
         }
     },
     {

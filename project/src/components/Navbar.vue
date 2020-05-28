@@ -7,17 +7,18 @@
             <!-- all auctions -->
             <router-link to="/">Home</router-link>
           </li>
-          <!-- v-if isAuthenticated -->
+          <!-- <div v-if isAuthenticated></div> -->
           <li class="nav-item">
             <router-link to="/my-auctions">My auctions</router-link>
           </li>
           <li class="nav-item">
             <router-link to="/my-history">My History</router-link>
           </li>
+          <!-- on the right side -->
           <li class="nav-item">
              <router-link to="/logout">Log out</router-link>
           </li>
-          <!-- v-else -->
+          <!-- <div v-else></div> -->
           <li class="nav-item">
             <router-link to="/login">Log in</router-link>
           </li>
@@ -31,6 +32,8 @@
 </template>
 
 <script>
+import api from "../modules/api";
+import router from "../router";
 
 export default {
     name: "Navbar",
@@ -41,6 +44,15 @@ export default {
                 default: false
             }
         };
+    },
+    methods: {
+        logout () {
+            api()
+                .post("/logout")
+                .then(() => {
+                    router.push("/");
+                });
+        }
     }
 };
 </script>

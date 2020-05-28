@@ -30,6 +30,7 @@
 
 <script>
 import api from "../modules/api";
+import router from "../router";
 
 export default {
     name: "AuctionForm",
@@ -45,8 +46,8 @@ export default {
             api()
                 .post("/auction", this.formData)
                 .then(() => {
-                    window.location.href = "/";
-                });
+                    router.push("/");
+                }); // .catch(() => {}));
         },
         createAndStart () {
 

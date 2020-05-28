@@ -1,30 +1,21 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <ul>
-      <li class="auction-item" v-for="auction in auctions" :key="auction._id">
-        Name: {{ auction.name }}
-        <button @click="showAuctionDetails(auction)">Details</button><br>
-        Seller: {{ auction.seller }}<br>
-        <div v-if="auction.type === 'Buy'">
-          Price: ${{ auction.price }}<br>
-          Buy now!<br>
-        </div>
-        <div v-else>
-          Highest bid: ${{ auction.price }}<br>
-          Bid now!<br>
-        </div>
-      </li>
-    </ul>
+    <img alt="Vue logo" src="../assets/logo.png"><br>
+    <!-- v-if="isAuthorised" -->
+    <button @click="goToAuctionForm()">Create auction</button>
+    <AuctionList v-bind:auctions="auctions"/>
   </div>
 </template>
-
 <script>
-// import AuctionItem from "@/components/AuctionItem";
 import api from "../modules/api";
+import router from "../router";
+import AuctionList from "@/components/AuctionList";
 
 export default {
     name: "Home",
+    components: {
+        AuctionList
+    },
     data () {
         return {
             auctions: null
@@ -32,14 +23,14 @@ export default {
     },
     created () { // or beforecreated
         api()
-            .get("/api/auctions")
+            .get("/auctions")
             .then((resp) => {
                 this.auctions = resp.data;
             });
     },
     methods: {
-        showAuctionDetails (auction) {
-            window.location.href = `/auction/id=${auction._id}`;
+        goToAuctionForm () {
+            router.push("/auction");
         }
     }
 };
