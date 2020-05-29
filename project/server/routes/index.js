@@ -60,7 +60,9 @@ router
 router
     .route("/login")
     .post(passport.authenticate("local"), async (req, res) => {
-        await res.json();
+        await res.json({
+            message: "success"
+        });
     })
     .all(rejectMethod);
 
@@ -69,8 +71,8 @@ router
     .get(isLoggedIn, (req, res) => {
         console.log("Logging out");
         req.logout();
-        res.status(200).send({
-            // isAuthenticated: req.isAuthenticated()
+        res.status(200).json({
+            isAuth: req.isAuthenticated()
         });
     })
     .all(rejectMethod);
@@ -101,7 +103,7 @@ router
 
 router.route("/auction/id=:id")
     .get((req, res) => {
-        Auction.findOne({ _id: req.params.id }, (err, doc) => {
+        Auction.findById(req.params.id, (err, doc) => {
             if (err) {
                 res.status(500).json(model.processErrors(err));
             } else {
@@ -114,14 +116,12 @@ router.route("/auction/id=:id")
         const update = {};
         let oldBidders;
         try {
-            const doc = await Auction.findByIdAndUpdate(filter, {});
+            const doc = await Auction.findById(filter);
             oldBidders = doc.bidders;
         } catch (err) {
             console.log(err);
             res.status(422).json(model.processErrors(err));
         }
-        // this or maybe a put method?
-        // patch is needed to update: price, duration, and status
         const body = req.body;
         if (body.name) {
             update.name = body.name;
@@ -135,10 +135,12 @@ router.route("/auction/id=:id")
         if (body.status) {
             update.status = body.status;
         }
-        if (body.duration) {
-            update.duration = body.duration;
+        if (body.timeLeft || body.timeLeft === "") {
+            update.timeLeft = body.timeLeft;
         }
-
+        if (body.highestBidder) {
+            update.highestBidder = body.highestBidder;
+        }
         if (body.bidders) {
             const newBidders = body.bidders;
             if (!oldBidders.includes(newBidders[0])) {
@@ -148,6 +150,8 @@ router.route("/auction/id=:id")
             };
         };
 
+        // CHECK IF status === "OnSale"
+        //      then start countdown on server
         Auction.findByIdAndUpdate(filter, update,
             (err, doc) => {
                 if (err) {
@@ -169,7 +173,6 @@ router.route("/auction")
             if (req.body.type === "Bid") {
                 auction = new Auction({
                     name: body.name,
-                    description: body.description,
                     price: body.price,
                     type: body.type,
                     seller: body.seller,
@@ -179,7 +182,6 @@ router.route("/auction")
             } else {
                 auction = new Auction({
                     name: body.name,
-                    description: body.description,
                     price: body.price,
                     type: body.type,
                     seller: body.seller,
@@ -199,8 +201,21 @@ router
     .route("/auctions")
     .get(async (req, res) => {
         try {
+            const docs = await Auction.find({ status: "OnSale" });
+            return res.json(docs);
+        } catch (err) {
+            console.log(err);
+            res.status(422).json(model.processErrors(err));
+        }
+    })
+    .all(rejectMethod);
+
+router.route("/my-bids")
+    .get(isLoggedIn, async (req, res) => {
+        try {
             const docs = await Auction.find({
-                $or: [{ status: "New" }, { status: "OnSale" }]
+                bidders: req.user.username,
+                status: "OnSale"
             });
             return res.json(docs);
         } catch (err) {
@@ -214,7 +229,8 @@ router.route("/my-auctions")
     .get(isLoggedIn, async (req, res) => {
         try {
             const docs = await Auction.find({
-                bidders: req.user.username, status: "OnSale"
+                seller: req.user.username,
+                status: "New"
             });
             return res.json(docs);
         } catch (err) {
@@ -228,7 +244,7 @@ router.route("/my-history")
     .get(isLoggedIn, async (req, res) => {
         try {
             const docs = await Auction.find({
-                $or: [{ buyer: req.user.username, status: "Sold" },
+                $or: [{ highestBidder: req.user.username, status: "Sold" },
                     { bidders: req.user.username, status: "Sold" }]
             });
             return res.json(docs);

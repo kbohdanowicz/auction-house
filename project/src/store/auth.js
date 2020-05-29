@@ -2,7 +2,10 @@ import axios from "axios";
 // import router from "../router";
 
 const state = {
-    currentUser: {}
+    currentUser: {
+        username: null,
+        isAuth: false
+    }
 };
 
 const getters = {

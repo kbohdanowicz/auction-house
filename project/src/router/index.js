@@ -3,10 +3,11 @@ import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
+import MyBids from "../views/MyBids.vue";
 import MyAuctions from "../views/MyAuctions.vue";
 import Auction from "../views/Auction.vue";
 import AuctionForm from "../views/AuctionForm.vue";
-import Error404 from "../views/Error_404.vue";
+import Error404 from "../views/Error404.vue";
 import store from "../store";
 
 Vue.use(VueRouter);
@@ -26,6 +27,11 @@ const routes = [
         path: "/register",
         name: "Register",
         component: Register
+    },
+    {
+        path: "/my-bids",
+        name: "MyBids",
+        component: MyBids
     },
     {
         path: "/my-auctions",
@@ -54,18 +60,10 @@ const routes = [
     },
     {
         path: "/404",
-        name: "Error_404",
+        name: "Error404",
         component: Error404
     }
 ];
-
-// const guard (to, from, next) => {
-//     if(store.state.auth.loggedIn) {
-//         // or however you store your logged in state
-//         next(); // allow to enter route
-//     } else{
-//         next('/login'); // go to '/login';
-//     }
 
 const router = new VueRouter({
     mode: "history",
@@ -81,19 +79,20 @@ const isInRoutes = (name) => {
     return routeNames.includes(name);
 };
 
-// TODO let unlogged user get to /auction/id=
+// TODO register should not be reachable by logged user
 router.beforeEach((to, from, next) => {
     store.dispatch("fetchCurrentUser");
-    console.log("Route " + to.name + " is " + isInRoutes(to.name));
-    if (to.name === "Error_404") {
-        // do nothing
+    console.log("Route " + to.path + " is " + isInRoutes(to.name));
+    if (to.name === "Error404") {
+        // next({ name: "Error404" }); DONT (Infinite recursion)
     } else if (!isInRoutes(to.name)) {
-        next({ name: "Error_404" });
+        console.log("Error 404");
+        next({ name: "Error404" });
     } else if (to.name === "Register" || to.name === "Home" || to.name === "Auction") {
         next();
     } else if (to.name !== "Login" && !store.getters.currentUser.isAuth) {
         console.log("Not logged in. Redirecting to login page");
-        // next({ name: "Login" });
+        next({ name: "Login" });
     } else if (to.name === "Login" && store.getters.currentUser.isAuth) {
         console.log("Logged in. Redirecting to home page");
         next({ name: "Home" });

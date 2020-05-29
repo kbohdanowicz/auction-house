@@ -1,16 +1,13 @@
 <template>
   <div class="auction-form">
-    <form @submit.prevent="handleSubmit()">
+    <form @submit.prevent="createAuction()">
       <br><br>
       <input v-model="formData.name" id="name-input" class="input" type="text"
-      placeholder="Name" required="">
-      <br><br>
-      <input v-model="formData.description" id="name-input" class="input" type="text"
-      placeholder="Description" size="100" required="">
+       minLength="3" placeholder="Name" required="">
       <br><br>
       <input v-model="formData.price" id="price-input" class="input" type="number"
-      min="0.01" step="0.01" placeholder="Price"
-      size="9" required="">
+       min="0.01" step="0.01" placeholder="Price"
+       size="9" required="">
       <br><br>
       <div class="select-type">
         <select v-model="formData.type" id="select">
@@ -25,11 +22,9 @@
       </div>
       <button type="submit">Create</button>
       <br><br>
-      <!--
       <div v-if="formData.type === 'Bid'">
         <button class="button" @click="createAndStart()">Create and start</button>
       </div>
-      -->
     </form>
   </div>
 </template>
@@ -44,17 +39,17 @@ export default {
         return {
             formData: {
                 name: null,
-                description: null,
                 price: null,
                 type: null,
                 seller: this.$store.getters.currentUser.username,
-                status: "OnSale",
-                timeleft: null
+                status: null,
+                timeLeft: null
             }
         };
     },
     methods: {
-        handleSubmit () {
+        createAuction () {
+            this.formData.status = "New";
             axios
                 .post("/api/auction", this.formData)
                 .then(() => {

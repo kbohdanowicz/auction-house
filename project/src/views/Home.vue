@@ -8,6 +8,7 @@
     <AuctionList v-bind:auctions="auctions"/>
   </div>
 </template>
+
 <script>
 import axios from "axios";
 import router from "../router";

@@ -54,7 +54,7 @@ const auctionSchema = new Schema({
         type: String,
         required: true
     },
-    buyer: {
+    highestBidder: {
         type: String,
         default: ""
     },
@@ -65,7 +65,7 @@ const auctionSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["OnSale", "Sold", "Ignored"]
+        enum: ["New", "OnSale", "Sold", "Ignored"]
     }
 });
 

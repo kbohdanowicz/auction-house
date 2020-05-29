@@ -1,5 +1,5 @@
 <template>
-  <div class="my-auctions">
+  <div class="my-bids">
     <AuctionList v-bind:auctions="auctions"/>
   </div>
 </template>
@@ -9,7 +9,7 @@ import axios from "axios";
 import AuctionList from "@/components/AuctionList";
 
 export default {
-    name: "MyAuctions",
+    name: "MyBids",
     components: {
         AuctionList
     },
@@ -20,7 +20,7 @@ export default {
     },
     created () { // or beforecreated
         axios
-            .get("/api/my-auctions")
+            .get("/api/my-bids")
             .then((resp) => {
                 this.auctions = resp.data;
             })

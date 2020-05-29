@@ -1,16 +1,18 @@
 <template>
   <div v-if="auction !== null" class="auction">
+    <div v-if="auction.type === 'Bid'">
+      <h3>Auction</h3>
+    </div>
+    <div v-if="auction.type === 'Buy'">
+      <h3>Product</h3>
+    </div>
     <div v-if="!isEdit">
       <AuctionDetails v-bind:auction="auction"/>
     </div>
-    <div v-if="currentUser.isAuth">
-        <!--
-        <div v-if="auction.seller === currentUser.username"> change to ""?
-        <button id="btn-edit" class="button" @click="isEdit = !isEdit">
-            Edit
-        </button>
-        </div>
-        -->
+    <div v-if="isAuthAndIsOwnerAndIsNotStarted">
+      <button id="btn-edit" class="button" @click="isEdit = !isEdit">
+        Edit
+      </button>
     </div>
     <div v-if="isEdit">
       <AuctionEdit v-bind:auction="auction"/>
@@ -37,7 +39,13 @@ export default {
         };
     },
     computed: {
-        ...mapGetters(["currentUser"])
+        ...mapGetters(["currentUser"]),
+        isAuthAndIsOwnerAndIsNotStarted: function () {
+            const user = this.$store.getters.currentUser;
+            return user.isAuth &&
+            this.auction.seller === user.username &&
+            this.auction.status === "New";
+        }
     },
     beforeCreate () {
         const id = window.location.href.split("id=")[1];

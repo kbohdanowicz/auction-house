@@ -3,13 +3,9 @@
     <p>Error 404. This page doesn't exist</p>
   </div>
 </template>
-<script>
-import { mapGetters } from "vuex";
 
+<script>
 export default {
-    name: "Error404",
-    computed: {
-        ...mapGetters(["currentUser"])
-    }
+    name: "Error"
 };
 </script>

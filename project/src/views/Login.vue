@@ -17,7 +17,7 @@
 <script>
 import axios from "axios";
 import router from "../router";
-import { mapGetters } from "vuex";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
     name: "Login",
@@ -33,6 +33,7 @@ export default {
         ...mapGetters(["currentUser"])
     },
     methods: {
+        ...mapActions(["fetchCurrentUser"]),
         handleSubmit () {
             axios
                 .post("/api/login", this.formData)
@@ -43,13 +44,13 @@ export default {
                     console.log(err);
                     location.reload();
                 });
-        },
-        clear () {
-            this.$refs.form.reset();
         }
-    },
-    created () {
     }
+    // }// ,
+    // destroyed () {
+    //     alert("destroyed");
+    //     this.$store.dispatch("fetchCurrentUser");
+    // }
 };
 </script>
 

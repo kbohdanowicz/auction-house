@@ -7,22 +7,24 @@
             <!-- all auctions -->
             <router-link to="/">Home</router-link>
           </li>
-          <!-- <div v-if currentUser.isLoggedIn></div> -->
-          <li class="nav-item">
+          <li v-if="currentUser.isAuth" class="nav-item">
+            <router-link to="/my-bids">My bids</router-link>
+          </li>
+          <li v-if="currentUser.isAuth" class="nav-item">
             <router-link to="/my-auctions">My auctions</router-link>
           </li>
-          <li class="nav-item">
+          <li v-if="currentUser.isAuth" class="nav-item">
             <router-link to="/my-history">My History</router-link>
           </li>
           <!-- on the right side -->
-          <li class="nav-item">
+          <li v-if="currentUser.isAuth" class="nav-item">
             <a @click="logout()">Log out</a>
           </li>
           <!-- <div v-else></div> -->
-          <li class="nav-item">
+          <li v-if="!currentUser.isAuth" class="nav-item">
             <router-link to="/login">Log in</router-link>
           </li>
-          <li class="nav-item">
+          <li v-if="!currentUser.isAuth" class="nav-item">
             <router-link to="/register">Register</router-link>
           </li>
         </ul>
@@ -33,8 +35,8 @@
 
 <script>
 import axios from "axios";
-import router from "../router";
-import { mapGetters } from "vuex";
+// import router from "../router";
+import { mapGetters, mapActions } from "vuex";
 
 export default {
     name: "Navbar",
@@ -42,16 +44,17 @@ export default {
         ...mapGetters(["currentUser"])
     },
     methods: {
+        ...mapActions(["fetchCurrentUser"]),
         logout () {
             axios
                 .get("/api/logout")
                 .then(() => {
-                    router.push("/");
+                    // router.push("/"); // uncaught exception error
                     location.reload();
                 })
                 .catch((err) => {
                     console.log(err);
-                    location.reload();
+                    // location.reload();
                 });
         }
     }
