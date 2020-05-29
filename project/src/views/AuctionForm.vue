@@ -1,6 +1,6 @@
 <template>
   <div class="auction-form">
-    <form>
+    <form @submit.prevent="handleSubmit()">
       <br><br>
       <input v-model="formData.name" id="name-input" class="input" type="text"
       placeholder="Name" required="">
@@ -16,14 +16,16 @@
         <br><br>
       </div>
       <div v-if="formData.type === 'Bid'">
-        <input type="number" placeholder="Duration" required="">
+        <input v-model="formData.timeLeft" type="number" placeholder="Duration" required="">
         <br><br>
       </div>
-      <button class="button" @click="create">Create</button>
+      <button type="submit">Create</button>
       <br><br>
+      <!--
       <div v-if="formData.type === 'Bid'">
-        <button class="button" @click="createAndStart">Create and start</button>
+        <button class="button" @click="createAndStart()">Create and start</button>
       </div>
+      -->
     </form>
   </div>
 </template>
@@ -37,20 +39,37 @@ export default {
     data () {
         return {
             formData: {
-                // type: "Bid"
+                name: null,
+                price: null,
+                type: null,
+                seller: this.$store.getters.currentUser.username,
+                status: null,
+                timeleft: null
             }
         };
     },
     methods: {
-        create () {
+        handleSubmit () {
+            this.formData.status = "New";
             axios
-                .post("/auction", this.formData)
+                .post("/api/auction", this.formData)
                 .then(() => {
                     router.push("/");
-                }); // .catch(() => {}));
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         },
         createAndStart () {
-
+            // this.formData.status = "OnSale";
+            // axios
+            //     .post("/auction", this.formData)
+            //     .then(() => {
+            //         router.push("/");
+            //     })
+            //     .catch((err) => {
+            //         console.log(err);
+            //     });
         }
     }
 };

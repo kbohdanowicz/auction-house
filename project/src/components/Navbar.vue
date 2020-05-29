@@ -7,7 +7,7 @@
             <!-- all auctions -->
             <router-link to="/">Home</router-link>
           </li>
-          <!-- <div v-if isAuthenticated></div> -->
+          <!-- <div v-if currentUser.isLoggedIn></div> -->
           <li class="nav-item">
             <router-link to="/my-auctions">My auctions</router-link>
           </li>
@@ -16,7 +16,7 @@
           </li>
           <!-- on the right side -->
           <li class="nav-item">
-             <a @click="logout()">Log out</a>
+            <a @click="logout()">Log out</a>
           </li>
           <!-- <div v-else></div> -->
           <li class="nav-item">
@@ -34,16 +34,12 @@
 <script>
 import axios from "axios";
 import router from "../router";
+import { mapGetters } from "vuex";
 
 export default {
     name: "Navbar",
-    data () {
-        return {
-            isAuthenticated: {
-                type: Boolean,
-                default: false
-            }
-        };
+    computed: {
+        ...mapGetters(["currentUser"])
     },
     methods: {
         logout () {
@@ -51,11 +47,11 @@ export default {
                 .get("/api/logout")
                 .then(() => {
                     router.push("/");
+                    location.reload();
                 })
                 .catch((err) => {
                     console.log(err);
-                    router.push("/login");
-                    // location.reload();
+                    location.reload();
                 });
         }
     }
@@ -87,6 +83,7 @@ ul {
         }
         a:hover {
             color: lightgray;
+            cursor: pointer;
         }
     }
 }

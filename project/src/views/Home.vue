@@ -1,9 +1,10 @@
 <template>
-  <div class="home" v-if="isLoggedIn">
+  <div class="home">
     <img alt="Vue logo" src="../assets/logo.png"><br>
-    <p>Welcome {{ username }}</p>
-    <!-- v-if="isAuthorised" -->
-    <button @click="goToAuctionForm()">Create auction</button>
+    <div v-if="currentUser.isLoggedIn">
+      <p>Welcome {{ currentUser.username }}</p>
+      <button @click="goToAuctionForm()">Create auction</button>
+    </div>
     <AuctionList v-bind:auctions="auctions"/>
   </div>
 </template>
@@ -11,6 +12,7 @@
 import axios from "axios";
 import router from "../router";
 import AuctionList from "@/components/AuctionList";
+import { mapGetters } from "vuex";
 
 export default {
     name: "Home",
@@ -19,37 +21,26 @@ export default {
     },
     data () {
         return {
-            auctions: null,
-            username: "",
-            isLoggedIn: false
+            auctions: null
         };
     },
-    created () { // or beforecreated
+    computed: {
+        ...mapGetters(["currentUser"])
+    },
+    methods: {
+        goToAuctionForm () {
+            router.push("/auction");
+        }
+    },
+    created () {
         axios
             .get("/api/auctions")
             .then((resp) => {
                 this.auctions = resp.data;
+            })
+            .catch((err) => {
+                console.log(err);
             });
-    },
-    methods: {
-        goToAuctionForm () {
-            router.push("/api/auction");
-        },
-        getUserData () {
-            axios
-                .get("/api/current-user")
-                .then((res) => {
-                    this.$set(this, "username", res.data.currentUser.username);
-                    this.isLoggedIn = res.data.isLoggedIn;
-                })
-                .catch((err) => {
-                    console.log(err);
-                    router.push("/login");
-                });
-        }
-    },
-    mounted () {
-        this.getUserData();
     }
 };
 </script>

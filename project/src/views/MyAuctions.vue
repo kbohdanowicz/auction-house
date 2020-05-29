@@ -23,6 +23,9 @@ export default {
             .get("/api/my-auctions")
             .then((resp) => {
                 this.auctions = resp.data;
+            })
+            .catch((err) => {
+                console.log(err);
             });
     }
 };

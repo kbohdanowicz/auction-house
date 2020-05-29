@@ -44,16 +44,20 @@ router
 
 router
     .route("/current-user")
-    .get(isLoggedIn, (req, res) => {
-        if (req.user) {
+    .get((req, res) => {
+        if (req.isAuthenticated()) {
             res.send({
-                currentUser: req.user,
-                isLoggedIn: req.isAuthenticated()
+                user: {
+                    username: req.user.username,
+                    isLoggedIn: req.isAuthenticated()
+                }
             });
         } else {
-            res.status(403).send({
-                success: false,
-                msg: "Unauthorized."
+            res.send({
+                user: {
+                    username: null,
+                    isLoggedIn: false
+                }
             });
         }
     });
@@ -70,11 +74,11 @@ router
 
 router
     .route("/logout")
-    .get((req, res) => {
+    .get(isLoggedIn, (req, res) => {
         console.log("Logging out");
         req.logout();
         res.status(200).send({
-            isAuthenticated: req.isAuthenticated()
+            // isAuthenticated: req.isAuthenticated()
         });
     })
     .all(rejectMethod);
@@ -104,7 +108,7 @@ router
     .all(rejectMethod);
 
 router.route("/auction/id=:id")
-    .get((req, res) => { // isLoggedIn,
+    .get((req, res) => {
         Auction.findOne({ _id: req.params.id }, (err, doc) => {
             if (err) {
                 res.status(500).json(model.processErrors(err));
@@ -113,7 +117,7 @@ router.route("/auction/id=:id")
             }
         });
     })
-    .patch((req, res) => { // isLoggedIn,
+    .patch(isLoggedIn, (req, res) => {
         const filter = req.params.id;
         const update = {};
         let oldBidders;
@@ -166,7 +170,7 @@ router.route("/auction/id=:id")
     .all(rejectMethod);
 
 router.route("/auction")
-    .post(async (req, res) => {
+    .post(isLoggedIn, async (req, res) => {
         try {
             const user = req.user;
             const body = req.body;
@@ -178,8 +182,7 @@ router.route("/auction")
                     price: body.price,
                     type: body.type,
                     seller: user.username,
-                    bidders: [],
-                    duration: body.duration,
+                    timeLeft: body.timeLeft,
                     status: body.status
                 });
             } else {
@@ -218,7 +221,7 @@ router
     .all(rejectMethod);
 
 router.route("/my-auctions")
-    .get(async (req, res) => {
+    .get(isLoggedIn, async (req, res) => {
         try {
             const docs = await Auction.find({
                 bidders: req.user.username, status: "OnSale"
@@ -232,7 +235,7 @@ router.route("/my-auctions")
     .all(rejectMethod);
 
 router.route("/my-history")
-    .get(async (req, res) => {
+    .get(isLoggedIn, async (req, res) => {
         try {
             const docs = await Auction.find({
                 $or: [{ buyer: req.user.username, status: "Sold" },
