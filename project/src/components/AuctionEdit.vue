@@ -7,7 +7,6 @@
 </template>
 
 <script>
-// import api from "../modules/api";
 
 export default {
     name: "AuctionEdit",

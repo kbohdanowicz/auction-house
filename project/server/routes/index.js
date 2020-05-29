@@ -11,27 +11,57 @@ const ChatRoom = model.ChatRoom;
 const passport = require("../passport");
 const bcrypt = require("../bcrypt");
 
-// Uwierzytelnianie
-const authenticate = (req, res, fun) => {
-    if (req.isAuthenticated()) {
-        return fun();
-    } else {
-        res.status(403).json({
-            message: "Not authenticated"
-        });
-    }
-};
-
 // Wyłapywanie odwołań nieobsługiwanymi metodami HTTP
 const rejectMethod = (_req, res, _next) => {
     // Method Not Allowed
     res.sendStatus(405);
 };
 
+// Uwierzytelnianie
+const isLoggedIn = (req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.status(403).json({
+        message: "Not authenticated"
+    });
+};
+
 router
-    .route("/")
-    .get(authenticate, (req, res) => {
-        res.render("index", {
+    .route("/users")
+    .get(passport.authenticate("basic", {
+        session: false
+    }), (req, res) => {
+        User.find({}, (err, data) => {
+            if (err) {
+                res.status(500).send();
+            } else {
+                res.json(data);
+            }
+        });
+    })
+    .all(rejectMethod);
+
+router
+    .route("/current-user")
+    .get(isLoggedIn, (req, res) => {
+        if (req.user) {
+            res.send({
+                currentUser: req.user,
+                isLoggedIn: req.isAuthenticated()
+            });
+        } else {
+            res.status(403).send({
+                success: false,
+                msg: "Unauthorized."
+            });
+        }
+    });
+
+router
+    .route("/login")
+    .post(passport.authenticate("local"), async (req, res) => {
+        await res.json({
             isAuthenticated: req.isAuthenticated(),
             user: req.user
         });
@@ -39,21 +69,18 @@ router
     .all(rejectMethod);
 
 router
-    .route("/api/login")
-    .post(passport.authenticate("local"), async (req, res) => {
-        await res.status(200);
-    })
-    .all(rejectMethod);
-
-router
-    .route("/api/logout")
+    .route("/logout")
     .get((req, res) => {
+        console.log("Logging out");
         req.logout();
+        res.status(200).send({
+            isAuthenticated: req.isAuthenticated()
+        });
     })
     .all(rejectMethod);
 
 router
-    .route("/api/register")
+    .route("/register")
     .post(async (req, res) => {
         try {
             const passwordHash = bcrypt.hash(req.body.password);
@@ -76,23 +103,8 @@ router
     })
     .all(rejectMethod);
 
-router
-    .route("/api/users")
-    .get(passport.authenticate("basic", {
-        session: false
-    }), (req, res) => {
-        User.find({}, (err, data) => {
-            if (err) {
-                res.code(500);
-            } else {
-                res.json(data);
-            }
-        });
-    })
-    .all(rejectMethod);
-
-router.route("/api/auction/id=:id")
-    .get((req, res) => { // authenticate,
+router.route("/auction/id=:id")
+    .get((req, res) => { // isLoggedIn,
         Auction.findOne({ _id: req.params.id }, (err, doc) => {
             if (err) {
                 res.status(500).json(model.processErrors(err));
@@ -101,7 +113,7 @@ router.route("/api/auction/id=:id")
             }
         });
     })
-    .patch((req, res) => { // authenticate,
+    .patch((req, res) => { // isLoggedIn,
         const filter = req.params.id;
         const update = {};
         let oldBidders;
@@ -153,8 +165,8 @@ router.route("/api/auction/id=:id")
     })
     .all(rejectMethod);
 
-router.route("/api/auction")
-    .post(authenticate, async (req, res) => {
+router.route("/auction")
+    .post(async (req, res) => {
         try {
             const user = req.user;
             const body = req.body;
@@ -189,7 +201,7 @@ router.route("/api/auction")
     .all(rejectMethod);
 
 router
-    .route("/api/auctions")
+    .route("/auctions")
     .get(async (req, res) => {
         try {
             const docs = [];
@@ -205,8 +217,8 @@ router
     })
     .all(rejectMethod);
 
-router.route("/api/my-auctions")
-    .get(authenticate, async (req, res) => {
+router.route("/my-auctions")
+    .get(async (req, res) => {
         try {
             const docs = await Auction.find({
                 bidders: req.user.username, status: "OnSale"
@@ -219,8 +231,8 @@ router.route("/api/my-auctions")
     })
     .all(rejectMethod);
 
-router.route("/api/my-history")
-    .get(authenticate, async (req, res) => {
+router.route("/my-history")
+    .get(async (req, res) => {
         try {
             const docs = await Auction.find({
                 $or: [{ buyer: req.user.username, status: "Sold" },

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import api from "../modules/api";
+import axios from "axios";
 import AuctionList from "@/components/AuctionList";
 
 export default {
@@ -19,8 +19,8 @@ export default {
         };
     },
     created () { // or beforecreated
-        api()
-            .get("/my-history")
+        axios
+            .get("/api/my-history")
             .then((resp) => {
                 this.auctions = resp.data;
             });

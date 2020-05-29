@@ -6,7 +6,7 @@
     <!-- .prevent keeps the event from bubbling around and doing anything else. -->
     <form @submit.prevent="handleSubmit()">
       <input v-model="user.username" type="text" name="username" id="username"
-      placeholder="Username" required="">
+      placeholder="Username" minLength="3" required="">
       <br><br>
       <input v-model="user.password" type="password" name="password" id="password"
       placeholder="Password" required="">
@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import api from "../modules/api";
+import axios from "axios";
 import router from "../router";
 
 export default {
@@ -35,10 +35,13 @@ export default {
     },
     methods: {
         handleSubmit () {
-            api()
-                .post("/register", this.user)
+            axios
+                .post("api/register", this.user)
                 .then(() => {
                     router.push("/login");
+                })
+                .catch((err) => {
+                    console.log(err);
                 });
         }
     }

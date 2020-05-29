@@ -8,10 +8,31 @@
 </template>
 
 <script>
+import axios from "axios";
 import Navbar from "@/components/Navbar";
+
 export default {
+    data () {
+        return {
+            currentUser: null
+        };
+    },
     components: {
         Navbar
+    },
+    mounted () {
+        // this.fetchUser();
+    },
+    methods: {
+        async fetchUser () {
+            return axios
+                .get("api/current-user")
+                .then((res) => {
+                    this.currentUser = res.data.currentUser;
+                })
+                .catch(() => {
+                });
+        }
     }
 };
 </script>

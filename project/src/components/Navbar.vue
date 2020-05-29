@@ -16,7 +16,7 @@
           </li>
           <!-- on the right side -->
           <li class="nav-item">
-             <router-link to="/logout">Log out</router-link>
+             <a @click="logout()">Log out</a>
           </li>
           <!-- <div v-else></div> -->
           <li class="nav-item">
@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import api from "../modules/api";
+import axios from "axios";
 import router from "../router";
 
 export default {
@@ -47,10 +47,15 @@ export default {
     },
     methods: {
         logout () {
-            api()
-                .post("/logout")
+            axios
+                .get("/api/logout")
                 .then(() => {
                     router.push("/");
+                })
+                .catch((err) => {
+                    console.log(err);
+                    router.push("/login");
+                    // location.reload();
                 });
         }
     }

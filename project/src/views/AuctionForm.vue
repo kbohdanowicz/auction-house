@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import api from "../modules/api";
+import axios from "axios";
 import router from "../router";
 
 export default {
@@ -43,7 +43,7 @@ export default {
     },
     methods: {
         create () {
-            api()
+            axios
                 .post("/auction", this.formData)
                 .then(() => {
                     router.push("/");

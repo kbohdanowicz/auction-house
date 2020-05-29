@@ -9,13 +9,13 @@
         <input v-model="user.password" type="password" name="password" id="password"
         placeholder="Password" required="">
         <br><br>
-        <input type="submit" value="Log in">
+        <button type="submit">Log in</button>
       </form>
   </div>
 </template>
 
 <script>
-import api from "../modules/api";
+import axios from "axios";
 import router from "../router";
 
 export default {
@@ -29,11 +29,17 @@ export default {
         };
     },
     methods: {
-        handleSubmit () {
-            api()
-                .post("/login", this.user)
-                .then(() => {
+        async handleSubmit () {
+            console.log("START");
+            await axios
+                .post("/api/login", this.user)
+                .then((res) => {
                     router.push("/");
+                })
+                .catch((err) => {
+                    console.log(err);
+                    router.push("/login");
+                    location.reload();
                 });
         }
     }

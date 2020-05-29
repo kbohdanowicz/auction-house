@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import api from "../modules/api";
+import axios from "axios";
 import AuctionDetails from "@/components/AuctionDetails";
 import AuctionEdit from "@/components/AuctionEdit";
 
@@ -37,8 +37,8 @@ export default {
     beforeCreate () {
         const id = window.location.href.split("id=")[1];
         console.log("id = " + id);
-        api()
-            .get(`/auction/id=${id}`)
+        axios
+            .get(`/api/auction/id=${id}`)
             .then((resp) => {
                 this.auction = resp.data;
             });

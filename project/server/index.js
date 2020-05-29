@@ -1,28 +1,29 @@
 require("dotenv").config();
 
 const express = require("express");
-const cors = require("cors");
 
 const app = express();
 
 // Wszelkie dane przesyłamy w formacie JSON
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors());
+
+const cors = require("cors");
+app.use(cors({ credentials: true }));
 
 // Sesja z wykorzystaniem ciasteczek
 const cookieParser = require("cookie-parser");
 app.use(cookieParser());
 const mongoose = require("mongoose");
-const expressSession = require("express-session");
-const MongoStore = require("connect-mongo")(expressSession);
+const session = require("express-session");
+const MongoStore = require("connect-mongo")(session);
 
 // Session store
 const sessionStore = new MongoStore({
     mongooseConnection: mongoose.connection
 });
 
-app.use(expressSession({
+app.use(session({
     secret: process.env.APP_SECRET,
     store: sessionStore,
     resave: false,
@@ -48,11 +49,11 @@ if (process.env.NODE_ENV === "development") {
 const path = require("path");
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/lib", express.static(path.normalize("./node_modules/axios/dist")));
+// app.use("/lib", express.static(path.normalize("./node_modules/axios/dist")));
 
 // Routing
 const routes = require("./routes");
-app.use(routes);
+app.use("/api", routes);
 
 // Wyłapujemy odwołania do nieobsługiwanych adresów
 app.use((_, res) => {
