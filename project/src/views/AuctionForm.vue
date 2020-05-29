@@ -5,8 +5,12 @@
       <input v-model="formData.name" id="name-input" class="input" type="text"
       placeholder="Name" required="">
       <br><br>
+      <input v-model="formData.description" id="name-input" class="input" type="text"
+      placeholder="Description" size="100" required="">
+      <br><br>
       <input v-model="formData.price" id="price-input" class="input" type="number"
-      min="0.01" step="0.01" placeholder="Price" required="">
+      min="0.01" step="0.01" placeholder="Price"
+      size="9" required="">
       <br><br>
       <div class="select-type">
         <select v-model="formData.type" id="select">
@@ -40,17 +44,17 @@ export default {
         return {
             formData: {
                 name: null,
+                description: null,
                 price: null,
                 type: null,
                 seller: this.$store.getters.currentUser.username,
-                status: null,
+                status: "OnSale",
                 timeleft: null
             }
         };
     },
     methods: {
         handleSubmit () {
-            this.formData.status = "New";
             axios
                 .post("/api/auction", this.formData)
                 .then(() => {

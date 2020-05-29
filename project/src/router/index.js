@@ -89,12 +89,12 @@ router.beforeEach((to, from, next) => {
         // do nothing
     } else if (!isInRoutes(to.name)) {
         next({ name: "Error_404" });
-    } else if (to.name === "Register" || to.name === "Home") {
+    } else if (to.name === "Register" || to.name === "Home" || to.name === "Auction") {
         next();
-    } else if (to.name !== "Login" && !store.getters.currentUser.isLoggedIn) {
+    } else if (to.name !== "Login" && !store.getters.currentUser.isAuth) {
         console.log("Not logged in. Redirecting to login page");
         // next({ name: "Login" });
-    } else if (to.name === "Login" && store.getters.currentUser.isLoggedIn) {
+    } else if (to.name === "Login" && store.getters.currentUser.isAuth) {
         console.log("Logged in. Redirecting to home page");
         next({ name: "Home" });
     } else {

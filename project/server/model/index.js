@@ -65,7 +65,7 @@ const auctionSchema = new Schema({
     },
     status: {
         type: String,
-        enum: ["New", "OnSale", "Sold", "Ignored"]
+        enum: ["OnSale", "Sold", "Ignored"]
     }
 });
 

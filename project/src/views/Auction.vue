@@ -1,12 +1,16 @@
 <template>
-  <div class="auction">
+  <div v-if="auction !== null" class="auction">
     <div v-if="!isEdit">
       <AuctionDetails v-bind:auction="auction"/>
     </div>
-    <div v-if="currentUser.isLoggedIn" >
+    <div v-if="currentUser.isAuth">
+        <!--
+        <div v-if="auction.seller === currentUser.username"> change to ""?
         <button id="btn-edit" class="button" @click="isEdit = !isEdit">
             Edit
         </button>
+        </div>
+        -->
     </div>
     <div v-if="isEdit">
       <AuctionEdit v-bind:auction="auction"/>

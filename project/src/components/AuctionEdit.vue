@@ -12,6 +12,7 @@ export default {
     name: "AuctionEdit",
     props: ["auction"],
     methods: {
+        // refresh view data ($emit)
     }
 };
 </script>

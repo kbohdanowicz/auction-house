@@ -14,10 +14,11 @@ const actions = {
         return new Promise((resolve, reject) => {
             axios.get("/api/current-user")
                 .then((resp) => {
-                    commit("authRefresh", resp.data.user);
+                    commit("authRefresh", resp.data);
                     resolve(resp);
                 })
                 .catch((err) => {
+                    commit("authNotLoggedIn");
                     reject(err);
                 });
         });
@@ -25,8 +26,13 @@ const actions = {
 };
 
 const mutations = {
-    authRefresh (state, currentUser) {
-        state.currentUser = currentUser;
+    authRefresh (state, data) {
+        state.currentUser.username = data.username;
+        state.currentUser.isAuth = data.isAuth;
+    },
+    authNotLoggedIn (state) {
+        state.currentUser.username = null;
+        state.currentUser.isAuth = false;
     }
 };
 

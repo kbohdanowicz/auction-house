@@ -47,17 +47,12 @@ router
     .get((req, res) => {
         if (req.isAuthenticated()) {
             res.send({
-                user: {
-                    username: req.user.username,
-                    isLoggedIn: req.isAuthenticated()
-                }
+                username: req.user.username,
+                isAuth: req.isAuthenticated()
             });
         } else {
             res.send({
-                user: {
-                    username: null,
-                    isLoggedIn: false
-                }
+                message: "Not logged in"
             });
         }
     });
@@ -65,10 +60,7 @@ router
 router
     .route("/login")
     .post(passport.authenticate("local"), async (req, res) => {
-        await res.json({
-            isAuthenticated: req.isAuthenticated(),
-            user: req.user
-        });
+        await res.json();
     })
     .all(rejectMethod);
 
@@ -117,18 +109,17 @@ router.route("/auction/id=:id")
             }
         });
     })
-    .patch(isLoggedIn, (req, res) => {
+    .patch(isLoggedIn, async (req, res) => {
         const filter = req.params.id;
         const update = {};
         let oldBidders;
-        Auction.findById(filter, (err, data) => {
-            if (err) {
-                res.status(500).json(model.processErrors(err));
-            } else {
-                oldBidders = data.bidders;
-            }
-        });
-
+        try {
+            const doc = await Auction.findByIdAndUpdate(filter, {});
+            oldBidders = doc.bidders;
+        } catch (err) {
+            console.log(err);
+            res.status(422).json(model.processErrors(err));
+        }
         // this or maybe a put method?
         // patch is needed to update: price, duration, and status
         const body = req.body;
@@ -151,12 +142,12 @@ router.route("/auction/id=:id")
         if (body.bidders) {
             const newBidders = body.bidders;
             if (!oldBidders.includes(newBidders[0])) {
-                const updatedBidders = oldBidders.push(newBidders[0]);
+                oldBidders.push(newBidders[0]);
+                const updatedBidders = oldBidders;
                 update.bidders = updatedBidders;
             };
         };
 
-        console.log("Update:" + update);
         Auction.findByIdAndUpdate(filter, update,
             (err, doc) => {
                 if (err) {
@@ -172,25 +163,26 @@ router.route("/auction/id=:id")
 router.route("/auction")
     .post(isLoggedIn, async (req, res) => {
         try {
-            const user = req.user;
             const body = req.body;
             let auction = {};
             // TODO try auction.timeLeft = body.timeLeft;
             if (req.body.type === "Bid") {
                 auction = new Auction({
                     name: body.name,
+                    description: body.description,
                     price: body.price,
                     type: body.type,
-                    seller: user.username,
+                    seller: body.seller,
                     timeLeft: body.timeLeft,
                     status: body.status
                 });
             } else {
                 auction = new Auction({
                     name: body.name,
+                    description: body.description,
                     price: body.price,
                     type: body.type,
-                    seller: user.username,
+                    seller: body.seller,
                     status: body.status
                 });
             }
@@ -207,11 +199,9 @@ router
     .route("/auctions")
     .get(async (req, res) => {
         try {
-            const docs = [];
-            for await (const doc of Auction.find()) {
-                docs.push(doc);
-            }
-            // docs = await Auction.find();
+            const docs = await Auction.find({
+                $or: [{ status: "New" }, { status: "OnSale" }]
+            });
             return res.json(docs);
         } catch (err) {
             console.log(err);

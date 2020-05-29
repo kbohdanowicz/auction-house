@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <img alt="Vue logo" src="../assets/logo.png"><br>
-    <div v-if="currentUser.isLoggedIn">
+    <div v-if="currentUser.isAuth">
       <p>Welcome {{ currentUser.username }}</p>
       <button @click="goToAuctionForm()">Create auction</button>
     </div>

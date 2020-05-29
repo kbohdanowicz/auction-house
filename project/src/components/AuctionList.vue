@@ -10,8 +10,9 @@
           Buy now!<br>
         </div>
         <div v-else>
-          Highest bid: ${{ auction.price }}<br>
-          Bid now!<br>
+            Current price: ${{ auction.price }}<br>
+            Time left: {{ auction.timeLeft }} min<br>
+            Bid now!<br>
         </div>
       </li>
     </ul>
