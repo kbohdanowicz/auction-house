@@ -1,5 +1,6 @@
 <template>
   <div class="my-bids">
+    <h2>My bids</h2>
     <AuctionList v-bind:auctions="auctions"/>
   </div>
 </template>

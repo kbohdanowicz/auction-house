@@ -3,7 +3,6 @@ const router = express.Router();
 
 const model = require("../model");
 const User = model.User;
-const Auction = model.Auction;
 // eslint-disable-next-line no-unused-vars
 const ChatRoom = model.ChatRoom;
 
@@ -11,21 +10,9 @@ const ChatRoom = model.ChatRoom;
 const passport = require("../passport");
 const bcrypt = require("../bcrypt");
 
-// Wyłapywanie odwołań nieobsługiwanymi metodami HTTP
-const rejectMethod = (_req, res, _next) => {
-    // Method Not Allowed
-    res.sendStatus(405);
-};
-
-// Uwierzytelnianie
-const isLoggedIn = (req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next();
-    }
-    res.status(403).json({
-        message: "Not authenticated"
-    });
-};
+const routeMethods = require("./routeMiddleware");
+const isAuth = routeMethods.isAuth;
+const rejectMethod = routeMethods.rejectMethod;
 
 router
     .route("/users")
@@ -68,7 +55,7 @@ router
 
 router
     .route("/logout")
-    .get(isLoggedIn, (req, res) => {
+    .get(isAuth, (req, res) => {
         console.log("Logging out");
         req.logout();
         res.status(200).json({
@@ -97,160 +84,6 @@ router
             } else {
                 res.status(422).json(model.processErrors(err));
             }
-        }
-    })
-    .all(rejectMethod);
-
-router.route("/auction/id=:id")
-    .get((req, res) => {
-        Auction.findById(req.params.id, (err, doc) => {
-            if (err) {
-                res.status(500).json(model.processErrors(err));
-            } else {
-                res.json(doc);
-            }
-        });
-    })
-    .patch(isLoggedIn, async (req, res) => {
-        const filter = req.params.id;
-        const update = {};
-        let oldBidders;
-        try {
-            const doc = await Auction.findById(filter);
-            oldBidders = doc.bidders;
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
-        }
-        const body = req.body;
-        if (body.name) {
-            update.name = body.name;
-        }
-        if (body.price) {
-            update.price = body.price;
-        }
-        if (body.type) {
-            update.type = body.type;
-        }
-        if (body.status) {
-            update.status = body.status;
-        }
-        if (body.timeLeft || body.timeLeft === "") {
-            update.timeLeft = body.timeLeft;
-        }
-        if (body.highestBidder) {
-            update.highestBidder = body.highestBidder;
-        }
-        if (body.bidders) {
-            const newBidders = body.bidders;
-            if (!oldBidders.includes(newBidders[0])) {
-                oldBidders.push(newBidders[0]);
-                const updatedBidders = oldBidders;
-                update.bidders = updatedBidders;
-            };
-        };
-
-        // CHECK IF status === "OnSale"
-        //      then start countdown on server
-        Auction.findByIdAndUpdate(filter, update,
-            (err, doc) => {
-                if (err) {
-                    res.code(500);
-                } else {
-                    res.json(doc);
-                }
-            }
-        );
-    })
-    .all(rejectMethod);
-
-router.route("/auction")
-    .post(isLoggedIn, async (req, res) => {
-        try {
-            const body = req.body;
-            let auction = {};
-            // TODO try auction.timeLeft = body.timeLeft;
-            if (req.body.type === "Bid") {
-                auction = new Auction({
-                    name: body.name,
-                    price: body.price,
-                    type: body.type,
-                    seller: body.seller,
-                    timeLeft: body.timeLeft,
-                    status: body.status
-                });
-            } else {
-                auction = new Auction({
-                    name: body.name,
-                    price: body.price,
-                    type: body.type,
-                    seller: body.seller,
-                    status: body.status
-                });
-            }
-            const doc = await auction.save();
-            res.json(doc);
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
-        }
-    })
-    .all(rejectMethod);
-
-router
-    .route("/auctions")
-    .get(async (req, res) => {
-        try {
-            const docs = await Auction.find({ status: "OnSale" });
-            return res.json(docs);
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
-        }
-    })
-    .all(rejectMethod);
-
-router.route("/my-bids")
-    .get(isLoggedIn, async (req, res) => {
-        try {
-            const docs = await Auction.find({
-                bidders: req.user.username,
-                status: "OnSale"
-            });
-            return res.json(docs);
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
-        }
-    })
-    .all(rejectMethod);
-
-router.route("/my-auctions")
-    .get(isLoggedIn, async (req, res) => {
-        try {
-            const docs = await Auction.find({
-                seller: req.user.username,
-                status: "New"
-            });
-            return res.json(docs);
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
-        }
-    })
-    .all(rejectMethod);
-
-router.route("/my-history")
-    .get(isLoggedIn, async (req, res) => {
-        try {
-            const docs = await Auction.find({
-                $or: [{ highestBidder: req.user.username, status: "Sold" },
-                    { bidders: req.user.username, status: "Sold" }]
-            });
-            return res.json(docs);
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
         }
     })
     .all(rejectMethod);

@@ -5,7 +5,6 @@ import Login from "../views/Login.vue";
 import Register from "../views/Register.vue";
 import MyBids from "../views/MyBids.vue";
 import MyAuctions from "../views/MyAuctions.vue";
-import Auction from "../views/Auction.vue";
 import AuctionForm from "../views/AuctionForm.vue";
 import Error404 from "../views/Error404.vue";
 import store from "../store";
@@ -49,11 +48,6 @@ const routes = [
         }
     },
     {
-        path: "/auction/:id",
-        name: "Auction",
-        component: Auction
-    },
-    {
         path: "/auction",
         name: "AuctionForm",
         component: AuctionForm
@@ -82,7 +76,7 @@ const isInRoutes = (name) => {
 // TODO register should not be reachable by logged user
 router.beforeEach((to, from, next) => {
     store.dispatch("fetchCurrentUser");
-    console.log("Route " + to.path + " is " + isInRoutes(to.name));
+    // console.log("Route " + to.path + " is " + isInRoutes(to.name));
     if (to.name === "Error404") {
         // next({ name: "Error404" }); DONT (Infinite recursion)
     } else if (!isInRoutes(to.name)) {
@@ -97,7 +91,7 @@ router.beforeEach((to, from, next) => {
         console.log("Logged in. Redirecting to home page");
         next({ name: "Home" });
     } else {
-        console.log("Other");
+        // console.log("Other");
         next();
     }
 });

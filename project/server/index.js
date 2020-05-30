@@ -54,6 +54,8 @@ app.use(express.static(path.join(__dirname, "public")));
 // Routing
 const routes = require("./routes");
 app.use("/api", routes);
+const auctionRoutes = require("./routes/auction");
+app.use("/api", auctionRoutes);
 
 // Wyłapujemy odwołania do nieobsługiwanych adresów
 app.use((_, res) => {
@@ -65,55 +67,50 @@ app.use((_, res) => {
 const server = require("./https")(app);
 const port = process.env.PORT;
 
-// Model
-const model = require("./model");
-const ChatRoom = model.chatRoom;
-const Message = model.message;
-
 // Socket.io
+const socketio = require("socket.io");
+const passportSocketIo = require("passport.socketio");
+const io = socketio(server);
 
-// const socketio = require("socket.io");
-// const passportSocketIo = require("passport.socketio");
-// const io = socketio(server);
+io.use(passportSocketIo.authorize({
+    key: "connect.sid",
+    secret: process.env.APP_SECRET,
+    store: sessionStore,
+    passport: passport,
+    cookieParser: cookieParser
+}));
 
-// io.use(passportSocketIo.authorize({
-//     key: "connect.sid",
-//     secret: process.env.APP_SECRET,
-//     store: sessionStore,
-//     passport: passport,
-//     cookieParser: cookieParser
-// }));
-
-// io.on("error", (err) => {
-//     console.log("Socket.IO Error");
-//     console.log(err.stack);
-// });
-
-// io.on("connection", (socket) => {
-//     console.log(`Made socket connection: ${socket.id}`);
-//     socket.on("chatMessage", (data) => {
-//         // User data from the socket.io passport middleware
-//         if (socket.request.user && socket.request.user.logged_in) {
-//             const modifiedData = {
-//                 handle: socket.request.user.username,
-//                 content: data.content
-//             };
-
-//             const message = new Message({
-//                 handle: socket.request.user.username,
-//                 content: data.content
-//             });
-
-//             ChatRoom.findOneAndUpdate(
-//                 { name: data.roomName },
-//                 { $push: { messages: message } },
-//                 () => {}
-//             );
-
-//             io.sockets.emit("chatMessage", modifiedData);
-//         };
-//     });
-// });
+io.on("connection", (socket) => {
+    console.log(`Made socket connection: ${socket.id}`);
+    const username = socket.request.user.username;
+    socket.on("join-auction", (data) => {
+        if (socket.request.user.logged_in) {
+            console.log(`Socket: User { ${username} } is joining { ${socket.id} }`);
+            socket.join(data.id);
+        }
+    });
+    socket.on("start-auction", (data) => {
+        if (socket.request.user.logged_in) {
+            console.log(`New auction socket created, id: { ${data.id} }`);
+        }
+    });
+    socket.on("leave-auction", (data) => {
+        if (socket.request.user.logged_in) {
+            console.log(`Socket: User { ${username} } is leaving { ${socket.id} }`);
+            socket.leave(data.socketId);
+        }
+    });
+    socket.on("new-bid", (data) => {
+        if (socket.request.user.logged_in) {
+            console.log(`Socket: New bid from user { ${username} }`);
+            const renamedData = {
+                bid: data.bid,
+                bidder: username
+            };
+            io.sockets.in(data.id).emit("new-bid", renamedData);
+        }
+    });
+});
 
 server.listen(port, () => {
     console.log(`Serwer działa pod adresem: https://localhost:${port}`);

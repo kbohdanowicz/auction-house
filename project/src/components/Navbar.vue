@@ -11,7 +11,7 @@
             <router-link to="/my-bids">My bids</router-link>
           </li>
           <li v-if="currentUser.isAuth" class="nav-item">
-            <router-link to="/my-auctions">My auctions</router-link>
+            <router-link to="/my-auctions">My offers</router-link>
           </li>
           <li v-if="currentUser.isAuth" class="nav-item">
             <router-link to="/my-history">My History</router-link>

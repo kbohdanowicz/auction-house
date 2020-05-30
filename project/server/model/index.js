@@ -59,9 +59,8 @@ const auctionSchema = new Schema({
         default: ""
     },
     bidders: [{ type: String }],
-    timeLeft: {
-        type: Number,
-        min: 1
+    duration: {
+        type: Number
     },
     status: {
         type: String,

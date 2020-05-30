@@ -1,9 +1,9 @@
 <template>
   <div class="home">
+    <h2>Available auctions</h2>
     <img alt="Vue logo" src="../assets/logo.png"><br>
     <div v-if="currentUser.isAuth">
-      <p>Welcome {{ currentUser.username }}</p>
-      <button @click="goToAuctionForm()">Create auction</button>
+      Welcome {{currentUser.username}}
     </div>
     <AuctionList v-bind:auctions="auctions"/>
   </div>

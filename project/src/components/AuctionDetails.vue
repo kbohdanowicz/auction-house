@@ -5,7 +5,9 @@
     <div v-if="auction.type === 'Bid'">
       <div v-if="auction.status === 'OnSale'">
         Current price: ${{ auction.price }}<br>
-        Time left: {{ auction.timeLeft }} min<br>
+        <div v-if="auction.duration != null && isAnyTimeLeft">
+          Time left: {{ timeLeft }}
+        </div>
         <div v-if="auction.highestBidder === ''">
           No one bid yet!<br>
         </div>
@@ -23,12 +25,12 @@
          </div>
       </div>
       <div v-else-if="auction.status === 'Sold'">
-        <p> Sold for: ${{ auction.price }}</p><br>
-        <p> Buyer: {{ auction.highestBidder }}</p>
+        Sold for: ${{ auction.price }}<br>
+        Buyer: {{ auction.highestBidder }}
       </div>
       <div v-else-if="auction.status === 'New'">
         Starting price: ${{ auction.price }}<br>
-        Duration: {{ auction.timeLeft }} min<br>
+        Duration: {{ getDurationText }}<br>
         <button id="btn-start" @click="startAuction()">Start auction</button>
       </div>
       <div v-else-if="auction.status === 'Ignored'">
@@ -45,7 +47,7 @@
         </div>
       </div>
       <div v-else-if="auction.status === 'Sold'">
-        Sold for: {{ auction.price }}<br>
+        Sold for: ${{ auction.price }}<br>
         Buyer: {{ auction.highestBidder }}
       </div>
       <div v-else-if="auction.status === 'New'">
@@ -60,15 +62,15 @@
 import axios from "axios";
 import router from "../router";
 import { mapGetters } from "vuex";
-
 export default {
     name: "AuctionDetails",
-    props: ["auction"],
+    props: ["auction", "currUser", "timeLeft", "socket"],
     data () {
         return {
             formData: {
+                id: this.auction._id,
                 price: "",
-                bidders: [this.$store.getters.currentUser.username],
+                bidders: [this.currUser.username],
                 highestBidder: ""
             }
         };
@@ -76,18 +78,47 @@ export default {
     computed: {
         ...mapGetters(["currentUser"]),
         isLoggedAndNotSeller: function () {
-            const user = this.$store.getters.currentUser;
+            const user = this.currUser;
             return user.isAuth && this.auction.seller !== user.username;
+        },
+        isAnyTimeLeft: function () {
+            if (new Date(this.auction.duration).getTime() >= new Date().getTime()) {
+                return true;
+            }
+            return false;
+        },
+        getDurationText: function () {
+            switch (this.auction.duration) {
+            case 1000 * 10:
+                return "10 Seconds";
+            case 1000 * 60 * 60:
+                return "1 Hour";
+            case 1000 * 60 * 60 * 3:
+                return "3 Hours";
+            case 1000 * 60 * 60 * 6:
+                return "6 Hours";
+            case 1000 * 60 * 60 * 12:
+                return "12 Hours";
+            case 1000 * 60 * 60 * 24:
+                return "1 Day";
+            case 1000 * 60 * 60 * 24 * 3:
+                return "3 Hours";
+            case 1000 * 60 * 60 * 24 * 7:
+                return "1 Week";
+            default:
+                return "DEFAULT VALUE";// watch out
+            }
         }
     },
     methods: {
         startAuction () {
-            const body = {
-                status: "OnSale"
-            };
             axios
-                .patch(`/api/auction/id=${this.auction._id}`, body)
+                .patch("/api/start", { id: this.auction._id })
                 .then(() => {
+                    this.socket.emit("start-auction", {
+                        id: this.auction._id,
+                        username: this.currentUser.username
+                    });
                     location.reload();
                 })
                 .catch((err) => {
@@ -99,12 +130,15 @@ export default {
                 // show message
                 console.log("Your bid is invalid!");
             } else {
-                this.formData.highestBidder = this.$store.getters.currentUser.username;
+                this.formData.highestBidder = this.currUser.username;
                 axios
-                    .patch(`/api/auction/id=${this.auction._id}`, this.formData)
+                    .patch("/api/auction", this.formData)
                     .then(() => {
-                        // showMessage: SUCCESS
-                        // websocket emit dom update current price
+                        console.log("New bid emitted");
+                        this.socket.emit("new-bid", {
+                            id: this.auction._id,
+                            bid: this.formData.price
+                        });
                     })
                     .catch((err) => {
                         console.log(err);
@@ -113,29 +147,20 @@ export default {
         },
         buyItem () {
             const body = {
+                id: this.auction._id,
                 status: "Sold",
-                highestBidder: this.$store.getters.currentUser.username
+                highestBidder: this.currUser.username
             };
             axios
-                .patch(`/api/auction/id=${this.auction._id}`, body)
+                .patch("/api/auction", body)
                 .then(() => {
-                    // showMessage: SUCCESS
-                    // set timeout
                     router.push("/");
                 })
                 .catch((err) => {
                     console.log(err);
                 });
         }
-    },
-    updated: {
     }
-    // ,
-    // beforeCreate: {
-    // if (this.$store.getters.currentUser.isAuth) {
-    //    open websocket
-    // }
-    // }
 };
 </script>
 
