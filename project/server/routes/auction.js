@@ -21,6 +21,7 @@ router.route("/start")
                 doc.status = "OnSale";
                 if (doc.type === "Bid") {
                     const tempTime = doc.duration;
+                    // TODO zmienic
                     doc.duration = new Date(new Date().getTime() + doc.duration).getTime();
                     console.dir(doc.duration);
                     doc.save();
@@ -209,7 +210,8 @@ router.route("/my-auctions")
     .get(isAuth, async (req, res) => {
         try {
             const docs = await Auction.find({
-                seller: req.user.username
+                seller: req.user.username,
+                status: "New"
             });
             return res.json(docs);
         } catch (err) {

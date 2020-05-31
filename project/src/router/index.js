@@ -7,6 +7,7 @@ import MyBids from "../views/MyBids.vue";
 import MyAuctions from "../views/MyAuctions.vue";
 import AuctionForm from "../views/AuctionForm.vue";
 import Error404 from "../views/Error404.vue";
+import MyConversations from "../views/MyConversations.vue";
 import store from "../store";
 
 Vue.use(VueRouter);
@@ -51,6 +52,11 @@ const routes = [
         path: "/auction",
         name: "AuctionForm",
         component: AuctionForm
+    },
+    {
+        path: "/conversations",
+        name: "MyConversations",
+        component: MyConversations
     },
     {
         path: "/404",

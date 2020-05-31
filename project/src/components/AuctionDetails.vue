@@ -5,7 +5,7 @@
     <div v-if="auction.type === 'Bid'">
       <div v-if="auction.status === 'OnSale'">
         Current price: ${{ auction.price }}<br>
-        <div v-if="auction.duration != null && isAnyTimeLeft">
+        <div v-if="isAnyTimeLeft">
           Time left: {{ timeLeft }}
         </div>
         <div v-if="auction.highestBidder === ''">

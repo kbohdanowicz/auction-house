@@ -105,7 +105,6 @@ export default {
                     console.log(err);
                 });
         }
-        // refresh view data ($emit)
     }
 };
 </script>

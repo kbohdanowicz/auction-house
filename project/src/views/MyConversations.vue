@@ -1,28 +1,28 @@
 <template>
-  <div class="my-auctions">
-    <h2>My offers</h2>
-    <br>
+  <div class="conversations">
+    <h2>Your conversations</h2>
+    <img alt="Vue logo" src="../assets/logo.png"><br>
     <div v-if="currentUser.isAuth">
-      <button @click="goToAuctionForm()">Create auction</button>
+      Welcome {{currentUser.username}}
     </div>
-    <AuctionList v-bind:auctions="auctions"/>
+    <Conversations v-bind:conversations="conversations"/>
   </div>
 </template>
 
 <script>
-import router from "../router";
 import axios from "axios";
-import AuctionList from "@/components/AuctionList";
+import router from "../router";
+import Conversations from "@/components/Conversations";
 import { mapGetters } from "vuex";
 
 export default {
-    name: "MyAuctions",
+    name: "Home",
     components: {
-        AuctionList
+        Conversations
     },
     data () {
         return {
-            auctions: null
+            conversations: null
         };
     },
     computed: {
@@ -30,14 +30,14 @@ export default {
     },
     methods: {
         goToAuctionForm () {
-            router.push("/auction");
+            router.push("/conversation");
         }
     },
     created () {
         axios
-            .get("/api/my-auctions")
+            .get("/api/conversations")
             .then((resp) => {
-                this.auctions = resp.data;
+                this.conversations = resp.data;
             })
             .catch((err) => {
                 console.log(err);
