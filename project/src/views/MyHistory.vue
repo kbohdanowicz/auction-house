@@ -1,12 +1,11 @@
 <template>
   <div class="my-history">
     <h2>My history</h2>
-    <AuctionList v-bind:auctions="auctions"/>
+    <AuctionList :apiString="apiString"/>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 import AuctionList from "@/components/AuctionList";
 
 export default {
@@ -16,18 +15,8 @@ export default {
     },
     data () {
         return {
-            auctions: null
+            apiString: "/api/my-history"
         };
-    },
-    created () { // or beforecreated
-        axios
-            .get("/api/my-history")
-            .then((resp) => {
-                this.auctions = resp.data;
-            })
-            .catch((err) => {
-                console.log(err);
-            });
     }
 };
 </script>

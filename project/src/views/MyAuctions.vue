@@ -5,13 +5,12 @@
     <div v-if="currentUser.isAuth">
       <button @click="goToAuctionForm()">Create auction</button>
     </div>
-    <AuctionList v-bind:auctions="auctions"/>
+    <AuctionList :apiString="apiString"/>
   </div>
 </template>
 
 <script>
 import router from "../router";
-import axios from "axios";
 import AuctionList from "@/components/AuctionList";
 import { mapGetters } from "vuex";
 
@@ -22,7 +21,7 @@ export default {
     },
     data () {
         return {
-            auctions: null
+            apiString: "/api/my-auctions"
         };
     },
     computed: {
@@ -32,16 +31,6 @@ export default {
         goToAuctionForm () {
             router.push("/auction");
         }
-    },
-    created () {
-        axios
-            .get("/api/my-auctions")
-            .then((resp) => {
-                this.auctions = resp.data;
-            })
-            .catch((err) => {
-                console.log(err);
-            });
     }
 };
 </script>

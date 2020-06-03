@@ -153,45 +153,134 @@ router.route("/auction")
     })
     .all(rejectMethod);
 
-router
-    .route("/auctions")
-    .get(async (req, res) => {
+const pageLimit = 4;
+
+// Middleware for pagination
+const paginatedResults = (filter) => {
+    return async (req, res, next) => {
+        const page = parseInt(req.query.page);
+        const limit = pageLimit;
+
+        const skippedPages = (page - 1) * limit;
         try {
-            const docs = await Auction.find({
-                status: "OnSale"
-            }).limit(5);
-            return res.json(docs);
+            const docs = await Auction.find(
+                filter
+            ).skip(skippedPages).limit(limit + 1);
+
+            const results = {
+                auctions: docs
+            };
+            // console.log(docs);
+            if (docs.length > limit) {
+                results.nextPage = {
+                    page: page + 1,
+                    limit: limit
+                };
+                docs.pop();
+            }
+            if (skippedPages > 0) {
+                results.previousPage = {
+                    page: page - 1,
+                    limit: limit
+                };
+            }
+            res.paginatedResults = results;
+            next();
         } catch (err) {
             console.log(err);
             res.status(422).json(model.processErrors(err));
         }
+    };
+};
+
+async function paginatedResults2 (filter, _page) {
+    const page = parseInt(_page);
+    const limit = pageLimit;
+
+    const skippedPages = (page - 1) * limit;
+    try {
+        const docs = await Auction.find(
+            filter
+        ).skip(skippedPages).limit(limit + 1);
+        const results = {
+            auctions: docs
+        };
+        if (docs.length > limit) {
+            results.nextPage = {
+                page: page + 1,
+                limit: limit
+            };
+            docs.pop();
+        }
+        if (skippedPages > 0) {
+            results.previousPage = {
+                page: page - 1,
+                limit: limit
+            };
+        }
+        return results;
+    } catch (err) {
+        console.log(err);
+        return { myErrorMessage: err };
+    };
+};
+
+router
+    .route("/auctions")
+    .get(paginatedResults({ status: "OnSale" }), (req, res) => {
+        res.json(res.paginatedResults);
     })
     .all(rejectMethod);
 
 router.route("/my-bids")
     .get(isAuth, async (req, res) => {
-        try {
-            const docs = await Auction.find({
-                bidders: req.user.username,
-                status: "OnSale"
-            });
-            return res.json(docs);
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
+        const filter = {
+            bidders: req.user.username,
+            status: "OnSale"
+        };
+        const results = await paginatedResults2(filter, req.query.page);
+        // console.dir(results);
+        if (results.myErrorMessage !== undefined) {
+            res.status(422).json(model.processErrors(results.myErrorMessage));
+        } else {
+            res.json(results);
         }
     })
     .all(rejectMethod);
 
 router.route("/my-auctions")
     .get(isAuth, async (req, res) => {
+        const page = parseInt(req.query.page);
+        const limit = pageLimit;
+        const filter = {
+            $or: [
+                { seller: req.user.username, status: "New" },
+                { seller: req.user.username, status: "OnSale" }
+            ]
+        };
+        const skippedPages = (page - 1) * limit;
         try {
-            const docs = await Auction.find({
-                $or: [{ seller: req.user.username, status: "New" },
-                    { seller: req.user.username, status: "OnSale" }
-                ]
-            });
-            return res.json(docs);
+            const docs = await Auction.find(
+                filter
+            ).skip(skippedPages).limit(limit + 1);
+            const results = {
+                auctions: docs
+            };
+            // console.log(docs);
+            if (docs.length > limit) {
+                results.nextPage = {
+                    page: page + 1,
+                    limit: limit
+                };
+                docs.pop();
+            }
+            if (skippedPages > 0) {
+                results.previousPage = {
+                    page: page - 1,
+                    limit: limit
+                };
+            }
+            res.json(results);
         } catch (err) {
             console.log(err);
             res.status(422).json(model.processErrors(err));
@@ -201,15 +290,37 @@ router.route("/my-auctions")
 
 router.route("/my-history")
     .get(isAuth, async (req, res) => {
+        const page = parseInt(req.query.page);
+        const limit = pageLimit;
+
+        const skippedPages = (page - 1) * limit;
         try {
             const docs = await Auction.find({
-                $or: [{ highestBidder: req.user.username, status: "Sold" },
+                $or: [
+                    { highestBidder: req.user.username, status: "Sold" },
                     { seller: req.user.username, status: "Sold" },
                     { highestBidder: req.user.username, status: "Ignored" },
                     { seller: req.user.username, status: "Ignored" }
                 ]
-            });
-            return res.json(docs);
+            }).skip(skippedPages).limit(limit + 1);
+            const results = {
+                auctions: docs
+            };
+            // console.log(docs);
+            if (docs.length > limit) {
+                results.nextPage = {
+                    page: page + 1,
+                    limit: limit
+                };
+                docs.pop();
+            }
+            if (skippedPages > 0) {
+                results.previousPage = {
+                    page: page - 1,
+                    limit: limit
+                };
+            }
+            res.json(results);
         } catch (err) {
             console.log(err);
             res.status(422).json(model.processErrors(err));
