@@ -184,9 +184,13 @@ const paginatedResults = (filter) => {
             if (docs.length > limit) {
                 results.nextPage = true;
                 docs.pop();
+            } else {
+                results.nextPage = false;
             }
             if (skippedPages > 0) {
                 results.previousPage = true;
+            } else {
+                results.previousPage = false;
             }
             res.paginatedResults = results;
             next();
@@ -212,9 +216,13 @@ async function paginatedResults2 (filter, _page) {
         if (docs.length > limit) {
             results.nextPage = true;
             docs.pop();
+        } else {
+            results.nextPage = false;
         }
         if (skippedPages > 0) {
             results.previousPage = true;
+        } else {
+            results.previousPage = false;
         }
         return results;
     } catch (err) {

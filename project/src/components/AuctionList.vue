@@ -1,7 +1,7 @@
 <template>
   <div>
         <div v-if="auctions !== null">
-      <button v-if="previousPage" @click="goToPreviousPage()">
+      <button id="btnPrevPage" @click="goToPreviousPage()">
           &lt;
       </button>
        <!--
@@ -10,7 +10,7 @@
         </li>
       </ul>
       -->
-      <button v-if="nextPage" @click="goToNextPage()">
+      <button id="btnNextPage" @click="goToNextPage()">
           &gt;
       </button>
     </div>
@@ -43,19 +43,25 @@ export default {
             currUser: this.$store.getters.currentUser,
             auctions: null,
             currentPage: 0,
-            nextPage: null,
-            previousPage: null
+            nextPage: false,
+            previousPage: false
         };
     },
-    watch: {
-        currentPage (newVal, oldVal) {
-            // console.log("before: " + this.$route.params.page);
-            this.$route.params.page = `/page/${newVal}`;
-            console.log(newVal);
-            // console.log("after: " + this.$route.params.page);
-        }
-    },
     methods: {
+        updateButtonVisibility () {
+            // console.log("Next: " + this.nextPage);
+            // console.log("Prev: " + this.previousPage);
+            if (this.nextPage) {
+                document.getElementById("btnNextPage").style.visibility = "visible";
+            } else {
+                document.getElementById("btnNextPage").style.visibility = "hidden";
+            }
+            if (this.previousPage) {
+                document.getElementById("btnPrevPage").style.visibility = "visible";
+            } else {
+                document.getElementById("btnPrevPage").style.visibility = "hidden";
+            }
+        },
         goToNextPage () {
             this.currentPage++;
             this.changePage(this.currentPage);
@@ -74,7 +80,6 @@ export default {
                     if (history.pushState) {
                         var newURL = window.location.protocol + "//" +
                         window.location.host + "/page/" + this.currentPage;
-                        // console.log(newURL);
                         window.history.pushState({ path: newURL }, "", newURL);
                     }
                 })
@@ -95,6 +100,9 @@ export default {
             .catch((err) => {
                 console.log(err);
             });
+    },
+    updated () {
+        this.updateButtonVisibility();
     }
 };
 </script>
