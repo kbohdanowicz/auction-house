@@ -99,18 +99,9 @@ router.route("/auction")
             res.status(422).json(model.processErrors(err));
         }
     })
-    .patch(isAuth, async (req, res) => {
+    .patch(isAuth, async (req, res) => { // TODO zrobic osobno buy i update status
         const filter = req.body.id;
         const update = {};
-        let oldBidders;
-        try {
-            const doc = await Auction.findById(filter);
-            oldBidders = doc.bidders;
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
-        }
-
         const body = req.body;
         if (body.seller === req.user.username) {
             if (body.name) {
@@ -126,20 +117,6 @@ router.route("/auction")
         if (body.status) {
             update.status = body.status;
         }
-        if (body.price) {
-            update.price = body.price;
-        }
-        if (body.highestBidder) {
-            update.highestBidder = body.highestBidder;
-        }
-        if (body.bidders) {
-            const newBidders = body.bidders;
-            if (!oldBidders.includes(newBidders[0])) {
-                oldBidders.push(newBidders[0]);
-                const updatedBidders = oldBidders;
-                update.bidders = updatedBidders;
-            };
-        };
         // console.dir(req.body);
         // console.dir(update);
         Auction.findByIdAndUpdate(filter, update,
@@ -210,8 +187,9 @@ router.route("/my-auctions")
     .get(isAuth, async (req, res) => {
         try {
             const docs = await Auction.find({
-                seller: req.user.username,
-                status: "New"
+                $or: [{ seller: req.user.username, status: "New" },
+                    { seller: req.user.username, status: "OnSale" }
+                ]
             });
             return res.json(docs);
         } catch (err) {

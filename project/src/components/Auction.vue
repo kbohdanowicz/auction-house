@@ -109,9 +109,9 @@ export default {
         }
 
         this.socket.on("new-bid", (data) => {
-            console.log(`New bid from ${data.bidder} has arrived!`);
-            this.auction.price = data.bid;
-            this.auction.highestBidder = data.bidder;
+            console.log(`New bid from ${data.highestBidder} has arrived!`);
+            this.auction.price = data.price;
+            this.auction.highestBidder = data.highestBidder;
         });
 
         window.onbeforeunload = () => {

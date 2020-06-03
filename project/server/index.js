@@ -72,6 +72,9 @@ const socketio = require("socket.io");
 const passportSocketIo = require("passport.socketio");
 const io = socketio(server);
 
+const model = require("./model");
+const Auction = model.Auction;
+
 io.use(passportSocketIo.authorize({
     key: "connect.sid",
     secret: process.env.APP_SECRET,
@@ -80,12 +83,14 @@ io.use(passportSocketIo.authorize({
     cookieParser: cookieParser
 }));
 
+// let bidsInProgress = [];
+
 io.on("connection", (socket) => {
     console.log(`Made socket connection: ${socket.id}`);
     const username = socket.request.user.username;
     socket.on("join-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User { ${username} } is joining { ${socket.id} }`);
+            console.log(`Socket: User ${username} is joining { ${data.id} }`);
             socket.join(data.id);
         }
     });
@@ -96,18 +101,47 @@ io.on("connection", (socket) => {
     });
     socket.on("leave-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User { ${username} } is leaving { ${socket.id} }`);
+            console.log(`Socket: User ${username} is leaving { ${data.id} }`);
             socket.leave(data.socketId);
         }
     });
-    socket.on("new-bid", (data) => {
+
+    socket.on("new-bid", async (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: New bid from user { ${username} }`);
-            const renamedData = {
-                bid: data.bid,
-                bidder: username
+            // if (!bidsInProgress.includes())
+            const filter = data.id;
+            let oldBidders;
+            try {
+                const doc = await Auction.findById(filter);
+                oldBidders = doc.bidders;
+            } catch (err) {
+                console.log(err);
+                return io.sockets.in(data.id).emit("server-error");// todo wyswietlanie bledu
+            }
+            const update = {
+                price: data.price,
+                highestBidder: data.highestBidder
             };
-            io.sockets.in(data.id).emit("new-bid", renamedData);
+
+            const newBidders = [data.highestBidder];
+            if (!oldBidders.includes(newBidders[0])) {
+                oldBidders.push(newBidders[0]);
+                const updatedBidders = oldBidders;
+                update.bidders = updatedBidders;
+            };
+
+            Auction.findByIdAndUpdate(filter, update,
+                (err, doc) => {
+                    if (err) {
+                        console.log(err);
+                        io.sockets.in(data.id).emit("server-error");
+                    } else {
+                        io.sockets.in(data.id).emit("new-bid", update);
+                        console.log(`Socket: New bid from user: ${update.highestBidder}`);
+                        console.log("Bid successfully posted!");
+                    }
+                }
+            );
         }
     });
 });

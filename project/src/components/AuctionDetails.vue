@@ -130,19 +130,11 @@ export default {
                 // show message
                 console.log("Your bid is invalid!");
             } else {
-                this.formData.highestBidder = this.currUser.username;
-                axios
-                    .patch("/api/auction", this.formData)
-                    .then(() => {
-                        console.log("New bid emitted");
-                        this.socket.emit("new-bid", {
-                            id: this.auction._id,
-                            bid: this.formData.price
-                        });
-                    })
-                    .catch((err) => {
-                        console.log(err);
-                    });
+                this.socket.emit("new-bid", {
+                    id: this.auction._id,
+                    highestBidder: this.currentUser.username,
+                    price: this.formData.price
+                });
             }
         },
         buyItem () {
