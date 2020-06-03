@@ -39,7 +39,6 @@
 
 <script>
 import axios from "axios";
-import router from "../router";
 import io from "@/../node_modules/socket.io-client";
 
 export default {
@@ -81,7 +80,7 @@ export default {
                         console.dir(res.data._id);
                         this.startAuction(res.data._id);
                     } else {
-                        router.push("/");
+                        location.reload();
                     }
                 })
                 .catch((err) => {

@@ -20,7 +20,7 @@ export default {
     },
     data () {
         return {
-            apiString: "/api/auctions"
+            apiString: "/api/auctions/page/"
         };
     },
     computed: {

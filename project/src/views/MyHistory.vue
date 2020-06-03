@@ -15,7 +15,7 @@ export default {
     },
     data () {
         return {
-            apiString: "/api/my-history"
+            apiString: "/api/my-history/page/"
         };
     }
 };

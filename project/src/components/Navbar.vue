@@ -5,16 +5,16 @@
         <ul>
           <li>
             <!-- all auctions -->
-            <router-link to="/">Home</router-link>
+            <router-link to="/page/1">Home</router-link>
           </li>
           <li v-if="currentUser.isAuth" class="nav-item">
-            <router-link to="/my-bids">My bids</router-link>
+            <router-link to="/my-bids/page/1">My bids</router-link>
           </li>
           <li v-if="currentUser.isAuth" class="nav-item">
-            <router-link to="/my-auctions">My offers</router-link>
+            <router-link to="/my-auctions/page/1">My offers</router-link>
           </li>
           <li v-if="currentUser.isAuth" class="nav-item">
-            <router-link to="/my-history">My History</router-link>
+            <router-link to="/my-history/page/1">My History</router-link>
           </li>
           <!-- on the right side -->
           <li v-if="currentUser.isAuth" class="nav-item">

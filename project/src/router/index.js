@@ -14,7 +14,7 @@ Vue.use(VueRouter);
 
 const routes = [
     {
-        path: "/",
+        path: "/page/:page(\\d+)",
         name: "Home",
         component: Home
     },
@@ -29,17 +29,17 @@ const routes = [
         component: Register
     },
     {
-        path: "/my-bids",
+        path: "/my-bids/page/:page(\\d+)",
         name: "MyBids",
         component: MyBids
     },
     {
-        path: "/my-auctions",
+        path: "/my-auctions/page/:page(\\d+)",
         name: "MyAuctions",
         component: MyAuctions
     },
     {
-        path: "/my-history",
+        path: "/my-history/page/:page(\\d+)",
         name: "MyHistory",
         // route level code-splitting
         // this generates a separate chunk (about.[hash].js) for this route

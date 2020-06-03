@@ -15,7 +15,7 @@ export default {
     },
     data () {
         return {
-            apiString: "/api/my-bids"
+            apiString: "/api/my-bids/page/"
         };
     }
 };

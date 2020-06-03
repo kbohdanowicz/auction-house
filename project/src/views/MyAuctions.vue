@@ -1,7 +1,6 @@
 <template>
   <div class="my-auctions">
     <h2>My offers</h2>
-    <br>
     <div v-if="currentUser.isAuth">
       <button @click="goToAuctionForm()">Create auction</button>
     </div>
@@ -21,7 +20,7 @@ export default {
     },
     data () {
         return {
-            apiString: "/api/my-auctions"
+            apiString: "/api/my-auctions/page/"
         };
     },
     computed: {

@@ -60,7 +60,6 @@
 
 <script>
 import axios from "axios";
-import router from "../router";
 import { mapGetters } from "vuex";
 export default {
     name: "AuctionDetails",
@@ -146,7 +145,7 @@ export default {
             axios
                 .patch("/api/auction", body)
                 .then(() => {
-                    router.push("/");
+                    location.reload();
                 })
                 .catch((err) => {
                     console.log(err);

@@ -7,6 +7,8 @@ const routeMethods = require("./routeMiddleware");
 const isAuth = routeMethods.isAuth;
 const rejectMethod = routeMethods.rejectMethod;
 
+const pageLimit = 2;
+
 router.route("/start")
     .patch(isAuth, (req, res) => {
         const filter = {
@@ -100,7 +102,6 @@ router.route("/auction")
         }
     })
     .patch(isAuth, async (req, res) => { // TODO zrobic osobno buy i update status
-        const filter = req.body.id;
         const update = {};
         const body = req.body;
         if (body.seller === req.user.username) {
@@ -114,11 +115,16 @@ router.route("/auction")
                 update.duration = body.duration;
             }
         }
+        if (body.highestBidder) {
+            update.highestBidder = body.highestBidder;
+        }
         if (body.status) {
             update.status = body.status;
         }
-        // console.dir(req.body);
-        // console.dir(update);
+        console.dir(req.body);
+        console.dir(update);
+        const filter = req.body.id;
+        console.dir(filter);
         Auction.findByIdAndUpdate(filter, update,
             (err, doc) => {
                 if (err) {
@@ -153,12 +159,16 @@ router.route("/auction")
     })
     .all(rejectMethod);
 
-const pageLimit = 4;
-
 // Middleware for pagination
 const paginatedResults = (filter) => {
     return async (req, res, next) => {
-        const page = parseInt(req.query.page);
+        let tempPage;
+        if (req.params.page) {
+            tempPage = req.params.page;
+        } else {
+            tempPage = 1;
+        }
+        const page = parseInt(tempPage);
         const limit = pageLimit;
 
         const skippedPages = (page - 1) * limit;
@@ -172,17 +182,11 @@ const paginatedResults = (filter) => {
             };
             // console.log(docs);
             if (docs.length > limit) {
-                results.nextPage = {
-                    page: page + 1,
-                    limit: limit
-                };
+                results.nextPage = true;
                 docs.pop();
             }
             if (skippedPages > 0) {
-                results.previousPage = {
-                    page: page - 1,
-                    limit: limit
-                };
+                results.previousPage = true;
             }
             res.paginatedResults = results;
             next();
@@ -206,17 +210,11 @@ async function paginatedResults2 (filter, _page) {
             auctions: docs
         };
         if (docs.length > limit) {
-            results.nextPage = {
-                page: page + 1,
-                limit: limit
-            };
+            results.nextPage = true;
             docs.pop();
         }
         if (skippedPages > 0) {
-            results.previousPage = {
-                page: page - 1,
-                limit: limit
-            };
+            results.previousPage = true;
         }
         return results;
     } catch (err) {
@@ -226,19 +224,19 @@ async function paginatedResults2 (filter, _page) {
 };
 
 router
-    .route("/auctions")
+    .route("/auctions/page/:page")
     .get(paginatedResults({ status: "OnSale" }), (req, res) => {
         res.json(res.paginatedResults);
     })
     .all(rejectMethod);
 
-router.route("/my-bids")
+router.route("/my-bids/page/:page")
     .get(isAuth, async (req, res) => {
         const filter = {
             bidders: req.user.username,
             status: "OnSale"
         };
-        const results = await paginatedResults2(filter, req.query.page);
+        const results = await paginatedResults2(filter, req.params.page);
         // console.dir(results);
         if (results.myErrorMessage !== undefined) {
             res.status(422).json(model.processErrors(results.myErrorMessage));
@@ -248,82 +246,40 @@ router.route("/my-bids")
     })
     .all(rejectMethod);
 
-router.route("/my-auctions")
+router.route("/my-auctions/page/:page")
     .get(isAuth, async (req, res) => {
-        const page = parseInt(req.query.page);
-        const limit = pageLimit;
         const filter = {
             $or: [
                 { seller: req.user.username, status: "New" },
                 { seller: req.user.username, status: "OnSale" }
             ]
         };
-        const skippedPages = (page - 1) * limit;
-        try {
-            const docs = await Auction.find(
-                filter
-            ).skip(skippedPages).limit(limit + 1);
-            const results = {
-                auctions: docs
-            };
-            // console.log(docs);
-            if (docs.length > limit) {
-                results.nextPage = {
-                    page: page + 1,
-                    limit: limit
-                };
-                docs.pop();
-            }
-            if (skippedPages > 0) {
-                results.previousPage = {
-                    page: page - 1,
-                    limit: limit
-                };
-            }
+        const results = await paginatedResults2(filter, req.params.page);
+        // console.dir(results);
+        if (results.myErrorMessage !== undefined) {
+            res.status(422).json(model.processErrors(results.myErrorMessage));
+        } else {
             res.json(results);
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
         }
     })
     .all(rejectMethod);
 
-router.route("/my-history")
+router.route("/my-history/page/:page")
     .get(isAuth, async (req, res) => {
-        const page = parseInt(req.query.page);
-        const limit = pageLimit;
-
-        const skippedPages = (page - 1) * limit;
-        try {
-            const docs = await Auction.find({
-                $or: [
-                    { highestBidder: req.user.username, status: "Sold" },
-                    { seller: req.user.username, status: "Sold" },
-                    { highestBidder: req.user.username, status: "Ignored" },
-                    { seller: req.user.username, status: "Ignored" }
-                ]
-            }).skip(skippedPages).limit(limit + 1);
-            const results = {
-                auctions: docs
-            };
-            // console.log(docs);
-            if (docs.length > limit) {
-                results.nextPage = {
-                    page: page + 1,
-                    limit: limit
-                };
-                docs.pop();
-            }
-            if (skippedPages > 0) {
-                results.previousPage = {
-                    page: page - 1,
-                    limit: limit
-                };
-            }
+        const filter = {
+            $or: [
+                { highestBidder: req.user.username, status: "Sold" },
+                { seller: req.user.username, status: "Sold" },
+                { highestBidder: req.user.username, status: "Ignored" },
+                { seller: req.user.username, status: "Ignored" }
+            ]
+        };
+        const results = await paginatedResults2(filter, req.params.page);
+        // console.dir(results);
+        if (results.myErrorMessage !== undefined) {
+            res.status(422).json(model.processErrors(results.myErrorMessage));
+        } else {
             res.json(results);
-        } catch (err) {
-            console.log(err);
-            res.status(422).json(model.processErrors(err));
         }
     })
     .all(rejectMethod);
