@@ -7,6 +7,7 @@ import MyBids from "../views/MyBids.vue";
 import MyAuctions from "../views/MyAuctions.vue";
 import AuctionForm from "../views/AuctionForm.vue";
 import Error404 from "../views/Error404.vue";
+import Conversation from "../views/Conversation.vue";
 import MyConversations from "../views/MyConversations.vue";
 import store from "../store";
 
@@ -54,7 +55,12 @@ const routes = [
         component: AuctionForm
     },
     {
-        path: "/conversations",
+        path: "/conversation",
+        name: "Conversation",
+        component: Conversation
+    },
+    {
+        path: "/my-conversations",
         name: "MyConversations",
         component: MyConversations
     },
@@ -80,6 +86,7 @@ const isInRoutes = (name) => {
 };
 
 // TODO register should not be reachable by logged user
+// make better
 router.beforeEach((to, from, next) => {
     store.dispatch("fetchCurrentUser");
     // console.log("Route " + to.path + " is " + isInRoutes(to.name));

@@ -76,17 +76,17 @@ export default {
     },
     computed: {
         ...mapGetters(["currentUser"]),
-        isLoggedAndNotSeller: function () {
+        isLoggedAndNotSeller () {
             const user = this.currUser;
             return user.isAuth && this.auction.seller !== user.username;
         },
-        isAnyTimeLeft: function () {
+        isAnyTimeLeft () {
             if (new Date(this.auction.duration).getTime() >= new Date().getTime()) {
                 return true;
             }
             return false;
         },
-        getDurationText: function () {
+        getDurationText () {
             switch (this.auction.duration) {
             case 1000 * 10:
                 return "10 Seconds";

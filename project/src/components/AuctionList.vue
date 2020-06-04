@@ -1,28 +1,16 @@
 <template>
   <div>
-        <div v-if="auctions !== null">
+    <div v-if="auctions !== null">
       <button id="btnPrevPage" @click="goToPreviousPage()">
           &lt;
       </button>
-       <!--
-      <ul>
-        <li class="auction-list">
-        </li>
-      </ul>
-      -->
       <button id="btnNextPage" @click="goToNextPage()">
           &gt;
       </button>
     </div>
     <ul>
-      <li class="auction-list"
-        v-for="auction in auctions"
-        :key="auction._id"
-      >
-        <Auction
-          :auction="auction"
-          :currUser="currUser"
-        />
+      <li class="auction-list" v-for="auction in auctions" :key="auction._id">
+        <Auction :auction="auction" :currUser="currUser"/>
       </li>
     </ul>
   </div>

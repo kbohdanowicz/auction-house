@@ -12,21 +12,26 @@
        :timeLeft="timeLeft" :socket="socket"/>
     </div>
     <div v-if="isAuthAndIsOwnerAndIsNotStarted">
-      <button id="btn-edit" class="button" @click="showEdit()">
+      <button id="btn-edit" @click="showEdit()">
         {{ editButtonText }}
       </button>
     </div>
     <div v-if="isEditMode">
       <AuctionEdit :auction="auction" :currUser="currUser"/>
     </div>
+    <button v-if="isAuthAndIsNotOwner" @click="goToConversation()">
+      Contact seller
+    </button>
   </div>
 </template>
 
 <script>
+import axios from "axios";
 import AuctionDetails from "@/components/AuctionDetails";
 import AuctionEdit from "@/components/AuctionEdit";
 import { mapGetters } from "vuex";
 import io from "@/../node_modules/socket.io-client";
+import router from "../router";
 
 export default {
     name: "Auction",
@@ -45,20 +50,64 @@ export default {
     },
     computed: {
         ...mapGetters(["currentUser"]),
-        isAuthAndIsOwnerAndIsNotStarted: function () {
+        isAuthAndIsOwnerAndIsNotStarted () {
             return this.currUser.isAuth &&
             this.auction.seller === this.currUser.username &&
             this.auction.status === "New";
+        },
+        isAuthAndIsNotOwner () {
+            return this.currUser.isAuth &&
+            this.auction.seller !== this.currUser.username;
         }
     },
     methods: { // TODO CMON
-        showEdit: function () {
+        showEdit () {
             this.isEditMode = !this.isEditMode;
             if (this.isEditMode) {
                 this.editButtonText = "Cancel changes";
             } else {
                 this.editButtonText = "Edit";
             }
+        },
+        goToConversation () {
+            const body = {
+                otherUser: this.auction.seller
+            };
+            axios
+                .post("/api/conversation/exists", body)
+                .then((res) => {
+                    if (res.data === null) {
+                        this.createConversation();
+                    } else {
+                        router.push({
+                            name: "Conversation",
+                            params: { conversation: res.data }
+                        });
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+        createConversation: function () {
+            const body = {
+                otherUser: this.auction.seller
+            };
+            axios
+                .post("/api/conversation", body)
+                .then((res) => {
+                    if (res.data !== null) {
+                        router.push({
+                            name: "Conversation",
+                            params: { conversation: res.data }
+                        });
+                    } else {
+                        console.log("Failed to create conversation");
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
         }
     },
     created () {
@@ -66,7 +115,7 @@ export default {
             this.auction.type === "Bid" &&
             this.auction.duration !== null &&
             new Date(this.auction.duration).getTime() >= new Date().getTime()) {
-            console.log("Countdown started!");
+            // console.log("Countdown started!");
             this.timer = setInterval(() => {
                 const now = new Date().getTime();
                 const to = new Date(this.auction.duration);

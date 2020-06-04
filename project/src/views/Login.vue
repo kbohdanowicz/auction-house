@@ -38,7 +38,7 @@ export default {
             axios
                 .post("/api/login", this.formData)
                 .then((res) => {
-                    router.push("/1");
+                    router.push("/page/1");
                 })
                 .catch((err) => {
                     console.log(err);

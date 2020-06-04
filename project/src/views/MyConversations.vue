@@ -1,36 +1,41 @@
 <template>
   <div class="conversations">
     <h2>Your conversations</h2>
-    <img alt="Vue logo" src="../assets/logo.png"><br>
-    <div v-if="currentUser.isAuth">
-      Welcome {{currentUser.username}}
-    </div>
-    <Conversations v-bind:conversations="conversations"/>
+    <ul>
+      <li class="conversation-list" v-for="conversation in conversations"
+      :key="conversation._id">
+        <h3>Conversation</h3>
+        {{ getOtherUser }}
+        <button id="btn-show-conversation" @click="goToConversation(conversation)">
+          Details
+        </button>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
 import axios from "axios";
 import router from "../router";
-import Conversations from "@/components/Conversations";
-import { mapGetters } from "vuex";
 
 export default {
     name: "Home",
-    components: {
-        Conversations
-    },
     data () {
         return {
             conversations: null
         };
     },
     computed: {
-        ...mapGetters(["currentUser"])
+        getOtherUser () {
+            return "OtherUser";
+        }
     },
     methods: {
-        goToAuctionForm () {
-            router.push("/conversation");
+        goToConversation (_conversation) {
+            router.push({
+                name: "Conversation",
+                params: { conversation: _conversation }
+            });
         }
     },
     created () {

@@ -54,8 +54,12 @@ app.use(express.static(path.join(__dirname, "public")));
 // Routing
 const routes = require("./routes");
 app.use("/api", routes);
+
 const auctionRoutes = require("./routes/auction");
 app.use("/api", auctionRoutes);
+
+const coversationRoutes = require("./routes/conversation");
+app.use("/api", coversationRoutes);
 
 // Wyłapujemy odwołania do nieobsługiwanych adresów
 app.use((_, res) => {
@@ -74,6 +78,8 @@ const io = socketio(server);
 
 const model = require("./model");
 const Auction = model.Auction;
+const Conversation = model.Conversation;
+const Message = model.Message;
 
 io.use(passportSocketIo.authorize({
     key: "connect.sid",
@@ -88,6 +94,8 @@ io.use(passportSocketIo.authorize({
 io.on("connection", (socket) => {
     console.log(`Made socket connection: ${socket.id}`);
     const username = socket.request.user.username;
+
+    // Auctions
     socket.on("join-auction", (data) => {
         if (socket.request.user.logged_in) {
             console.log(`Socket: User ${username} is joining { ${data.id} }`);
@@ -102,13 +110,14 @@ io.on("connection", (socket) => {
     socket.on("leave-auction", (data) => {
         if (socket.request.user.logged_in) {
             console.log(`Socket: User ${username} is leaving { ${data.id} }`);
-            socket.leave(data.socketId);
+            socket.leave(data.socketId);// probably data.id?
         }
     });
 
     socket.on("new-bid", async (data) => {
         if (socket.request.user.logged_in) {
             // if (!bidsInProgress.includes())
+            // wrzucić całe to do osobnej funkcji odpalanej na końcu
             const filter = data.id;
             let oldBidders;
             try {
@@ -143,6 +152,45 @@ io.on("connection", (socket) => {
                 }
             );
         }
+    });
+
+    // Conversations
+    socket.on("join-conversation", (data) => {
+        if (socket.request.user.logged_in) {
+            console.log(`Socket: User ${username} is joining { ${data.id} }`);
+            socket.join(data.id);
+        }
+    });
+    socket.on("leave-conversation", (data) => {
+        if (socket.request.user.logged_in) {
+            console.log(`Socket: User ${username} is leaving { ${data.id} }`);
+            socket.leave(data.id);
+        }
+    });
+
+    socket.on("new-message", (data) => {
+        if (socket.request.user.logged_in) {
+            const message = new Message({
+                handle: data.handle,
+                content: data.content
+            });
+
+            Conversation.findByIdAndUpdate(
+                { _id: data.id },
+                { $push: { messages: message } },
+                (err, doc) => {
+                    if (err) {
+                        console.log(err);
+                        io.sockets.in(data.id).emit("server-error");
+                    } else {
+                        console.log(data);
+                        io.sockets.in(data.id).emit("new-message", data);
+                        console.log(`Socket: New message from user: ${data.handle}`);
+                        console.log("Message successfully posted!");
+                    }
+                }
+            );
+        };
     });
 });
 

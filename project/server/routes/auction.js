@@ -7,7 +7,7 @@ const routeMethods = require("./routeMiddleware");
 const isAuth = routeMethods.isAuth;
 const rejectMethod = routeMethods.rejectMethod;
 
-const pageLimit = 2;
+const pageLimit = 3;
 
 router.route("/start")
     .patch(isAuth, (req, res) => {

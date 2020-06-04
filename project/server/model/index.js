@@ -13,11 +13,11 @@ const messageSchema = new Schema({
     }
 });
 
-const chatRoomSchema = new Schema({
-    name: {
+const conversationSchema = new Schema({
+    participants: [{
         type: String,
-        required: true
-    },
+        maxLength: 2
+    }],
     messages: [messageSchema]
 });
 
@@ -79,7 +79,7 @@ userSchema.methods.isValidPassword = function (password) {
 };
 
 const Message = mongoose.model("Message", messageSchema);
-const ChatRoom = mongoose.model("ChatRoom", chatRoomSchema, "chatRooms");
+const Conversation = mongoose.model("Conversation", conversationSchema);
 const User = mongoose.model("User", userSchema);
 const Auction = mongoose.model("Auction", auctionSchema);
 
@@ -94,7 +94,7 @@ const processErrors = (err) => {
 
 module.exports = {
     Message,
-    ChatRoom,
+    Conversation,
     User,
     Auction,
     processErrors

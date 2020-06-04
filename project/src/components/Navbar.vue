@@ -16,6 +16,9 @@
           <li v-if="currentUser.isAuth" class="nav-item">
             <router-link to="/my-history/page/1">My History</router-link>
           </li>
+          <li v-if="currentUser.isAuth" class="nav-item">
+            <router-link to="/my-conversations">My Conversations</router-link>
+          </li>
           <!-- on the right side -->
           <li v-if="currentUser.isAuth" class="nav-item">
             <a @click="logout()">Log out</a>
