@@ -45,7 +45,8 @@ export default {
             socket: io(),
             isEditMode: false,
             editButtonText: "Edit",
-            timeLeft: null
+            timeLeft: null,
+            addressBar: window.location.href
         };
     },
     computed: {
@@ -115,7 +116,6 @@ export default {
             this.auction.type === "Bid" &&
             this.auction.duration !== null &&
             new Date(this.auction.duration).getTime() >= new Date().getTime()) {
-            // console.log("Countdown started!");
             this.timer = setInterval(() => {
                 const now = new Date().getTime();
                 const to = new Date(this.auction.duration);
@@ -147,6 +147,7 @@ export default {
                 }
             });
         }
+
         if (this.currUser.isAuth &&
             this.auction.type === "Bid" &&
             this.auction.status === "OnSale") {
@@ -162,17 +163,16 @@ export default {
             this.auction.price = data.price;
             this.auction.highestBidder = data.highestBidder;
         });
-
-        window.onbeforeunload = () => {
-            if (this.currUser.isAuth &&
-                this.auction.type === "Bid") {
-                console.log("Left auction!");
-                this.socket.emit("leave-auction", {
-                    id: this.auction._id,
-                    username: this.currentUser.username
-                });
-            }
-        };
+    },
+    beforeDestroy () {
+        if (this.currUser.isAuth &&
+            this.auction.type === "Bid") {
+            this.socket.emit("leave-auction", {
+                id: this.auction._id,
+                username: this.currUser.username
+            });
+            console.log("Left auction!");
+        }
     }
 };
 </script>

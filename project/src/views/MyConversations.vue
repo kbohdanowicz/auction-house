@@ -5,7 +5,7 @@
       <li class="conversation-list" v-for="conversation in conversations"
       :key="conversation._id">
         <h3>Conversation</h3>
-        {{ getOtherUser }}
+        {{ getOtherUser(conversation.participants) }}
         <button id="btn-show-conversation" @click="goToConversation(conversation)">
           Details
         </button>
@@ -17,6 +17,7 @@
 <script>
 import axios from "axios";
 import router from "../router";
+import { mapGetters } from "vuex";
 
 export default {
     name: "Home",
@@ -26,11 +27,16 @@ export default {
         };
     },
     computed: {
-        getOtherUser () {
-            return "OtherUser";
-        }
+        ...mapGetters(["currentUser"])
     },
     methods: {
+        getOtherUser (participants) {
+            if (participants[0] === this.currentUser.username) {
+                return participants[1];
+            } else {
+                return participants[0];
+            }
+        },
         goToConversation (_conversation) {
             router.push({
                 name: "Conversation",

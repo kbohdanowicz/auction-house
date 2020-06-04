@@ -57,16 +57,15 @@ export default {
             this.conversation.messages.push(data);
             console.log(`New message from ${data.handle} has arrived!`);
         });
-
-        window.onbeforeunload = () => {
-            if (this.currentUser.isAuth) {
-                this.socket.emit("leave-conversation", {
-                    id: this.conversation._id,
-                    username: this.currentUser.username
-                });
-                console.log("Left conversation!");
-            }
-        };
+    },
+    beforeDestroy () {
+        if (this.currentUser.isAuth) {
+            this.socket.emit("leave-conversation", {
+                id: this.conversation._id,
+                username: this.currentUser.username
+            });
+            console.log("Left conversation!");
+        }
     }
 };
 </script>

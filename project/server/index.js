@@ -98,7 +98,7 @@ io.on("connection", (socket) => {
     // Auctions
     socket.on("join-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User ${username} is joining { ${data.id} }`);
+            console.log(`Socket: User "${username}" has joined { ${data.id} }`);
             socket.join(data.id);
         }
     });
@@ -109,8 +109,8 @@ io.on("connection", (socket) => {
     });
     socket.on("leave-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User ${username} is leaving { ${data.id} }`);
-            socket.leave(data.socketId);// probably data.id?
+            console.log(`Socket: User ${username} has left { ${data.id} }`);
+            socket.leave(data.id);
         }
     });
 
@@ -157,13 +157,13 @@ io.on("connection", (socket) => {
     // Conversations
     socket.on("join-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User ${username} is joining { ${data.id} }`);
+            console.log(`Socket: User ${username} has joined { ${data.id} }`);
             socket.join(data.id);
         }
     });
     socket.on("leave-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User ${username} is leaving { ${data.id} }`);
+            console.log(`Socket: User ${username} has left { ${data.id} }`);
             socket.leave(data.id);
         }
     });
@@ -178,7 +178,7 @@ io.on("connection", (socket) => {
             Conversation.findByIdAndUpdate(
                 { _id: data.id },
                 { $push: { messages: message } },
-                (err, doc) => {
+                (err) => {
                     if (err) {
                         console.log(err);
                         io.sockets.in(data.id).emit("server-error");
