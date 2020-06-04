@@ -19,7 +19,7 @@
     <div v-if="isEditMode">
       <AuctionEdit :auction="auction" :currUser="currUser"/>
     </div>
-    <button v-if="isAuthAndIsNotOwner" @click="goToConversation()">
+    <button v-if="isAuthAndIsNotOwnerAndOnSale" @click="goToConversation()">
       Contact seller
     </button>
   </div>
@@ -56,9 +56,10 @@ export default {
             this.auction.seller === this.currUser.username &&
             this.auction.status === "New";
         },
-        isAuthAndIsNotOwner () {
+        isAuthAndIsNotOwnerAndOnSale () {
             return this.currUser.isAuth &&
-            this.auction.seller !== this.currUser.username;
+            this.auction.seller !== this.currUser.username &&
+            this.auction.status === "OnSale";
         }
     },
     methods: { // TODO CMON
@@ -109,6 +110,16 @@ export default {
                 .catch((err) => {
                     console.log(err);
                 });
+        },
+        leaveSocket () {
+            if (this.currUser.isAuth &&
+                this.auction.type === "Bid") {
+                this.socket.emit("leave-auction", {
+                    id: this.auction._id,
+                    username: this.currUser.username
+                });
+                console.log("Left auction!");
+            }
         }
     },
     created () {
@@ -149,7 +160,6 @@ export default {
         }
 
         if (this.currUser.isAuth &&
-            this.auction.type === "Bid" &&
             this.auction.status === "OnSale") {
             console.log("Joined an auction!");
             this.socket.emit("join-auction", {
@@ -163,16 +173,19 @@ export default {
             this.auction.price = data.price;
             this.auction.highestBidder = data.highestBidder;
         });
+
+        this.socket.on("new-buy", (data) => {
+            console.log(`A product has been bought by ${data.highestBidder}!`);
+            this.auction.status = "Sold";
+            this.auction.highestBidder = data.highestBidder;
+        });
+
+        window.onbeforeunload = () => {
+            this.leaveSocket();
+        };
     },
     beforeDestroy () {
-        if (this.currUser.isAuth &&
-            this.auction.type === "Bid") {
-            this.socket.emit("leave-auction", {
-                id: this.auction._id,
-                username: this.currUser.username
-            });
-            console.log("Left auction!");
-        }
+        this.leaveSocket();
     }
 };
 </script>

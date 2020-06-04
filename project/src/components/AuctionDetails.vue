@@ -137,19 +137,11 @@ export default {
             }
         },
         buyItem () {
-            const body = {
+            this.socket.emit("new-buy", {
                 id: this.auction._id,
                 status: "Sold",
                 highestBidder: this.currUser.username
-            };
-            axios
-                .patch("/api/auction", body)
-                .then(() => {
-                    location.reload();
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
+            });
         }
     }
 };

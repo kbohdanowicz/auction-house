@@ -89,7 +89,7 @@ io.use(passportSocketIo.authorize({
     cookieParser: cookieParser
 }));
 
-// let bidsInProgress = [];
+let isTransactionInProgress = false;
 
 io.on("connection", (socket) => {
     console.log(`Made socket connection: ${socket.id}`);
@@ -98,7 +98,7 @@ io.on("connection", (socket) => {
     // Auctions
     socket.on("join-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User "${username}" has joined { ${data.id} }`);
+            console.log(`[Socket]: User: "${username}" has JOINED { ${data.id} }`);
             socket.join(data.id);
         }
     });
@@ -109,72 +109,115 @@ io.on("connection", (socket) => {
     });
     socket.on("leave-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User ${username} has left { ${data.id} }`);
+            console.log(`[Socket]: User: ${username} has LEFT { ${data.id} }`);
             socket.leave(data.id);
         }
     });
-
     socket.on("new-bid", async (data) => {
-        if (socket.request.user.logged_in) {
-            // if (!bidsInProgress.includes())
-            // wrzucić całe to do osobnej funkcji odpalanej na końcu
+        if (socket.request.user.logged_in && !isTransactionInProgress) {
+            // Initialize transaction
+            isTransactionInProgress = true;
             const filter = data.id;
             let oldBidders;
+            let oldPrice;
             try {
                 const doc = await Auction.findById(filter);
                 oldBidders = doc.bidders;
+                oldPrice = doc.price;
             } catch (err) {
                 console.log(err);
-                return io.sockets.in(data.id).emit("server-error");// todo wyswietlanie bledu
+                // return io.sockets.socketId.emit("server-error");// todo wyswietlanie bledu
             }
+            if (data.price > oldPrice) {
+                const update = {
+                    price: data.price,
+                    highestBidder: data.highestBidder
+                };
+
+                const newBidders = [data.highestBidder];
+                if (!oldBidders.includes(newBidders[0])) {
+                    oldBidders.push(newBidders[0]);
+                    const updatedBidders = oldBidders;
+                    update.bidders = updatedBidders;
+                };
+
+                Auction.findByIdAndUpdate(filter, update,
+                    (err) => {
+                        if (err) {
+                            console.log(err);
+                            io.sockets.in(data.id).emit("server-error");
+                        } else {
+                            io.sockets.in(data.id).emit("new-bid", update);
+                            console.log(`[Socket]: New bid from user: ${update.highestBidder}`);
+                        }
+                    }
+                );
+            }
+            // Commit transaction
+            isTransactionInProgress = false;
+        } else {
+            io.sockets.in(data.id).emit("server-busy");
+        }
+    });
+    socket.on("new-buy", async (data) => {
+        if (socket.request.user.logged_in && !isTransactionInProgress) {
+            // Initialize transaction
+            isTransactionInProgress = true;
+            const filter = data.id;
             const update = {
-                price: data.price,
+                status: data.status,
                 highestBidder: data.highestBidder
             };
 
-            const newBidders = [data.highestBidder];
-            if (!oldBidders.includes(newBidders[0])) {
-                oldBidders.push(newBidders[0]);
-                const updatedBidders = oldBidders;
-                update.bidders = updatedBidders;
-            };
-
             Auction.findByIdAndUpdate(filter, update,
-                (err, doc) => {
+                (err) => {
                     if (err) {
                         console.log(err);
                         io.sockets.in(data.id).emit("server-error");
                     } else {
-                        io.sockets.in(data.id).emit("new-bid", update);
-                        console.log(`Socket: New bid from user: ${update.highestBidder}`);
-                        console.log("Bid successfully posted!");
+                        io.sockets.in(data.id).emit("new-buy", update);
+                        console.log(`[Socket]: Product bought by user: ${update.highestBidder}`);
                     }
                 }
             );
+        } else {
+            io.sockets.in(data.id).emit("server-busy");
         }
+        // Commit transaction
+        isTransactionInProgress = false;
     });
 
     // Conversations
     socket.on("join-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User ${username} has joined { ${data.id} }`);
+            console.log(`[Socket]: User: ${username} has JOINED { ${data.id} }`);
             socket.join(data.id);
         }
     });
     socket.on("leave-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`Socket: User ${username} has left { ${data.id} }`);
+            console.log(`[Socket]: User: ${username} has LEFT { ${data.id} }`);
             socket.leave(data.id);
         }
     });
-
     socket.on("new-message", (data) => {
         if (socket.request.user.logged_in) {
-            const message = new Message({
-                handle: data.handle,
-                content: data.content
-            });
-
+            const usersInConversation = io.sockets.adapter.rooms[data.id].length;
+            console.dir(usersInConversation);
+            let message;
+            if (usersInConversation > 1) {
+                message = new Message({
+                    handle: data.handle,
+                    content: data.content,
+                    seen: [username, data.otherUser]
+                });
+            } else {
+                message = new Message({
+                    handle: data.handle,
+                    content: data.content,
+                    seen: [username]
+                });
+            }
             Conversation.findByIdAndUpdate(
                 { _id: data.id },
                 { $push: { messages: message } },
@@ -186,7 +229,6 @@ io.on("connection", (socket) => {
                         console.log(data);
                         io.sockets.in(data.id).emit("new-message", data);
                         console.log(`Socket: New message from user: ${data.handle}`);
-                        console.log("Message successfully posted!");
                     }
                 }
             );

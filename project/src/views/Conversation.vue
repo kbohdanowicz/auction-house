@@ -28,18 +28,34 @@ export default {
         ...mapGetters(["currentUser"])
     },
     methods: {
+        getOtherUser (participants) {
+            if (participants[0] === this.currentUser.username) {
+                return participants[1];
+            } else {
+                return participants[0];
+            }
+        },
         sendMessage () {
             if (this.messageInput === "") {
                 console.log("Your message is empty!");
             } else {
-                const message = {
+                const dataToSend = {
+                    id: this.conversation._id,
                     handle: this.currentUser.username,
-                    content: this.messageInput
+                    content: this.messageInput,
+                    otherUser: this.getOtherUser(this.conversation.participants)
                 };
-                const tempMessage = message;
-                tempMessage.id = this.conversation._id;
-                this.socket.emit("new-message", tempMessage);
+                this.socket.emit("new-message", dataToSend);
                 this.messageInput = "";
+            }
+        },
+        leaveSocket () {
+            if (this.currentUser.isAuth) {
+                this.socket.emit("leave-conversation", {
+                    id: this.conversation._id,
+                    username: this.currentUser.username
+                });
+                console.log("Left conversation!");
             }
         }
     },
@@ -57,15 +73,15 @@ export default {
             this.conversation.messages.push(data);
             console.log(`New message from ${data.handle} has arrived!`);
         });
+
+        window.onbeforeunload = () => {
+            this.leaveSocket();
+        };
+
+        // update messages.seen
     },
     beforeDestroy () {
-        if (this.currentUser.isAuth) {
-            this.socket.emit("leave-conversation", {
-                id: this.conversation._id,
-                username: this.currentUser.username
-            });
-            console.log("Left conversation!");
-        }
+        this.leaveSocket();
     }
 };
 </script>

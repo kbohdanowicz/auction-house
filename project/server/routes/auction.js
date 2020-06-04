@@ -101,7 +101,7 @@ router.route("/auction")
             res.status(422).json(model.processErrors(err));
         }
     })
-    .patch(isAuth, async (req, res) => { // TODO zrobic osobno buy i update status
+    .patch(isAuth, async (req, res) => {
         const update = {};
         const body = req.body;
         if (body.seller === req.user.username) {
@@ -159,6 +159,7 @@ router.route("/auction")
     })
     .all(rejectMethod);
 
+// TODO
 // Middleware for pagination
 const paginatedResults = (filter) => {
     return async (req, res, next) => {

@@ -7,6 +7,9 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
     state: {
+        unreadMessages: 0 // TODO load messages
+    },
+    getters: {
     },
     mutations: {
     },

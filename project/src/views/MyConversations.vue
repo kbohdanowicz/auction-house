@@ -7,8 +7,11 @@
         <h3>Conversation</h3>
         {{ getOtherUser(conversation.participants) }}
         <button id="btn-show-conversation" @click="goToConversation(conversation)">
-          Details
+          Open conversation
         </button>
+        <strong v-if="isAnyMessageUnRead(conversation.messages)">
+          Unread messages
+        </strong>
       </li>
     </ul>
   </div>
@@ -20,7 +23,7 @@ import router from "../router";
 import { mapGetters } from "vuex";
 
 export default {
-    name: "Home",
+    name: "MyConversations",
     data () {
         return {
             conversations: null
@@ -30,6 +33,10 @@ export default {
         ...mapGetters(["currentUser"])
     },
     methods: {
+        isAnyMessageUnRead (messages) {
+            const fun = msg => !msg.seen.includes(this.currentUser.username);
+            return messages.some(fun);
+        },
         getOtherUser (participants) {
             if (participants[0] === this.currentUser.username) {
                 return participants[1];

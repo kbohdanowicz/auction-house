@@ -10,7 +10,11 @@ const messageSchema = new Schema({
     content: {
         type: String,
         required: true
-    }
+    },
+    seen: [{
+        type: String,
+        maxLength: 2
+    }]
 });
 
 const conversationSchema = new Schema({
