@@ -28,7 +28,7 @@ export default {
     },
     methods: {
         goToAuctionForm () {
-            router.push("/auction");
+            router.push({ name: "Auction" });
         }
     }
 };
@@ -36,7 +36,7 @@ export default {
 <style lang="scss" scoped>
 #btn-create-auction {
     position: fixed;
-    top: 50px;
-    left: 150px;
+    top: 60px;
+    left: 140px;
 }
 </style>

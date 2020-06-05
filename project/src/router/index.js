@@ -6,7 +6,6 @@ import Register from "../views/Register.vue";
 import MyBids from "../views/MyBids.vue";
 import MyAuctions from "../views/MyAuctions.vue";
 import AuctionForm from "../views/AuctionForm.vue";
-import Error404 from "../views/Error404.vue";
 import Conversation from "../views/Conversation.vue";
 import MyConversations from "../views/MyConversations.vue";
 import store from "../store";
@@ -63,11 +62,6 @@ const routes = [
         path: "/my-conversations",
         name: "MyConversations",
         component: MyConversations
-    },
-    {
-        path: "/404",
-        name: "Error404",
-        component: Error404
     }
 ];
 
@@ -85,14 +79,10 @@ const isInRoutes = (name) => {
     return routeNames.includes(name);
 };
 
-// TODO register should not be reachable by logged user
-// make better
 router.beforeEach(async (to, from, next) => {
     await store.dispatch("fetchCurrentUser");
-    if (to.name === "Error404") {
-        next();
-    } else if (!isInRoutes(to.name)) {
-        next({ name: "Error404" });
+    if (!isInRoutes(to.name)) {
+        next({ name: "Home", params: { page: 1 } });
     } else if (!store.getters.currentUser.isAuth) {
         if (to.name === "Register" ||
             to.name === "Login" ||
@@ -104,7 +94,7 @@ router.beforeEach(async (to, from, next) => {
     } else if (store.getters.currentUser.isAuth) {
         if (to.name === "Register" ||
             to.name === "Login") {
-            next({ name: "Home" });
+            next({ name: "Home", params: { page: 1 } });
         } else {
             next();
         }

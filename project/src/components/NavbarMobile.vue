@@ -41,7 +41,7 @@
 
 <script>
 import axios from "axios";
-// import router from "../router";
+import router from "../router";
 import { mapGetters, mapActions } from "vuex";
 
 export default {
@@ -63,12 +63,10 @@ export default {
             axios
                 .get("/api/logout")
                 .then(() => {
-                    // router.push("/"); // uncaught exception error
-                    location.reload();
+                    router.push({ name: "Login" });
                 })
                 .catch((err) => {
                     console.log(err);
-                    // location.reload();
                 });
         }
     }

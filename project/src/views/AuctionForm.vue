@@ -97,10 +97,6 @@ export default {
                         id: _id,
                         username: this.$store.getters.currentUser.username
                     });
-                    router.push({
-                        name: "MyAuctions",
-                        params: { page: 1 }
-                    });
                 })
                 .catch((err) => {
                     console.log(err);

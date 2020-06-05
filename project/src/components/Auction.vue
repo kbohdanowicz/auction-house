@@ -153,7 +153,6 @@ export default {
 
                 if (tempTime <= 0) {
                     clearInterval(this.timer);
-                    location.reload();
                 }
             });
         }

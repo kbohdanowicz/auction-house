@@ -1,11 +1,11 @@
 <template>
   <div class="auction-list">
     <div v-if="auctions !== null">
-      <button id="btnPrevPage" @click="goToPreviousPage()">
-          &lt;
+      <button id="btn-prev-page" @click="goToPreviousPage()">
+        &lt;
       </button>
-      <button id="btnNextPage" @click="goToNextPage()">
-          &gt;
+      <button id="btn-next-page" @click="goToNextPage()">
+        &gt;
       </button>
     </div>
     <ul>
@@ -37,17 +37,15 @@ export default {
     },
     methods: {
         updateButtonVisibility () {
-            // console.log("Next: " + this.nextPage);
-            // console.log("Prev: " + this.previousPage);
             if (this.nextPage) {
-                document.getElementById("btnNextPage").style.visibility = "visible";
+                document.getElementById("btn-next-page").style.visibility = "visible";
             } else {
-                document.getElementById("btnNextPage").style.visibility = "hidden";
+                document.getElementById("btn-next-page").style.visibility = "hidden";
             }
             if (this.previousPage) {
-                document.getElementById("btnPrevPage").style.visibility = "visible";
+                document.getElementById("btn-prev-page").style.visibility = "visible";
             } else {
-                document.getElementById("btnPrevPage").style.visibility = "hidden";
+                document.getElementById("btn-prev-page").style.visibility = "hidden";
             }
         },
         goToNextPage () {
@@ -100,12 +98,12 @@ export default {
     margin-top: 45px;
     padding-top: 1px;
 }
-#btnPrevPage {
+#btn-prev-page {
     position: fixed;
-    margin: 25px 200px;
+    margin: 14px 255px;
 }
-#btnNextPage {
+#btn-next-page {
     position: fixed;
-    margin: 25px 250px;
+    margin: 14px 290px;
 }
 </style>

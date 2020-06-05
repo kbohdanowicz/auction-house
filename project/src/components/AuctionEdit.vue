@@ -87,7 +87,7 @@ export default {
                 .patch("/api/auction", this.formData)
                 .then(() => {
                     router.push({
-                        name: "MyHistory",
+                        name: "Home",
                         params: { page: 1 }
                     });
                 })
@@ -102,7 +102,10 @@ export default {
             axios
                 .delete("/api/auction", body)
                 .then(() => {
-                    location.reload();
+                    router.push({
+                        name: "Home",
+                        params: { page: 1 }
+                    });
                 })
                 .catch((err) => {
                     console.log(err);

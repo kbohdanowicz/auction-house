@@ -64,6 +64,8 @@
 <script>
 import axios from "axios";
 import { mapGetters } from "vuex";
+import router from "../router";
+
 export default {
     name: "AuctionDetails",
     props: ["auction", "currUser", "timeLeft", "socket"],
@@ -125,7 +127,10 @@ export default {
                         id: this.auction._id,
                         username: this.currentUser.username
                     });
-                    location.reload();
+                    router.push({
+                        name: "Home",
+                        params: { page: 1 }
+                    });
                 })
                 .catch((err) => {
                     console.log(err);

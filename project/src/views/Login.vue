@@ -39,7 +39,10 @@ export default {
             axios
                 .post("/api/login", this.formData)
                 .then((res) => {
-                    router.push("/page/1");
+                    router.push({
+                        name: "Home",
+                        params: { page: 1 }
+                    });
                 })
                 .catch((err) => {
                     const error = document.getElementById("error-message");

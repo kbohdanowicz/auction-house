@@ -45,10 +45,6 @@ if (process.env.NODE_ENV === "development") {
     app.use(logger("short"));
 }
 
-// Publiczny folder
-const path = require("path");
-app.use(express.static(path.join(__dirname, "public")));
-
 // app.use("/lib", express.static(path.normalize("./node_modules/axios/dist")));
 
 // Routing
@@ -60,6 +56,14 @@ app.use("/api", auctionRoutes);
 
 const coversationRoutes = require("./routes/conversation");
 app.use("/api", coversationRoutes);
+
+const path = require("path");
+// Handle production
+if (process.env.NODE_ENV !== "production") {
+    app.use(express.static(path.join(__dirname, "public")));
+
+    app.get(/.*/, (req, res) => res.sendFile(__dirname, "/public/index.html"));
+}
 
 // Wyłapujemy odwołania do nieobsługiwanych adresów
 app.use((_, res) => {
