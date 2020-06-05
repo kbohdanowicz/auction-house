@@ -78,7 +78,12 @@ export default {
             this.leaveSocket();
         };
 
-        // update messages.seen
+        const msgs = this.conversation.messages;
+        if (!msgs[msgs.length - 1].seen.includes(this.currentUser.username)) {
+            this.socket.emit("update-conversation-seen", {
+                id: this.conversation._id
+            });
+        }
     },
     beforeDestroy () {
         this.leaveSocket();

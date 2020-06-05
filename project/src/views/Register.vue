@@ -38,6 +38,7 @@ export default {
             axios
                 .post("api/register", this.user)
                 .then(() => {
+                    // display message if invalid credentials
                     router.push("/login");
                 })
                 .catch((err) => {

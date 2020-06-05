@@ -40,6 +40,7 @@
 <script>
 import axios from "axios";
 import io from "@/../node_modules/socket.io-client";
+import router from "../router";
 
 export default {
     name: "AuctionForm",
@@ -77,11 +78,12 @@ export default {
                 .post("/api/auction", this.formData)
                 .then((res) => {
                     if (this.isStartAuction) {
-                        console.dir(res.data._id);
                         this.startAuction(res.data._id);
-                    } else {
-                        location.reload();
                     }
+                    router.push({
+                        name: "MyAuctions",
+                        params: { page: 1 }
+                    });
                 })
                 .catch((err) => {
                     console.log(err);
@@ -95,7 +97,10 @@ export default {
                         id: _id,
                         username: this.$store.getters.currentUser.username
                     });
-                    location.reload();
+                    router.push({
+                        name: "MyAuctions",
+                        params: { page: 1 }
+                    });
                 })
                 .catch((err) => {
                     console.log(err);

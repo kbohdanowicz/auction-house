@@ -200,6 +200,31 @@ io.on("connection", (socket) => {
             socket.leave(data.id);
         }
     });
+    socket.on("update-conversation-seen", async (data) => {
+        if (socket.request.user.logged_in) {
+            console.log(`[Socket]: New seen update from: ${username}, on: { ${data.id} }`);
+            const doc = await Conversation.findById(data.id);
+            for (const msg of doc.messages.reverse()) {
+                if (!msg.seen.includes(username)) {
+                    msg.seen.push(username);
+                } else {
+                    break;
+                }
+            }
+            Conversation.update(
+                { _id: data.id },
+                doc,
+                (err) => {
+                    if (err) {
+                        console.log(err);
+                        io.sockets.in(data.id).emit("server-error");
+                    } else {
+                        console.log(`[Socket]: New messages read by user: ${username}`);
+                    }
+                }
+            );
+        }
+    });
     socket.on("new-message", (data) => {
         if (socket.request.user.logged_in) {
             const usersInConversation = io.sockets.adapter.rooms[data.id].length;
@@ -219,7 +244,7 @@ io.on("connection", (socket) => {
                 });
             }
             Conversation.findByIdAndUpdate(
-                { _id: data.id },
+                data.id,
                 { $push: { messages: message } },
                 (err) => {
                     if (err) {

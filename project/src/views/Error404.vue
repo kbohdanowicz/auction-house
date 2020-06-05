@@ -1,6 +1,6 @@
 <template>
   <div class="error-404">
-    <p>Error 404. This page doesn't exist</p>
+    <p>Error 404 This page doesn't exist</p>
   </div>
 </template>
 

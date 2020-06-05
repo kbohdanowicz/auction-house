@@ -51,7 +51,7 @@ const routes = [
     },
     {
         path: "/auction",
-        name: "AuctionForm",
+        name: "Auction",
         component: AuctionForm
     },
     {
@@ -87,25 +87,27 @@ const isInRoutes = (name) => {
 
 // TODO register should not be reachable by logged user
 // make better
-router.beforeEach((to, from, next) => {
-    store.dispatch("fetchCurrentUser");
-    // console.log("Route " + to.path + " is " + isInRoutes(to.name));
+router.beforeEach(async (to, from, next) => {
+    await store.dispatch("fetchCurrentUser");
     if (to.name === "Error404") {
-        // next({ name: "Error404" }); DONT (Infinite recursion)
+        next();
     } else if (!isInRoutes(to.name)) {
-        console.log("Error 404");
         next({ name: "Error404" });
-    } else if (to.name === "Register" || to.name === "Home" || to.name === "Auction") {
-        next();
-    } else if (to.name !== "Login" && !store.getters.currentUser.isAuth) {
-        console.log("Not logged in. Redirecting to login page");
-        next({ name: "Login" });
-    } else if (to.name === "Login" && store.getters.currentUser.isAuth) {
-        console.log("Logged in. Redirecting to home page");
-        next({ name: "Home" });
-    } else {
-        // console.log("Other");
-        next();
+    } else if (!store.getters.currentUser.isAuth) {
+        if (to.name === "Register" ||
+            to.name === "Login" ||
+            to.name === "Home") {
+            next();
+        } else {
+            next({ name: "Login" });
+        }
+    } else if (store.getters.currentUser.isAuth) {
+        if (to.name === "Register" ||
+            to.name === "Login") {
+            next({ name: "Home" });
+        } else {
+            next();
+        }
     }
 });
 

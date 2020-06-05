@@ -38,19 +38,14 @@ export default {
             axios
                 .post("/api/login", this.formData)
                 .then((res) => {
+                    // display message if invalid credentials
                     router.push("/page/1");
                 })
                 .catch((err) => {
                     console.log(err);
-                    location.reload();
                 });
         }
     }
-    // }// ,
-    // destroyed () {
-    //     alert("destroyed");
-    //     this.$store.dispatch("fetchCurrentUser");
-    // }
 };
 </script>
 

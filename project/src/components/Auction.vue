@@ -181,7 +181,11 @@ export default {
         });
 
         window.onbeforeunload = () => {
-            this.leaveSocket();
+            this.socket.emit("leave-auction", {
+                id: this.auction._id,
+                username: this.currUser.username
+            });
+            console.log("Left auction!");
         };
     },
     beforeDestroy () {
