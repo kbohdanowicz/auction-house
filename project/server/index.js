@@ -58,12 +58,11 @@ const coversationRoutes = require("./routes/conversation");
 app.use("/api", coversationRoutes);
 
 const path = require("path");
-// Handle production
-if (process.env.NODE_ENV !== "production") {
-    app.use(express.static(path.join(__dirname, "public")));
 
-    app.get(/.*/, (req, res) => res.sendFile(__dirname, "/public/index.html"));
-}
+// Handle production
+app.use(express.static(path.join(__dirname, "public")));
+
+app.get(/.*/, (req, res) => res.sendFile(__dirname, "/public/index.html"));
 
 // Wyłapujemy odwołania do nieobsługiwanych adresów
 app.use((_, res) => {
