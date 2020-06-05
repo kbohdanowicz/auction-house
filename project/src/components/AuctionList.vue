@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="auction-list">
     <div v-if="auctions !== null">
       <button id="btnPrevPage" @click="goToPreviousPage()">
           &lt;
@@ -96,4 +96,16 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.auction-list {
+    margin-top: 45px;
+    padding-top: 1px;
+}
+#btnPrevPage {
+    position: fixed;
+    margin: 25px 200px;
+}
+#btnNextPage {
+    position: fixed;
+    margin: 25px 250px;
+}
 </style>

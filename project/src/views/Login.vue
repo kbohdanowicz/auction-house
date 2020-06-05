@@ -11,6 +11,7 @@
         <br><br>
         <button type="submit">Log in</button>
       </form>
+      <div id="error-message">dupa</div>
   </div>
 </template>
 
@@ -38,11 +39,17 @@ export default {
             axios
                 .post("/api/login", this.formData)
                 .then((res) => {
-                    // display message if invalid credentials
                     router.push("/page/1");
                 })
                 .catch((err) => {
-                    console.log(err);
+                    const error = document.getElementById("error-message");
+                    if (err.response.status === 401) {
+                        error.style.visibility = "visible";
+                        error.innerHTML = "Invalid credentials";
+                    } else {
+                        error.style.visibility = "visible";
+                        error.innerHTML = "An error occured, try again later";
+                    }
                 });
         }
     }
@@ -51,10 +58,12 @@ export default {
 
 <style lang="scss" scoped>
 h2 {
-    font-family: 'Montserrat', sans-serif;
     text-align: center;
 }
-
+#error-message {
+    visibility: hidden;
+    color: red;
+}
 // input {
 
 // }

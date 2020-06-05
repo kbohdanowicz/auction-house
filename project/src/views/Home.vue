@@ -1,10 +1,6 @@
 <template>
   <div class="home">
-    <!-- <img alt="Vue logo" src="../assets/logo.png"><br> -->
-    <div v-if="currentUser.isAuth">
-      Welcome {{currentUser.username}}
-    </div>
-    <h2>Available auctions</h2>
+    <h2 class="list-type-message">Available auctions</h2>
     <AuctionList :apiString="apiString"/>
   </div>
 </template>
@@ -28,3 +24,6 @@ export default {
     }
 };
 </script>
+
+<style lang="scss" scoped>
+</style>

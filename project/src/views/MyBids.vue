@@ -1,6 +1,6 @@
 <template>
   <div class="my-bids">
-    <h2>My bids</h2>
+    <h2 class="list-type-message">Bids</h2>
     <AuctionList :apiString="apiString"/>
   </div>
 </template>

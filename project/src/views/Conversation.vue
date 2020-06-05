@@ -1,5 +1,5 @@
 <template>
-  <div v-if="conversation !== null" class="conversation">
+  <div class="conversation" v-if="conversation !== null">
     <input v-model="messageInput" id="message-content" type="text" placeholder="Content">
     <button id="btn-send" @click="sendMessage()">Send</button>
     <div v-if="conversation.messages.length === 0">
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+
 import { mapGetters } from "vuex";
 import io from "@/../node_modules/socket.io-client";
 
@@ -90,3 +91,10 @@ export default {
     }
 };
 </script>
+
+<style lang="scss" scoped>
+.conversation {
+    margin-top: 70px;
+    padding-top: 1px;
+}
+</style>

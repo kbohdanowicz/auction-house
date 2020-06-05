@@ -1,13 +1,13 @@
 <template>
   <div class="conversations">
-    <h2>Your conversations</h2>
+    <h2 class="list-type-message">Conversations</h2>
     <ul>
       <li class="conversation-list" v-for="conversation in conversations"
       :key="conversation._id">
         <h3>Conversation</h3>
         {{ getOtherUser(conversation.participants) }}
         <button id="btn-show-conversation" @click="goToConversation(conversation)">
-          Open conversation
+          Open
         </button>
         <strong v-if="isAnyMessageUnRead(conversation.messages)">
           Unread messages
@@ -63,3 +63,11 @@ export default {
     }
 };
 </script>
+
+<style lang="scss" scoped>
+
+.conversations {
+    margin-top: 45px;
+    padding-top: 1px;
+}
+</style>

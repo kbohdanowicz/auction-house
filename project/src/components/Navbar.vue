@@ -1,38 +1,34 @@
 <template>
-  <div class="navbar">
-    <header>
-      <nav>
-        <ul>
-          <li>
-            <!-- all auctions -->
-            <router-link to="/page/1">Home</router-link>
-          </li>
-          <li v-if="currentUser.isAuth" class="nav-item">
-            <router-link to="/my-bids/page/1">My bids</router-link>
-          </li>
-          <li v-if="currentUser.isAuth" class="nav-item">
-            <router-link to="/my-auctions/page/1">My offers</router-link>
-          </li>
-          <li v-if="currentUser.isAuth" class="nav-item">
-            <router-link to="/my-history/page/1">My History</router-link>
-          </li>
-          <li v-if="currentUser.isAuth" class="nav-item">
-            <router-link to="/my-conversations">My Conversations</router-link>
-          </li>
-          <!-- on the right side -->
-          <li v-if="currentUser.isAuth" class="nav-item">
-            <a @click="logout()">Log out</a>
-          </li>
-          <!-- <div v-else></div> -->
-          <li v-if="!currentUser.isAuth" class="nav-item">
-            <router-link to="/login">Log in</router-link>
-          </li>
-          <li v-if="!currentUser.isAuth" class="nav-item">
-            <router-link to="/register">Register</router-link>
-          </li>
-        </ul>
-      </nav>
-    </header>
+  <div id="navbar">
+    <ul>
+      <li v-if="currentUser.isAuth">
+        <div id="welcome-message">Welcome {{currentUser.username}}</div>
+      </li>
+      <li>
+        <router-link to="/page/1">Home</router-link>
+      </li>
+      <li v-if="currentUser.isAuth" class="nav-item">
+        <router-link to="/my-bids/page/1">My bids</router-link>
+      </li>
+      <li v-if="currentUser.isAuth" class="nav-item">
+        <router-link to="/my-auctions/page/1">My offers</router-link>
+      </li>
+      <li v-if="currentUser.isAuth" class="nav-item">
+        <router-link to="/my-history/page/1">My history</router-link>
+      </li>
+      <li v-if="currentUser.isAuth" class="nav-item">
+        <router-link to="/my-conversations">My conversations</router-link>
+      </li>
+      <li v-if="currentUser.isAuth">
+        <a class="log-item" @click="logout()">Log out</a>
+      </li>
+      <li v-if="!currentUser.isAuth">
+        <router-link class="log-item" to="/login">Log in</router-link>
+      </li>
+      <li v-if="!currentUser.isAuth">
+        <router-link  class="log-item" to="/register">Register</router-link>
+      </li>
+    </ul>
   </div>
 </template>
 
@@ -45,6 +41,10 @@ export default {
     name: "Navbar",
     computed: {
         ...mapGetters(["currentUser"])
+    },
+    data () {
+        return {
+        };
     },
     methods: {
         ...mapActions(["fetchCurrentUser"]),
@@ -65,39 +65,45 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-* {
-    //box-sizing: border-box;
+#navbar {
     margin: 0;
     padding: 0;
-    background-color: royalblue;
+    width: 100vw;
 }
 
 ul {
-    //list-style: none;
-
+    position: fixed;
+    top: 0;
+    width: 100%;
+    overflow: hidden;
+    margin: 0;
+    background-color: royalblue;
+    list-style-type: none;
+    .log-item {
+        float:right;
+        // right: 25px;
+    }
     li {
+        float: left;
         font-family: 'Montserrat', sans-serif;
-        //font-weight: 500;
-        //font-size: 16px;
-        //text-decoration: none;
-        display: inline-block;
-        //padding: 0px 25px;
         a {
-            padding: 20px 25px;
+            display: block;
             text-decoration: none;
             color: white;
+            text-align: center;
+            padding: 14px 16px;
+        }
+        #welcome-message {
+            display: block;
+            text-decoration: none;
+            color: white;
+            text-align: center;
+            padding: 14px 16px;
         }
         a:hover {
-            color: lightgray;
+            background-color: rgb(2, 25, 43);
             cursor: pointer;
         }
     }
-}
-
-header {
-    //display: flex;
-    //justify-content: space-between;
-    //align-items: center;
-    padding: 20px 5%;
 }
 </style>

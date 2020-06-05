@@ -1,10 +1,10 @@
 <template>
   <div class="my-auctions">
-    <h2>My offers</h2>
-    <div v-if="currentUser.isAuth">
+    <h2 class="list-type-message">My offers</h2>
+    <AuctionList :apiString="apiString"/>
+    <div id="btn-create-auction" v-if="currentUser.isAuth">
       <button @click="goToAuctionForm()">Create auction</button>
     </div>
-    <AuctionList :apiString="apiString"/>
   </div>
 </template>
 
@@ -33,3 +33,10 @@ export default {
     }
 };
 </script>
+<style lang="scss" scoped>
+#btn-create-auction {
+    position: fixed;
+    top: 50px;
+    left: 150px;
+}
+</style>

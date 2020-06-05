@@ -1,5 +1,5 @@
 <template>
-  <div class="auction-details">
+  <div id="auction-details">
     Name: {{ auction.name }}<br>
     Seller: {{ auction.seller }}<br>
     <div v-if="auction.type === 'Bid'">

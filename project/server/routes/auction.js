@@ -7,7 +7,7 @@ const routeMethods = require("./routeMiddleware");
 const isAuth = routeMethods.isAuth;
 const rejectMethod = routeMethods.rejectMethod;
 
-const pageLimit = 3;
+const auctionLimit = 3;
 
 router.route("/start")
     .patch(isAuth, (req, res) => {
@@ -23,7 +23,6 @@ router.route("/start")
                 doc.status = "OnSale";
                 if (doc.type === "Bid") {
                     const tempTime = doc.duration;
-                    // TODO zmienic
                     doc.duration = new Date(new Date().getTime() + doc.duration).getTime();
                     console.dir(doc.duration);
                     doc.save();
@@ -57,9 +56,6 @@ router.route("/start")
     })
     .all(rejectMethod);
 
-// TODO route /api/auction/id=:id/buy
-// TODO route /api/auction/id=:id/bid
-
 router.route("/auction")
     .get((req, res) => {
         Auction.findById(req.body.id, (err, doc) => {
@@ -75,7 +71,6 @@ router.route("/auction")
             const user = req.user;
             const body = req.body;
             let auction = {};
-            // TODO try auction.duration = body.duration;
             if (req.body.type === "Bid") {
                 auction = new Auction({
                     name: body.name,
@@ -159,9 +154,8 @@ router.route("/auction")
     })
     .all(rejectMethod);
 
-// TODO
 // Middleware for pagination
-const paginatedResults = (filter) => {
+const paginatedResultsMid = (filter) => {
     return async (req, res, next) => {
         let tempPage;
         if (req.params.page) {
@@ -170,7 +164,7 @@ const paginatedResults = (filter) => {
             tempPage = 1;
         }
         const page = parseInt(tempPage);
-        const limit = pageLimit;
+        const limit = auctionLimit;
 
         const skippedPages = (page - 1) * limit;
         try {
@@ -181,7 +175,6 @@ const paginatedResults = (filter) => {
             const results = {
                 auctions: docs
             };
-            // console.log(docs);
             if (docs.length > limit) {
                 results.nextPage = true;
                 docs.pop();
@@ -202,9 +195,10 @@ const paginatedResults = (filter) => {
     };
 };
 
-async function paginatedResults2 (filter, _page) {
+// Function for pagination
+async function paginatedResultsFun (filter, _page) {
     const page = parseInt(_page);
-    const limit = pageLimit;
+    const limit = auctionLimit;
 
     const skippedPages = (page - 1) * limit;
     try {
@@ -234,7 +228,7 @@ async function paginatedResults2 (filter, _page) {
 
 router
     .route("/auctions/page/:page")
-    .get(paginatedResults({ status: "OnSale" }), (req, res) => {
+    .get(paginatedResultsMid({ status: "OnSale" }), (req, res) => {
         res.json(res.paginatedResults);
     })
     .all(rejectMethod);
@@ -245,8 +239,7 @@ router.route("/my-bids/page/:page")
             bidders: req.user.username,
             status: "OnSale"
         };
-        const results = await paginatedResults2(filter, req.params.page);
-        // console.dir(results);
+        const results = await paginatedResultsFun(filter, req.params.page);
         if (results.myErrorMessage !== undefined) {
             res.status(422).json(model.processErrors(results.myErrorMessage));
         } else {
@@ -263,7 +256,7 @@ router.route("/my-auctions/page/:page")
                 { seller: req.user.username, status: "OnSale" }
             ]
         };
-        const results = await paginatedResults2(filter, req.params.page);
+        const results = await paginatedResultsFun(filter, req.params.page);
         // console.dir(results);
         if (results.myErrorMessage !== undefined) {
             res.status(422).json(model.processErrors(results.myErrorMessage));
@@ -283,8 +276,7 @@ router.route("/my-history/page/:page")
                 { seller: req.user.username, status: "Ignored" }
             ]
         };
-        const results = await paginatedResults2(filter, req.params.page);
-        // console.dir(results);
+        const results = await paginatedResultsFun(filter, req.params.page);
         if (results.myErrorMessage !== undefined) {
             res.status(422).json(model.processErrors(results.myErrorMessage));
         } else {

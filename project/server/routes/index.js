@@ -3,8 +3,6 @@ const router = express.Router();
 
 const model = require("../model");
 const User = model.User;
-// eslint-disable-next-line no-unused-vars
-const ChatRoom = model.ChatRoom;
 
 // Passport.js i narzędzie do szyfrowania haseł
 const passport = require("../passport");
@@ -16,9 +14,7 @@ const rejectMethod = routeMethods.rejectMethod;
 
 router
     .route("/users")
-    .get(passport.authenticate("basic", {
-        session: false
-    }), (req, res) => {
+    .get(passport.authenticate("basic", { session: false }), (req, res) => {
         User.find({}, (err, data) => {
             if (err) {
                 res.status(500).send();

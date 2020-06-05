@@ -1,5 +1,5 @@
 <template>
-  <div v-if="auction !== null" class="auction">
+  <div v-if="auction !== null" id="auction">
     <div v-if="auction.type === 'Bid'">
       <h3>Auction</h3>
     </div>
@@ -62,7 +62,7 @@ export default {
             this.auction.status === "OnSale";
         }
     },
-    methods: { // TODO CMON
+    methods: {
         showEdit () {
             this.isEditMode = !this.isEditMode;
             if (this.isEditMode) {
@@ -118,7 +118,6 @@ export default {
                     id: this.auction._id,
                     username: this.currUser.username
                 });
-                console.log("Left auction!");
             }
         }
     },
@@ -161,7 +160,6 @@ export default {
 
         if (this.currUser.isAuth &&
             this.auction.status === "OnSale") {
-            console.log("Joined an auction!");
             this.socket.emit("join-auction", {
                 id: this.auction._id,
                 username: this.currentUser.username
@@ -185,7 +183,6 @@ export default {
                 id: this.auction._id,
                 username: this.currUser.username
             });
-            console.log("Left auction!");
         };
     },
     beforeDestroy () {

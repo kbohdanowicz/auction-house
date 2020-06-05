@@ -109,7 +109,7 @@ io.on("connection", (socket) => {
     });
     socket.on("leave-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`[Socket]: User: ${username} has LEFT { ${data.id} }`);
+            console.log(`[Socket]: User: "${username}" has LEFT { ${data.id} }`);
             socket.leave(data.id);
         }
     });
@@ -190,13 +190,13 @@ io.on("connection", (socket) => {
     // Conversations
     socket.on("join-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`[Socket]: User: ${username} has JOINED { ${data.id} }`);
+            console.log(`[Socket]: User: "${username}" has JOINED { ${data.id} }`);
             socket.join(data.id);
         }
     });
     socket.on("leave-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`[Socket]: User: ${username} has LEFT { ${data.id} }`);
+            console.log(`[Socket]: User: "${username}" has LEFT { ${data.id} }`);
             socket.leave(data.id);
         }
     });

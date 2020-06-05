@@ -62,7 +62,6 @@ router.route("/conversation")
                 messages: []
             });
             const doc = await conversation.save();
-            // console.log(doc);
             res.json(doc);
         } catch (err) {
             console.log(err);
