@@ -14,6 +14,7 @@
 <script>
 
 import { mapGetters } from "vuex";
+import router from "../router";
 import io from "@/../node_modules/socket.io-client";
 
 export default {
@@ -61,6 +62,12 @@ export default {
         }
     },
     created () {
+        if (this.$route.params.conversation === undefined) {
+            router.push({
+                name: "MyConversations"
+            });
+            return;
+        }
         this.conversation = this.$route.params.conversation;
         if (this.currentUser.isAuth) {
             this.socket.emit("join-conversation", {
@@ -80,14 +87,17 @@ export default {
         };
 
         const msgs = this.conversation.messages;
-        if (!msgs[msgs.length - 1].seen.includes(this.currentUser.username)) {
+        if (msgs.length >= 1 &&
+            !msgs[msgs.length - 1].seen.includes(this.currentUser.username)) {
             this.socket.emit("update-conversation-seen", {
                 id: this.conversation._id
             });
         }
     },
     beforeDestroy () {
-        this.leaveSocket();
+        if (this.$route.params.conversation !== undefined) {
+            this.leaveSocket();
+        }
     }
 };
 </script>

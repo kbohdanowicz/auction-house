@@ -69,7 +69,7 @@ app.use((_, res) => {
 // Serwer HTTPS
 // openssl req -x509 -nodes -days 365 -newkey rsa:1024 -out my.crt -keyout my.key
 const server = require("./https")(app);
-const port = process.env.PORT;
+const port = process.env.PORT || 3000;
 
 // Socket.io
 const socketio = require("socket.io");

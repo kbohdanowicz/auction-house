@@ -11,7 +11,7 @@
         <br><br>
         <button type="submit">Log in</button>
       </form>
-      <div id="error-message">dupa</div>
+      <div id="error-message"></div>
   </div>
 </template>
 

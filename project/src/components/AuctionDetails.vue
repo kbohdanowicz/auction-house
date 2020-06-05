@@ -55,7 +55,10 @@
         <button id="btn-start" @click="startAuction()">Start auction</button>
       </div>
     </div>
-</div>
+    <div id="error-message" v-if="errorMessage.isVisible">
+        {{ errorMessage.content }}
+    </div>
+  </div>
 </template>
 
 <script>
@@ -66,6 +69,10 @@ export default {
     props: ["auction", "currUser", "timeLeft", "socket"],
     data () {
         return {
+            errorMessage: {
+                isVisible: false,
+                content: "Your bid is invalid"
+            },
             formData: {
                 id: this.auction._id,
                 price: "",
@@ -126,8 +133,10 @@ export default {
         },
         bidItem () {
             if (this.formData.price <= this.auction.price) {
-                // show message
-                console.log("Your bid is invalid!");
+                this.errorMessage.isVisible = true;
+                setTimeout(() => {
+                    this.errorMessage.isVisible = false;
+                }, 3000);
             } else {
                 this.socket.emit("new-bid", {
                     id: this.auction._id,
@@ -148,4 +157,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#error-message {
+    color: red;
+}
 </style>
