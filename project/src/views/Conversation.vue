@@ -18,7 +18,7 @@ import router from "../router";
 import io from "@/../node_modules/socket.io-client";
 
 export default {
-    name: "Auction",
+    name: "Conversation",
     data () {
         return {
             socket: io(),
@@ -95,7 +95,7 @@ export default {
         }
     },
     beforeDestroy () {
-        if (this.$route.params.conversation !== undefined) {
+        if (this.$route.params.conversation !== null) {
             this.leaveSocket();
         }
     }
