@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const remoteConnectionString = "mongodb://admin:whIsky7fOx6Haend4Malakamongodb://<dbuser>:<dbpassword>@ds121965.mlab.com:21965/heroku_kf3b52k4";
+const remoteConnectionString = "mongodb://admin:whIsky7fOx6Haend4Malaka@ds121965.mlab.com:21965/heroku_kf3b52k4";
 // const localConnectionString = process.env.DBURI;
 
 (async () => {

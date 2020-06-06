@@ -60,9 +60,9 @@ app.use("/api", coversationRoutes);
 const path = require("path");
 
 // Handle production
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static(path.join(__dirname, "dist")));
 
-app.get(/.*/, (req, res) => res.sendFile(__dirname, "/public/index.html"));
+// app.get(/.*/, (req, res) => res.sendFile(__dirname, "/public/index.html"));
 
 // Wyłapujemy odwołania do nieobsługiwanych adresów
 app.use((_, res) => {
