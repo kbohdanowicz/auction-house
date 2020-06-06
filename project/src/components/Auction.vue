@@ -151,8 +151,11 @@ export default {
                 }
                 this.timeLeft = `${hoursString}:${minutesString}:${secondsString}`;
 
-                if (tempTime <= 0) {
+                if (this.timeLeft === "00:00:00") {
                     clearInterval(this.timer);
+                    setTimeout(() => {
+                        this.$emit("refresh-auctions");
+                    }, 1000);
                 }
             });
         }
@@ -185,6 +188,7 @@ export default {
         };
     },
     beforeDestroy () {
+        // dsf
         this.leaveSocket();
     }
 };

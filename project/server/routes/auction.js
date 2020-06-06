@@ -57,15 +57,6 @@ router.route("/start")
     .all(rejectMethod);
 
 router.route("/auction")
-    .get((req, res) => {
-        Auction.findById(req.body.id, (err, doc) => {
-            if (err) {
-                res.status(500).json(model.processErrors(err));
-            } else {
-                res.json(doc);
-            }
-        });
-    })
     .post(isAuth, async (req, res) => {
         try {
             const user = req.user;

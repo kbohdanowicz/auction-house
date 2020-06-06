@@ -10,7 +10,8 @@
     </div>
     <ul>
       <li class="auction-list" v-for="auction in auctions" :key="auction._id">
-        <Auction :auction="auction" :currUser="currUser"/>
+        <Auction :auction="auction" :currUser="currUser"
+        @refresh-auctions="refreshAuctions()"/>
       </li>
     </ul>
   </div>
@@ -68,6 +69,20 @@ export default {
                         window.location.host + "/page/" + this.currentPage;
                         window.history.pushState({ path: newURL }, "", newURL);
                     }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        },
+        refreshAuctions () {
+            console.log("Refreshing auctions");
+            axios
+                .get(this.apiString + this.currentPage)
+                .then((resp) => {
+                    console.log("Inside");
+                    this.auctions = resp.data.auctions;
+                    this.nextPage = resp.data.nextPage;
+                    this.previousPage = resp.data.previousPage;
                 })
                 .catch((err) => {
                     console.log(err);
