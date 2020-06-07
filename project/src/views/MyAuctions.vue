@@ -1,8 +1,11 @@
 <template>
   <div class="my-auctions">
-    <h2 class="list-type-message">My offers</h2>
+    <h2 class="header-text">My offers</h2>
     <AuctionList :apiString="apiString"/>
-    <div id="btn-create-auction" v-if="currentUser.isAuth">
+    <div class="btn-create-auction-mobile" v-if="isAuthAndMobile">
+      <button @click="goToAuctionForm()">Create auction</button>
+    </div>
+    <div class="btn-create-auction-desktop" v-if="isAuthAndDesktop">
       <button @click="goToAuctionForm()">Create auction</button>
     </div>
   </div>
@@ -18,13 +21,21 @@ export default {
     components: {
         AuctionList
     },
+    props: ["mobileView"],
     data () {
         return {
             apiString: "/api/my-auctions/page/"
         };
     },
     computed: {
-        ...mapGetters(["currentUser"])
+        ...mapGetters(["currentUser"]),
+        isAuthAndMobile () {
+            console.log(this.mobileView);
+            return this.currentUser.isAuth && this.mobileView;
+        },
+        isAuthAndDesktop () {
+            return this.currentUser.isAuth && !this.mobileView;
+        }
     },
     methods: {
         goToAuctionForm () {
@@ -34,9 +45,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-#btn-create-auction {
+.btn-create-auction-desktop {
     position: fixed;
-    top: 60px;
-    left: 140px;
+    display: table;
+    bottom: 13px;
+    left: 20vw;
+}
+.btn-create-auction-mobile {
+    position: fixed;
+    bottom: 13px;
+    left: 5vw;
 }
 </style>

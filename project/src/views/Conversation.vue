@@ -1,18 +1,25 @@
 <template>
-  <div class="conversation" v-if="conversation !== null">
-    <input v-model="messageInput" id="message-content" type="text" placeholder="Content">
-    <button id="btn-send" @click="sendMessage()">Send</button>
-    <div v-if="conversation.messages.length === 0">
+  <div>
+    <h2 class="header-text">Conversation</h2>
+    <div class="conversation" v-if="conversation !== null">
+      <div id="no-messages" v-if="conversation.messages.length === 0">
         No messages
+      </div>
+    <div id="messages" v-else v-for="message in conversation.messages" :key="message._id">
+      <strong>{{ message.handle }}:</strong> <div class="message-content">{{ message.content }}</div>
     </div>
-    <div v-else v-for="message in conversation.messages" :key="message._id">
-      <strong>{{ message.handle }}</strong>: {{ message.content }}
+    <div class="box">
+      <textarea v-model="messageInput" placeholder="Type here"/>
+      <div class="right">
+        <button id="btn-send" @click="sendMessage()">Send</button>
+      </div>
     </div>
+    <div id="footer"></div>
+</div>
   </div>
 </template>
 
 <script>
-
 import { mapGetters } from "vuex";
 import router from "../router";
 import io from "@/../node_modules/socket.io-client";
@@ -104,7 +111,34 @@ export default {
 
 <style lang="scss" scoped>
 .conversation {
-    margin-top: 70px;
-    padding-top: 1px;
+    margin: 45px auto;
+    padding-top: 70px;
+    //width: 50%;
+    display: table;
+}
+#no-messages {
+    margin-top: 5px;
+}
+#btn-send {
+    margin-left: 0px;
+}
+textarea {
+    resize: none;
+    height: 50px;
+}
+.message-content {
+    word-break: break-all;
+}
+.box {
+    display: table;
+    margin: 0 auto;
+    //left: 50%;
+    .right {
+         display: table;
+    margin: 0 auto;
+    }
+}
+#footer {
+    left: 0;
 }
 </style>

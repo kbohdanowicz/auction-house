@@ -1,17 +1,20 @@
 <template>
   <div class="login">
-    <h2>Log in</h2>
-    <hr>
-      <form @submit.prevent="handleSubmit()" ref="form">
-        <input v-model="formData.username" type="text" name="username" id="username"
-        placeholder="Username" minLength="3" required="">
-        <br><br>
-        <input v-model="formData.password" type="password" name="password" id="password"
-        placeholder="Password" required="">
-        <br><br>
-        <button type="submit">Log in</button>
-      </form>
-      <div id="error-message"></div>
+    <h2 class="header-text">Log in</h2>
+    <form class="login-form" @submit.prevent="handleSubmit()" ref="form">
+      <input class="input-login" v-model="formData.username"
+      type="text" name="username" id="username"
+      placeholder="Username" minLength="3" required="">
+      <br><br>
+      <input v-model="formData.password" type="password" name="password" id="password"
+      placeholder="Password" required="">
+      <br><br> <!-- TODO replace -->
+      <button class="btn-submit" type="submit">Log in</button>
+      <div id="error-message" v-if="errorMessage.isVisible">
+        {{ errorMessage.content }}
+      </div>
+    </form>
+    <div id="footer"></div>
   </div>
 </template>
 
@@ -27,6 +30,10 @@ export default {
             formData: {
                 username: "",
                 password: ""
+            },
+            errorMessage: {
+                isVisible: false,
+                content: ""
             }
         };
     },
@@ -45,14 +52,15 @@ export default {
                     });
                 })
                 .catch((err) => {
-                    const error = document.getElementById("error-message");
                     if (err.response.status === 401) {
-                        error.style.visibility = "visible";
-                        error.innerHTML = "Invalid credentials";
+                        this.errorMessage.content = "Invalid credentials";
                     } else {
-                        error.style.visibility = "visible";
-                        error.innerHTML = "An error occured, try again later";
+                        this.errorMessage.content = "Something went wrong";
                     }
+                    this.errorMessage.isVisible = true;
+                    setTimeout(() => {
+                        this.errorMessage.isVisible = false;
+                    }, 3000);
                 });
         }
     }
@@ -64,10 +72,21 @@ h2 {
     text-align: center;
 }
 #error-message {
-    visibility: hidden;
+    text-align: center;
     color: red;
 }
-// input {
-
-// }
+.login-form {
+    display: table;
+    margin: 0 auto;
+    margin-top: 45px;
+    padding-top: 1px;
+}
+.input-login {
+    margin-top: 60px;
+    padding-top: 1px;
+}
+.btn-submit {
+    display: table;
+    margin: 0 auto;
+}
 </style>

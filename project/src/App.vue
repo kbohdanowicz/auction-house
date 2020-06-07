@@ -16,7 +16,7 @@
         <Navbar v-if="!mobileView"/>
       </div>
       <div id="top-spacing"></div>
-      <router-view/>
+      <router-view :mobileView="mobileView"/>
     </div>
   </div>
 </template>
@@ -68,8 +68,10 @@ body {
     height: 100vh;
     margin: 0 !important;
     padding: 0 !important;
-    background-color: royalblue;
     font-family: 'Montserrat', sans-serif;
+}
+#app {
+    background-color: royalblue;
 }
 
 // #top-spacing {
@@ -78,14 +80,15 @@ body {
 //     padding-bottom: 25px;
 // }
 
-.list-type-message {
+.header-text {
+    text-align: center;
     position: fixed;
     background-color: white;
     height: 10px;
     width: 100%;
     margin-top: 0px;
     padding-top: 10px;
-    padding-left: 25px;
+    padding-left: 0px;
     padding-bottom: 25px;
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
 }
@@ -127,5 +130,18 @@ body {
 
 i {
     font-size: 2rem;
+}
+
+#footer {
+    text-align: center;
+    position: fixed;
+    height: 10px;
+    width: 100%;
+    //margin-top: 0px;
+    padding-top: 10px;
+    //padding-left: 0px;
+    padding-bottom: 25px;
+    background-color: royalblue;
+    bottom: 0;
 }
 </style>

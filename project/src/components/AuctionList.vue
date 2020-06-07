@@ -1,19 +1,19 @@
 <template>
   <div class="auction-list">
-    <div v-if="auctions !== null">
-      <button id="btn-prev-page" @click="goToPreviousPage()">
-        &lt;
-      </button>
-      <button id="btn-next-page" @click="goToNextPage()">
-        &gt;
-      </button>
-    </div>
     <ul>
-      <li class="auction-list" v-for="auction in auctions" :key="auction._id">
+      <li v-for="auction in auctions" :key="auction._id">
         <Auction :auction="auction" :currUser="currUser"
         @refresh-auctions="refreshAuctions()"/>
       </li>
     </ul>
+    <div id="footer">
+      <button v-if="auctions !== null" id="btn-prev-page" @click="goToPreviousPage()">
+        &lt;
+      </button>
+      <button v-if="auctions !== null" id="btn-next-page" @click="goToNextPage()">
+        &gt;
+      </button>
+    </div>
   </div>
 </template>
 
@@ -52,10 +52,12 @@ export default {
         goToNextPage () {
             this.currentPage++;
             this.changePage(this.currentPage);
+            window.scrollTo(0, 0);
         },
         goToPreviousPage () {
             this.currentPage--;
             this.changePage(this.currentPage);
+            window.scrollTo(0, 0);
         },
         changePage (page) {
             axios
@@ -112,13 +114,16 @@ export default {
 .auction-list {
     margin-top: 45px;
     padding-top: 1px;
+    width: 100vw;
 }
-#btn-prev-page {
-    position: fixed;
-    margin: 14px 255px;
+ul {
+    list-style-type: none;
+    display: table;
+    margin: 0 auto;
+    margin-top: 35px;
+    padding-top: 1px;
 }
 #btn-next-page {
-    position: fixed;
-    margin: 14px 290px;
+    margin: 0 auto 0 8px;
 }
 </style>

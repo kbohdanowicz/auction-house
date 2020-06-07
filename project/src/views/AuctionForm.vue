@@ -107,7 +107,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#auction-form {
-    position: center;
+.auction-form {
+    display: table;
+    margin: 0 auto;
 }
 </style>

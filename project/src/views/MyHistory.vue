@@ -1,6 +1,6 @@
 <template>
   <div class="my-history">
-    <h2 class="list-type-message">History</h2>
+    <h2 class="header-text">History</h2>
     <AuctionList :apiString="apiString"/>
   </div>
 </template>

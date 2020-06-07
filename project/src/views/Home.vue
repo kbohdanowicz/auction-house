@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <h2 class="list-type-message">Available auctions</h2>
+    <h2 class="header-text">Available auctions</h2>
     <AuctionList :apiString="apiString"/>
   </div>
 </template>

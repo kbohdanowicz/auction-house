@@ -79,22 +79,21 @@ export default {
     // z-index: 125555;
     ul {
         position: fixed;
-        // height: 100vh;
-        background-color: royalblue;
+        background-color: white;
         list-style: none;
         width: 58%;
         li {
             font-family: 'Montserrat', sans-serif;
             font-size: 25px;
             padding: 0px;
-            color: #fff;
+            color: royalblue;
             margin-bottom: 20px;
             cursor: pointer;
             a {
                 text-align: center;
                 padding: 14px 0px;
                 text-decoration: none;
-                color: white;
+                color: royalblue;
             }
             a:hover {
                 cursor: pointer;

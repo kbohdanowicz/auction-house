@@ -1,21 +1,22 @@
 <template>
   <div class="register">
-    <h2>Register</h2>
-    <hr>
+    <h2 class="header-text">Register</h2>
     <!-- @submit handles any form of submission. -->
     <!-- .prevent keeps the event from bubbling around and doing anything else. -->
-    <form @submit.prevent="handleSubmit()">
-      <input v-model="user.username" type="text" name="username" id="username"
+    <form class="login-form" @submit.prevent="handleSubmit()">
+      <input class="input-login" v-model="user.username"
+      type="text" name="username" id="username"
       placeholder="Username" minLength="3" required="">
       <br><br>
       <input v-model="user.password" type="password" name="password" id="password"
       placeholder="Password" required="">
       <br><br>
-      <!-- confirm password
-          <input v-model="password" type="password" name="password" id="password" placeholder="Password"><br><br>
-      -->
       <button type="submit">Register</button>
+      <div id="error-message" v-if="errorMessage.isVisible">
+        {{ errorMessage.content }}
+      </div>
     </form>
+    <div id="footer"></div>
   </div>
 </template>
 
@@ -30,6 +31,10 @@ export default {
             user: {
                 username: "",
                 password: ""
+            },
+            errorMessage: {
+                isVisible: false,
+                content: ""
             }
         };
     },
@@ -41,7 +46,18 @@ export default {
                     router.push({ name: "Login" });
                 })
                 .catch((err) => {
-                    console.log(err);
+                    const status = err.response.status;
+                    if (status === 401) {
+                        this.errorMessage.content = "Invalid credentials";
+                    } else if (status === 422) {
+                        this.errorMessage.content = "Username is already taken";
+                    } else {
+                        this.errorMessage.content = "Something went wrong";
+                    }
+                    this.errorMessage.isVisible = true;
+                    setTimeout(() => {
+                        this.errorMessage.isVisible = false;
+                    }, 3000);
                 });
         }
     }
@@ -50,11 +66,24 @@ export default {
 
 <style lang="scss" scoped>
 h2 {
-    font-family: 'Montserrat', sans-serif;
     text-align: center;
 }
-
-// input {
-
-// }
+#error-message {
+    text-align: center;
+    color: red;
+}
+.login-form {
+    display: table;
+    margin: 0 auto;
+    margin-top: 45px;
+    padding-top: 1px;
+}
+.input-login {
+    margin-top: 60px;
+    padding-top: 1px;
+}
+.btn-submit {
+    display: table;
+    margin: 0 auto;
+}
 </style>

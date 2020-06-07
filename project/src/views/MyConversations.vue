@@ -1,10 +1,9 @@
 <template>
   <div class="conversations">
-    <h2 class="list-type-message">Conversations</h2>
+    <h2 class="header-text">Conversations</h2>
     <ul>
       <li class="conversation-list" v-for="conversation in conversations"
       :key="conversation._id">
-        <h3>Conversation</h3>
         {{ getOtherUser(conversation.participants) }}
         <button id="btn-show-conversation" @click="goToConversation(conversation)">
           Open
@@ -14,6 +13,7 @@
         </strong>
       </li>
     </ul>
+    <div id="footer"></div>
   </div>
 </template>
 
@@ -65,9 +65,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-
 .conversations {
     margin-top: 45px;
     padding-top: 1px;
+}
+.conversation-list {
+    padding-top: 45px;
+    display: table;
+    margin: 0 50% 0 auto;
 }
 </style>

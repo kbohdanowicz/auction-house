@@ -1,11 +1,5 @@
 <template>
   <div v-if="auction !== null" id="auction">
-    <div v-if="auction.type === 'Bid'">
-      <h3>Auction</h3>
-    </div>
-    <div v-if="auction.type === 'Buy'">
-      <h3>Product</h3>
-    </div>
     <div v-if="!isEditMode">
       <AuctionDetails
        :auction="auction" :currUser="currUser"

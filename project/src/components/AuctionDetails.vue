@@ -1,5 +1,11 @@
 <template>
   <div id="auction-details">
+    <div v-if="auction.type === 'Bid'">
+      <h3>Auction</h3>
+    </div>
+    <div v-if="auction.type === 'Buy'">
+      <h3>Product</h3>
+    </div>
     Name: {{ auction.name }}<br>
     Seller: {{ auction.seller }}<br>
     <div v-if="auction.type === 'Bid'">
@@ -20,8 +26,8 @@
           </button>
           <input v-model="formData.price" id="price-input"
            class="input" type="number"
-           min="0.01" step="0.01" placeholder="Your bid"
-           size="9" required="">
+           min="0.01" step="0.01"
+           size="7" required="">
          </div>
       </div>
       <div v-else-if="auction.status === 'Sold'">
