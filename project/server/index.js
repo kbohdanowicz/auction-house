@@ -107,7 +107,7 @@ io.on("connection", (socket) => {
     });
     socket.on("start-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`New auction socket created, id: { ${data.id} }`);
+            console.log(`[Socket]: New auction socket created, id: { ${data.id} }`);
         }
     });
     socket.on("leave-auction", (data) => {
@@ -205,7 +205,6 @@ io.on("connection", (socket) => {
     });
     socket.on("update-conversation-seen", async (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`[Socket]: New seen update from: ${username}, on: { ${data.id} }`);
             const doc = await Conversation.findById(data.id);
             for (const msg of doc.messages.reverse()) {
                 if (!msg.seen.includes(username)) {
@@ -222,7 +221,7 @@ io.on("connection", (socket) => {
                         console.log(err);
                         io.sockets.in(data.id).emit("server-error");
                     } else {
-                        console.log(`[Socket]: New messages read by user: ${username}`);
+                        console.log(`[Socket]: Messages read by user: ${username}`);
                     }
                 }
             );
@@ -231,7 +230,7 @@ io.on("connection", (socket) => {
     socket.on("new-message", (data) => {
         if (socket.request.user.logged_in) {
             const usersInConversation = io.sockets.adapter.rooms[data.id].length;
-            console.dir(usersInConversation);
+            console.dir(`${usersInConversation} users in conversation`);
             let message;
             if (usersInConversation > 1) {
                 message = new Message({
@@ -254,9 +253,8 @@ io.on("connection", (socket) => {
                         console.log(err);
                         io.sockets.in(data.id).emit("server-error");
                     } else {
-                        console.log(data);
                         io.sockets.in(data.id).emit("new-message", data);
-                        console.log(`Socket: New message from user: ${data.handle}`);
+                        console.log(`[Socket]: New message from user: ${data.handle}`);
                     }
                 }
             );
@@ -265,5 +263,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(port, () => {
-    console.log(`Serwer działa pod adresem: https://localhost:${port}`);
+    console.log(`https://localhost:${port}`);
 });

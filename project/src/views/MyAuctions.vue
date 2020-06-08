@@ -30,7 +30,6 @@ export default {
     computed: {
         ...mapGetters(["currentUser"]),
         isAuthAndMobile () {
-            console.log(this.mobileView);
             return this.currentUser.isAuth && this.mobileView;
         },
         isAuthAndDesktop () {
@@ -53,7 +52,17 @@ export default {
 }
 .btn-create-auction-mobile {
     position: fixed;
-    bottom: 13px;
-    left: 5vw;
+    bottom: 8px;
+    left: 2vw;
+}
+button {
+    color: white;
+    background-color: green;
+    border-radius: 8px;
+     padding: 2px 8px;
+    font-size: 16px;
+    cursor: pointer;
+    display: table;
+    margin: 0 auto;
 }
 </style>

@@ -85,6 +85,7 @@ ul {
         float: left;
         font-family: 'Montserrat', sans-serif;
         a {
+            border-left: 1px solid rgba(173, 173, 173, 0.2);
             display: block;
             text-decoration: none;
             color: white;

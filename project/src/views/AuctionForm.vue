@@ -4,11 +4,11 @@
     <form @submit.prevent="createAuction()">
       <label for="name-input">Name: </label>
       <input v-model="formData.name" id="name-input" class="input" type="text"
-       minLength="3" placeholder="Name" required="">
+       minLength="3" required="">
       <br><br>
       <label for="price-input">Price: $ </label>
       <input v-model="formData.price" id="price-input" class="input" type="number"
-       min="0.01" step="0.01" placeholder="Price"
+       min="0.01" step="0.01"
        size="9" required="">
       <br><br>
       <div class="select-type">
@@ -28,7 +28,7 @@
           </option>
         </select>
       </div><br>
-      <label for="jack">Start auction</label>
+      <label for="jack">Start auction?</label>
       <input v-model="isStartAuction" type="checkbox">
       <br><br>
       <button type="submit">Create</button>
@@ -108,6 +108,28 @@ export default {
 
 <style lang="scss" scoped>
 .auction-form {
+    display: table;
+    margin: 0 auto;
+}
+input, select{
+    font-size: 17px;
+    border: 2px solid royalblue;
+    border-radius: 4px;
+    width: 100%;
+    padding: 12px 14px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+input[type=checkbox] {
+    width: 20%;
+}
+button {
+    color: white;
+    background-color: #4CAF50;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 20px;
+    cursor: pointer;
     display: table;
     margin: 0 auto;
 }

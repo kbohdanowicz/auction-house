@@ -188,5 +188,26 @@ export default {
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+button {
+    color: white;
+    background-color: royalblue;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+#btn-edit {
+    background-color: salmon;
+}
+input, select{
+    border: 2px solid royalblue;
+    border-radius: 4px;
+    padding: 5px 14px;
+    margin: 8px 0;
+    box-sizing: border-box;
+}
+input[type=checkbox] {
+    width: 20%;
+}
 </style>

@@ -126,4 +126,12 @@ ul {
 #btn-next-page {
     margin: 0 auto 0 8px;
 }
+button {
+    color: black;
+    background-color: white;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
 </style>

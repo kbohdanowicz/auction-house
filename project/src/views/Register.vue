@@ -82,7 +82,7 @@ h2 {
     margin-top: 60px;
     padding-top: 1px;
 }
-.btn-submit {
+button[type=submit] {
     display: table;
     margin: 0 auto;
 }

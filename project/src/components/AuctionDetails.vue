@@ -21,7 +21,7 @@
           Highest bidder: {{ auction.highestBidder }}<br>
         </div>
         <div v-if="isLoggedAndNotSeller">
-          <button @click="bidItem()">
+          <button id="btn-bid" @click="bidItem()">
             Bid now!
           </button>
           <input v-model="formData.price" id="price-input"
@@ -37,7 +37,7 @@
       <div v-else-if="auction.status === 'New'">
         Starting price: ${{ auction.price }}<br>
         Duration: {{ getDurationText }}<br>
-        <button id="btn-start" @click="startAuction()">Start auction</button>
+        <button class="btn-start" @click="startAuction()">Start auction</button>
       </div>
       <div v-else-if="auction.status === 'Ignored'">
         No buyer<br>
@@ -45,9 +45,9 @@
     </div>
     <div v-else-if="auction.type === 'Buy'">
       <div v-if="auction.status === 'OnSale'">
-        Price: ${{ auction.price }}<br>
+        Price: <a class="dollar-sign">$</a>{{ auction.price }}<br>
         <div v-if="isLoggedAndNotSeller">
-          <button @click="buyItem()">
+          <button id="btn-buy" @click="buyItem()">
             Buy now!
           </button><br>
         </div>
@@ -58,7 +58,7 @@
       </div>
       <div v-else-if="auction.status === 'New'">
         Price: ${{ auction.price }}<br>
-        <button id="btn-start" @click="startAuction()">Start auction</button>
+        <button class="btn-start" @click="startAuction()">Start auction</button>
       </div>
     </div>
     <div id="error-message" v-if="errorMessage.isVisible">
@@ -170,5 +170,24 @@ export default {
 <style lang="scss" scoped>
 #error-message {
     color: red;
+}
+button {
+    color: white;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.btn-start {
+    background-color: royalblue;
+}
+#btn-bid {
+    background-color: salmon;
+}
+#btn-buy {
+    background-color: salmon;
+}
+.dollar-sign {
+    color: green;
 }
 </style>

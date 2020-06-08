@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="header-text">Conversation</h2>
+    <h2 class="header-text">{{ getOtherUser(conversation.participants) }}</h2>
     <div class="conversation" v-if="conversation !== null">
       <div id="no-messages" v-if="conversation.messages.length === 0">
         No messages
@@ -11,7 +11,7 @@
     <div class="box">
       <textarea v-model="messageInput" placeholder="Type here"/>
       <div class="right">
-        <button id="btn-send" @click="sendMessage()">Send</button>
+        <button @click="sendMessage()">Send</button>
       </div>
     </div>
     <div id="footer"></div>
@@ -113,15 +113,14 @@ export default {
 .conversation {
     margin: 45px auto;
     padding-top: 70px;
-    //width: 50%;
     display: table;
+    #no-messages {
+        display: table;
+        margin: 5px auto;
+        padding: 10px;
+    }
 }
-#no-messages {
-    margin-top: 5px;
-}
-#btn-send {
-    margin-left: 0px;
-}
+
 textarea {
     resize: none;
     height: 50px;
@@ -140,5 +139,15 @@ textarea {
 }
 #footer {
     left: 0;
+}
+button {
+    color: white;
+    background-color: royalblue;
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 18px;
+    cursor: pointer;
+    display: table;
+    margin: 0 auto;
 }
 </style>

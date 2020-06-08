@@ -8,7 +8,7 @@
       <br><br>
       <input v-model="formData.password" type="password" name="password" id="password"
       placeholder="Password" required="">
-      <br><br> <!-- TODO replace -->
+      <br><br>
       <button class="btn-submit" type="submit">Log in</button>
       <div id="error-message" v-if="errorMessage.isVisible">
         {{ errorMessage.content }}
@@ -85,7 +85,7 @@ h2 {
     margin-top: 60px;
     padding-top: 1px;
 }
-.btn-submit {
+button[type=submit] {
     display: table;
     margin: 0 auto;
 }

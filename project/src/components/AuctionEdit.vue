@@ -116,4 +116,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+#btn-save {
+    background-color: green;
+}
+#btn-delete {
+    background-color: red;
+}
 </style>
