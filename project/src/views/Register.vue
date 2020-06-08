@@ -39,26 +39,38 @@ export default {
         };
     },
     methods: {
+        isUsernameValid (str) {
+            const nameRegex = /^[a-zA-Z]+$/;
+            console.log(str.match(nameRegex));
+            return str.match(nameRegex) !== null;
+        },
+        showErrorMessage (message) {
+            this.errorMessage.content = message;
+            this.errorMessage.isVisible = true;
+            setTimeout(() => {
+                this.errorMessage.isVisible = false;
+            }, 3000);
+        },
         handleSubmit () {
-            axios
-                .post("api/register", this.user)
-                .then(() => {
-                    router.push({ name: "Login" });
-                })
-                .catch((err) => {
-                    const status = err.response.status;
-                    if (status === 401) {
-                        this.errorMessage.content = "Invalid credentials";
-                    } else if (status === 422) {
-                        this.errorMessage.content = "Username is already taken";
-                    } else {
-                        this.errorMessage.content = "Something went wrong";
-                    }
-                    this.errorMessage.isVisible = true;
-                    setTimeout(() => {
-                        this.errorMessage.isVisible = false;
-                    }, 3000);
-                });
+            if (this.isUsernameValid(this.user.username)) {
+                axios
+                    .post("api/register", this.user)
+                    .then(() => {
+                        router.push({ name: "Login" });
+                    })
+                    .catch((err) => {
+                        const status = err.response.status;
+                        if (status === 401) {
+                            this.showErrorMessage("Invalid credentials");
+                        } else if (status === 422) {
+                            this.showErrorMessage("Username is already taken");
+                        } else {
+                            this.showErrorMessage("Something went wrong");
+                        }
+                    });
+            } else {
+                this.showErrorMessage("Invalid username");
+            }
         }
     }
 };

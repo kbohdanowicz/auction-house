@@ -9,7 +9,7 @@
       <strong>{{ message.handle }}:</strong> <div class="message-content">{{ message.content }}</div>
     </div>
     <div class="box">
-      <textarea v-model="messageInput" placeholder="Type here"/>
+      <textarea maxlength="100" v-model="messageInput" placeholder="Type here"/>
       <div class="right">
         <button @click="sendMessage()">Send</button>
       </div>
@@ -44,8 +44,12 @@ export default {
                 return participants[0];
             }
         },
+        isEmptyOrSpaces (str) {
+            return str === "" || str.match(/^ *$/) !== null;
+        },
         sendMessage () {
-            if (this.messageInput === "") {
+            this.messageInput.trim();
+            if (this.isEmptyOrSpaces(this.messageInput)) {
                 console.log("Your message is empty!");
             } else {
                 const dataToSend = {
