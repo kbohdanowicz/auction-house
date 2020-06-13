@@ -1,22 +1,19 @@
 <template>
-  <div class="conversation">
+  <div>
     <h2 class="header-text">{{ getOtherUser(conversation.participants) }}</h2>
-    <div id="container" :class="{'desktop-view':!mobileView}">
-      <ul v-if="conversation !== null">
-        <li id="no-messages" v-if="conversation.messages.length === 0">
-          <h2>Type something!</h2>
-        </li>
-        <li class="message" v-else v-for="message in conversation.messages" :key="message._id">
-          <strong>{{ message.handle }}:</strong>
-          <div class="message-content">{{ message.content }}</div>
-        </li>
-        <li id="bottom-chat"></li>
-      </ul>
-      <div class="box">
-        <textarea :class="{'desktop-text-area':!mobileView}" maxlength="100" v-model="messageInput" placeholder="Type here"/>
-        <div>
-          <button @click="sendMessage()">Send</button>
-        </div>
+    <div class="conversation" v-if="conversation !== null">
+      <div id="no-messages" v-if="conversation.messages.length === 0">
+        No messages
+      </div>
+      <div class="message" v-else v-for="message in conversation.messages" :key="message._id">
+        <strong>{{ message.handle }}:</strong>
+        <div class="message-content">{{ message.content }}</div>
+      </div>
+    </div>
+    <div class="box">
+      <textarea maxlength="100" v-model="messageInput" placeholder="Type here"/>
+      <div class="right">
+        <button @click="sendMessage()">Send</button>
       </div>
     </div>
     <div id="footer"></div>
@@ -34,8 +31,7 @@ export default {
         return {
             socket: io(),
             messageInput: "",
-            conversation: null,
-            mobileView: true
+            conversation: null
         };
     },
     computed: {
@@ -65,7 +61,6 @@ export default {
                 };
                 this.socket.emit("new-message", dataToSend);
                 this.messageInput = "";
-                document.getElementById("bottom-chat").scrollIntoView();
             }
         },
         leaveSocket () {
@@ -85,10 +80,7 @@ export default {
             });
             return;
         }
-
         this.conversation = this.$route.params.conversation;
-        this.mobileView = this.$route.params.mobileView;
-
         if (this.currentUser.isAuth) {
             this.socket.emit("join-conversation", {
                 id: this.conversation._id,
@@ -97,10 +89,9 @@ export default {
             console.log("Joined a conversation!");
         }
 
-        this.socket.on("new-message", async (data) => {
-            await this.conversation.messages.push(data);
+        this.socket.on("new-message", (data) => {
+            this.conversation.messages.push(data);
             console.log(`New message from ${data.handle} has arrived!`);
-            document.getElementById("bottom-chat").scrollIntoView();
         });
 
         window.onbeforeunload = () => {
@@ -115,9 +106,6 @@ export default {
             });
         }
     },
-    mounted () {
-        document.getElementById("bottom-chat").scrollIntoView();
-    },
     beforeDestroy () {
         if (this.$route.params.conversation !== null) {
             this.leaveSocket();
@@ -128,59 +116,51 @@ export default {
 
 <style lang="scss" scoped>
 .conversation {
-    #container {
-        margin: 45px auto;
-        ul {
-            border-bottom: solid royalblue;
-            padding-top: 70px;
-            padding-left: 0;
-            height: 50vh;
-            overflow: auto;
-            list-style-type: none;
-            li {
-                margin: 5px auto;
-                .message-content {
-                    word-break: break-all;
-                }
-            }
-            #no-messages {
-                padding: 10px;
-                display: table;
-                margin: 0 auto;
-            }
-            .message {
-                max-width: 60vw;
-            }
-        }
-        .box {
-            display: table;
-            margin: 0 auto;
-            textarea {
-                resize: none;
-                height: 13vh;
-                width: 60vw;
-            }
-            button {
-                display: table;
-                margin: 8px auto;
-                color: white;
-                background-color: royalblue;
-                border-radius: 8px;
-                padding: 4px 12px;
-                font-size: 18px;
-                cursor: pointer;
-            }
-        }
-    }
-    #footer {
-        left: 0;
-    }
-}
-.desktop-view {
+    margin: 8px auto;
+    padding-top: 70px;
+    height: 60vh;
+    //overflow: auto;
     display: table;
-    width: 36vw;
+    #no-messages {
+        display: table;
+        margin: 5px auto;
+        padding: 10px;
+    }
+    .message {
+        max-width: 60vw;
+    }
 }
-.desktop-text-area{
-    max-width: 30vw;
+.blank{
+    visibility: hidden;
+    height: 10px;
+}
+
+textarea {
+    resize: none;
+    height: 10vh;
+}
+.message-content {
+    word-break: break-all;
+}
+.box {
+    display: table;
+    margin: 0 auto;
+    .right {
+         display: table;
+    margin: 0 auto;
+    }
+}
+#footer {
+    left: 0;
+}
+button {
+    color: white;
+    background-color: royalblue;
+    border-radius: 8px;
+    padding: 4px 12px;
+    font-size: 18px;
+    cursor: pointer;
+    display: table;
+    margin: 0 auto;
 }
 </style>

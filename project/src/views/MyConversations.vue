@@ -1,15 +1,19 @@
 <template>
-  <div class="conversations">
+  <div v-if="conversations !== null" class="conversations">
     <h2 class="header-text">Conversations</h2>
     <ul>
-      <li class="conversation-list" v-for="conversation in conversations"
+      <li v-if="conversations.length <= 0" class="no-content-message">
+        <h2>No conversations :(</h2>
+      </li>
+      <li class="conversation" v-for="conversation in conversations"
       :key="conversation._id">
         {{ getOtherUser(conversation.participants) }}
+        <br>
         <button id="btn-show-conversation" @click="goToConversation(conversation)">
           Open
         </button>
         <strong v-if="isAnyMessageUnRead(conversation.messages)">
-          Unread messages
+          (!)
         </strong>
       </li>
     </ul>
@@ -29,6 +33,7 @@ export default {
             conversations: null
         };
     },
+    props: ["mobileView"],
     computed: {
         ...mapGetters(["currentUser"])
     },
@@ -47,12 +52,12 @@ export default {
         goToConversation (_conversation) {
             router.push({
                 name: "Conversation",
-                params: { conversation: _conversation }
+                params: { conversation: _conversation, mobileView: this.mobileView }
             });
         }
     },
-    created () {
-        axios
+    async created () {
+        await axios
             .get("/api/conversations")
             .then((resp) => {
                 this.conversations = resp.data;
@@ -68,10 +73,15 @@ export default {
 .conversations {
     margin-top: 45px;
     padding-top: 1px;
-}
-.conversation-list {
-    padding-top: 45px;
-    display: table;
-    margin: 0 50% 0 auto;
+    ul {
+        list-style-type: none;
+        display: table;
+        margin: 0 auto;
+        margin-top: 35px;
+        padding-left: 0;
+        li {
+            padding-top: 20px;
+        }
+    }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div id="auction-details">
+  <div class="auction-details" :class="{'mobile-view':mobileView}">
     <div v-if="auction.type === 'Bid'">
       <h3>Auction</h3>
     </div>
@@ -24,10 +24,11 @@
           <button id="btn-bid" @click="bidItem()">
             Bid now!
           </button>
-          <input v-model="formData.price" id="price-input"
+          <input v-model="formData.price"
            class="input" type="number"
-           min="0.01" step="0.01"
-           size="7" required="">
+           min="1" max="999999999" maxlength="9" step="1"
+           oninput="this.value = this.value.slice(0, this.maxLength)"
+           size="9">
          </div>
       </div>
       <div v-else-if="auction.status === 'Sold'">
@@ -74,7 +75,7 @@ import router from "../router";
 
 export default {
     name: "AuctionDetails",
-    props: ["auction", "currUser", "timeLeft", "socket"],
+    props: ["auction", "currUser", "timeLeft", "socket", "mobileView"],
     data () {
         return {
             errorMessage: {
@@ -151,7 +152,7 @@ export default {
             } else {
                 this.socket.emit("new-bid", {
                     id: this.auction._id,
-                    highestBidder: this.currentUser.username,
+                    highestBidder: this.currUser.username,
                     price: this.formData.price
                 });
             }
@@ -168,15 +169,18 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#error-message {
-    color: red;
+.auction-details {
+    word-break: break-all;
+    width: 300px;
+    #error-message {
+        color: red;
+    }
 }
-button {
-    color: white;
-    border-radius: 8px;
-    padding: 2px 8px;
-    font-size: 16px;
-    cursor: pointer;
+input {
+    margin-left: 10px;
+}
+.mobile-view {
+    width: 80vw;
 }
 .btn-start {
     background-color: royalblue;
@@ -187,7 +191,11 @@ button {
 #btn-buy {
     background-color: salmon;
 }
-.dollar-sign {
-    color: green;
+button {
+    color: white;
+    border-radius: 8px;
+    padding: 2px 8px;
+    font-size: 16px;
+    cursor: pointer;
 }
 </style>

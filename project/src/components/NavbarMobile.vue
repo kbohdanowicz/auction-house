@@ -2,7 +2,7 @@
   <div id="navbar-mobile">
     <ul>
       <li v-if="currentUser.isAuth">
-        <div id="welcome-message">Welcome {{currentUser.username}}</div>
+        <div id="welcome-message">Welcome <br>{{currentUser.username}}</div>
       </li>
       <li @click="openOrCloseNavBar()">
         <router-link to="/page/1">Home</router-link>
@@ -45,17 +45,13 @@ import router from "../router";
 import { mapGetters, mapActions } from "vuex";
 
 export default {
-    name: "Navbar",
+    name: "NavbarMobile",
     computed: {
         ...mapGetters(["currentUser"])
     },
-    props: ["showNav"],
-    data () {
-        return {
-        };
-    },
+    props: ["showSideBar"],
     methods: {
-        ...mapActions(["fetchCurrentUser"]),
+        ...mapActions(["fetchCurrentUser"]), // raczej useless
         openOrCloseNavBar () {
             this.$emit("swap");
         },
@@ -75,25 +71,24 @@ export default {
 
 <style lang="scss" scoped>
 #navbar-mobile {
-    // padding: 20px 0 0 0;
-    // z-index: 125555;
+    background-color: rgba(65, 105, 225, 0.8);
+    height: 100vh;
     ul {
         position: fixed;
-        background-color: white;
         list-style: none;
-        width: 58%;
+        width: 56vw;
         li {
+            word-break: break-all;
             font-family: 'Montserrat', sans-serif;
             font-size: 25px;
-            padding: 0px;
-            color: royalblue;
+            //padding: 0px 0px;
+            color: white;
             margin-bottom: 20px;
-            cursor: pointer;
             a {
+                cursor: pointer;
                 text-align: center;
-                padding: 14px 0px;
                 text-decoration: none;
-                color: royalblue;
+                color: white;
             }
             a:hover {
                 cursor: pointer;

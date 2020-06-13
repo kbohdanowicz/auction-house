@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <h2 class="header-text">Available auctions</h2>
-    <AuctionList :apiString="apiString"/>
+    <AuctionList :apiString="apiString" :mobileView="mobileView"/>
   </div>
 </template>
 
@@ -14,6 +14,7 @@ export default {
     components: {
         AuctionList
     },
+    props: ["mobileView"],
     data () {
         return {
             apiString: "/api/auctions/page/"

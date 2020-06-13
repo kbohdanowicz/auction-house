@@ -1,10 +1,15 @@
 <template>
-  <div class="auction-list">
+  <div v-if="auctions !== null" class="auction-list">
     <ul>
+      <li v-if="auctions.length <= 0" class="no-content-message">
+        <h2>No auctions :(</h2>
+      </li>
       <li v-for="auction in auctions" :key="auction._id">
         <Auction :auction="auction" :currUser="currUser"
+        :mobileView="mobileView"
         @refresh-auctions="refreshAuctions()"/>
       </li>
+      <li class="blank">Blank</li>
     </ul>
     <div id="footer">
       <button v-if="auctions !== null" id="btn-prev-page" @click="goToPreviousPage()">
@@ -26,7 +31,7 @@ export default {
     components: {
         Auction
     },
-    props: ["apiString"],
+    props: ["apiString", "mobileView"],
     data () {
         return {
             currUser: this.$store.getters.currentUser,
@@ -115,21 +120,22 @@ export default {
     margin-top: 45px;
     padding-top: 1px;
     width: 100vw;
+    ul {
+        list-style-type: none;
+        display: table;
+        margin: 0 auto;
+        margin-top: 35px;
+        padding-top: 1px;
+    }
 }
-ul {
-    list-style-type: none;
-    display: table;
-    margin: 0 auto;
-    margin-top: 35px;
-    padding-top: 1px;
-}
+
 #btn-next-page {
-    margin: 0 auto 0 8px;
+    margin: 0 auto 0 6px;
 }
 button {
     color: black;
     background-color: white;
-    border-radius: 8px;
+    border-radius: 6px;
     padding: 2px 8px;
     font-size: 16px;
     cursor: pointer;

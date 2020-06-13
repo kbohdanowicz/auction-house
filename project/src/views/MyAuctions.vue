@@ -1,7 +1,7 @@
 <template>
   <div class="my-auctions">
     <h2 class="header-text">My offers</h2>
-    <AuctionList :apiString="apiString"/>
+    <AuctionList :apiString="apiString" :mobileView="mobileView"/>
     <div class="btn-create-auction-mobile" v-if="isAuthAndMobile">
       <button @click="goToAuctionForm()">Create auction</button>
     </div>
@@ -47,19 +47,19 @@ export default {
 .btn-create-auction-desktop {
     position: fixed;
     display: table;
-    bottom: 13px;
-    left: 20vw;
+    bottom: 8px;
+    left: 63vw;
 }
 .btn-create-auction-mobile {
     position: fixed;
     bottom: 8px;
-    left: 2vw;
+    left: 63vw;
 }
 button {
     color: white;
     background-color: green;
     border-radius: 8px;
-     padding: 2px 8px;
+    padding: 3px 2px;
     font-size: 16px;
     cursor: pointer;
     display: table;

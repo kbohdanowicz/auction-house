@@ -5,19 +5,18 @@
       <label for="name-input">Name: </label>
       <input v-model="formData.name" id="name-input" class="input" type="text"
        minLength="3" required="">
-      <br><br>
-      <label for="price-input">Price: $ </label>
-      <input v-model="formData.price" id="price-input" class="input" type="number"
-       min="0.01" step="0.01"
+      <label for="price-input">Price ($): </label>
+      <input v-model="formData.price" id="price-input"
+       class="input" type="number"
+       min="1" max="999999999" maxlength="9" step="1"
+       oninput="this.value = this.value.slice(0, this.maxLength)"
        size="9" required="">
-      <br><br>
       <div class="select-type">
         <label for="type-input">Type: </label>
         <select v-model="formData.type" id="type-input">
           <option value="Bid">Bid</option>
           <option value="Buy">Buy now</option>
         </select>
-        <br><br>
       </div>
       <div v-if="formData.type === 'Bid'">
         <label for="duration-input">Duration: </label>
@@ -27,13 +26,13 @@
             {{ option.text }}
           </option>
         </select>
-      </div><br>
+      </div>
       <label for="jack">Start auction?</label>
       <input v-model="isStartAuction" type="checkbox">
-      <br><br>
       <button type="submit">Create</button>
-      <br><br>
     </form>
+    <div class="blank">Blank</div>
+    <div id="footer"></div>
   </div>
 </template>
 
@@ -107,9 +106,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.auction-form {
+form {
     display: table;
     margin: 0 auto;
+    height: 100%;
+    width: 80%;
+    max-width: 300px;
 }
 input, select{
     font-size: 17px;
@@ -117,7 +119,7 @@ input, select{
     border-radius: 4px;
     width: 100%;
     padding: 12px 14px;
-    margin: 8px 0;
+    margin: 12px 0;
     box-sizing: border-box;
 }
 input[type=checkbox] {
@@ -127,7 +129,7 @@ button {
     color: white;
     background-color: #4CAF50;
     border-radius: 8px;
-    padding: 8px 16px;
+    padding: 2px 11px;
     font-size: 20px;
     cursor: pointer;
     display: table;

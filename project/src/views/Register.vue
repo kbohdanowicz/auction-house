@@ -40,8 +40,7 @@ export default {
     },
     methods: {
         isUsernameValid (str) {
-            const nameRegex = /^[a-zA-Z]+$/;
-            console.log(str.match(nameRegex));
+            const nameRegex = /^[a-zA-Z0-9]+$/;
             return str.match(nameRegex) !== null;
         },
         showErrorMessage (message) {

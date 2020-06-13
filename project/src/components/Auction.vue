@@ -3,7 +3,8 @@
     <div v-if="!isEditMode">
       <AuctionDetails
        :auction="auction" :currUser="currUser"
-       :timeLeft="timeLeft" :socket="socket"/>
+       :timeLeft="timeLeft" :socket="socket"
+       :mobileView="mobileView"/>
     </div>
     <div v-if="isAuthAndIsOwnerAndIsNotStarted">
       <button id="btn-edit" @click="showEdit()">
@@ -33,7 +34,7 @@ export default {
         AuctionDetails,
         AuctionEdit
     },
-    props: ["auction", "currUser"],
+    props: ["auction", "currUser", "mobileView"],
     data () {
         return {
             socket: io(),
@@ -77,7 +78,7 @@ export default {
                     } else {
                         router.push({
                             name: "Conversation",
-                            params: { conversation: res.data }
+                            params: { conversation: res.data, mobileView: this.mobileView }
                         });
                     }
                 })
@@ -182,7 +183,6 @@ export default {
         };
     },
     beforeDestroy () {
-        // dsf
         this.leaveSocket();
     }
 };

@@ -79,7 +79,6 @@ ul {
     list-style-type: none;
     .log-item {
         float:right;
-        // right: 25px;
     }
     li {
         float: left;
