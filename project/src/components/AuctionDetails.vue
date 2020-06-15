@@ -180,7 +180,6 @@ input {
     margin-left: 10px;
 }
 .mobile-view {
-    width: 80vw;
 }
 .btn-start {
     background-color: royalblue;

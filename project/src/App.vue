@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div>
-      <NavbarMobile :showSideBar="showSideBar" @swap="swap()"/>
+      <NavbarMobile v-if="mobileView" :showSideBar="showSideBar" @swap="swap()"/>
     </div>
     <div class="content" :class="{'open':showSideBar}">
       <div id="nav-icon" v-if="mobileView">
@@ -33,24 +33,27 @@ export default {
     data () {
         return {
             mobileView: false,
-            showSideBar: false,
-            windowWidth: window.outerWidth
+            showSideBar: false
         };
     },
     methods: {
         handleView () {
-            this.mobileView = window.innerWidth <= 600;
+            this.mobileView = window.innerWidth <= 782;
         },
         swap () {
-            // window.scrollTo(0, 0);
             this.showSideBar = !this.showSideBar;
         }
 
     },
     created () {
         this.handleView();
-        // window.onresize() = event => {
-        // };
+    },
+    updated () {
+        if (document.getElementsByName("NavbarMobile") &&
+            this.mobileView === false) {
+            this.showSideBar = false;
+        }
+        window.addEventListener("resize", this.handleView, false);
     }
 };
 </script>
@@ -109,7 +112,7 @@ body {
     }
 }
 .open {
-    transform: translate(70%);
+    transform: translate(230px);
     overflow: initial;
 }
 .blank{

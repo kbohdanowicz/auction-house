@@ -96,7 +96,7 @@ export default {
                     if (res.data !== null) {
                         router.push({
                             name: "Conversation",
-                            params: { conversation: res.data }
+                            params: { conversation: res.data, mobileView: this.mobileView }
                         });
                     } else {
                         console.log("Failed to create conversation");

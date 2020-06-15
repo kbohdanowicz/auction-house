@@ -16,6 +16,7 @@
           (!)
         </strong>
       </li>
+      <li class="blank">Blank</li>
     </ul>
     <div id="footer"></div>
   </div>

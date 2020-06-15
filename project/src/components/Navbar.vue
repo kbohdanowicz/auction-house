@@ -68,7 +68,6 @@ export default {
     padding: 0;
     width: 100vw;
 }
-
 ul {
     position: fixed;
     top: 0;

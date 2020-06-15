@@ -81,7 +81,6 @@ export default {
             word-break: break-all;
             font-family: 'Montserrat', sans-serif;
             font-size: 25px;
-            //padding: 0px 0px;
             color: white;
             margin-bottom: 20px;
             a {

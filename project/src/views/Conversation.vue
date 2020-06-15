@@ -1,19 +1,21 @@
 <template>
   <div class="conversation">
     <h2 class="header-text">{{ getOtherUser(conversation.participants) }}</h2>
-    <div id="container" :class="{'desktop-view':!mobileView}">
+    <div class="container" :class="{'desktop-view':!mobileView}">
       <ul v-if="conversation !== null">
         <li id="no-messages" v-if="conversation.messages.length === 0">
           <h2>Type something!</h2>
         </li>
-        <li class="message" v-else v-for="message in conversation.messages" :key="message._id">
-          <strong>{{ message.handle }}:</strong>
+        <li id="message" :class="checkCurrentUser(message)"
+        v-else v-for="message in conversation.messages" :key="message._id">
+          <div class="message-handle">{{ message.handle }}</div>
           <div class="message-content">{{ message.content }}</div>
         </li>
         <li id="bottom-chat"></li>
       </ul>
       <div class="box">
-        <textarea :class="{'desktop-text-area':!mobileView}" maxlength="100" v-model="messageInput" placeholder="Type here"/>
+        <textarea :class="{'desktop-text-area':!mobileView}" maxlength="100"
+         v-model="messageInput" placeholder="Type here"/>
         <div>
           <button @click="sendMessage()">Send</button>
         </div>
@@ -42,6 +44,13 @@ export default {
         ...mapGetters(["currentUser"])
     },
     methods: {
+        checkCurrentUser (message) {
+            if (this.$store.getters.currentUser.username === message.handle) {
+                return "message-current-user";
+            } else {
+                return "message-other-user";
+            }
+        },
         getOtherUser (participants) {
             if (participants[0] === this.currentUser.username) {
                 return participants[1];
@@ -76,6 +85,10 @@ export default {
                 });
                 console.log("Left conversation!");
             }
+        },
+        handleView2 () {
+            console.log("Width: " + window.innerWidth);
+            this.mobileView = window.innerWidth <= 782;
         }
     },
     created () {
@@ -88,6 +101,8 @@ export default {
 
         this.conversation = this.$route.params.conversation;
         this.mobileView = this.$route.params.mobileView;
+
+        this.handleView2();
 
         if (this.currentUser.isAuth) {
             this.socket.emit("join-conversation", {
@@ -122,13 +137,16 @@ export default {
         if (this.$route.params.conversation !== null) {
             this.leaveSocket();
         }
+    },
+    updated () {
+        window.addEventListener("resize", this.handleView2, false);
     }
 };
 </script>
 
 <style lang="scss" scoped>
 .conversation {
-    #container {
+    .container {
         margin: 45px auto;
         ul {
             border-bottom: solid royalblue;
@@ -139,17 +157,39 @@ export default {
             list-style-type: none;
             li {
                 margin: 5px auto;
+                .message-handle {
+                    font-size: 12px;
+                    margin: 0 10px;
+                }
                 .message-content {
+                    margin: 0 10px;
                     word-break: break-all;
                 }
             }
             #no-messages {
                 padding: 10px;
                 display: table;
-                margin: 0 auto;
+                margin: 10vh auto;
             }
-            .message {
-                max-width: 60vw;
+            #message {
+                max-width: 250px;
+                background-color: #dfdfdf;
+                border-radius: 6px;
+                margin-bottom: 10px;
+                padding: 5px 0px;
+            }
+            .message-other-user {
+                margin-left: 8px;
+                .message-handle {
+                    color: red;
+                }
+            }
+            .message-current-user {
+                margin-right: 8px;
+                text-align: right;
+                .message-handle {
+                    color: royalblue;
+                }
             }
         }
         .box {
@@ -172,13 +212,13 @@ export default {
             }
         }
     }
+    .container.desktop-view {
+        display: table;
+        width: 36vw;
+    }
     #footer {
         left: 0;
     }
-}
-.desktop-view {
-    display: table;
-    width: 36vw;
 }
 .desktop-text-area{
     max-width: 30vw;
