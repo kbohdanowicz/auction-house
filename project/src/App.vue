@@ -89,9 +89,8 @@ body {
     width: 100%;
     height: 100vh;
     background-color: #fff;
-    height: 70vh;
-    overflow: auto;
-    padding-bottom: 30vh;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 #nav-icon {
     background-color: white;

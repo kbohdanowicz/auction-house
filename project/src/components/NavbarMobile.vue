@@ -70,6 +70,7 @@ export default {
 #navbar-mobile {
     background-color: rgba(65, 105, 225, 0.8);
     height: 100vh;
+    width: 250px;
     ul {
         position: fixed;
         list-style: none;

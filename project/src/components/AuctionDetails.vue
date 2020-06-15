@@ -97,7 +97,7 @@ export default {
             return user.isAuth && this.auction.seller !== user.username;
         },
         isAnyTimeLeft () {
-            if (new Date(this.auction.duration).getTime() >= new Date().getTime()) {
+            if (this.auction.endTime >= new Date().getTime()) {
                 return true;
             }
             return false;
@@ -178,8 +178,6 @@ export default {
 }
 input {
     margin-left: 10px;
-}
-.mobile-view {
 }
 .btn-start {
     background-color: royalblue;

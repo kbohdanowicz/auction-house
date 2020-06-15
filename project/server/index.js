@@ -129,7 +129,6 @@ io.on("connection", (socket) => {
                 oldPrice = doc.price;
             } catch (err) {
                 console.log(err);
-                // return io.sockets.socketId.emit("server-error");// todo wyswietlanie bledu
             }
             if (data.price > oldPrice) {
                 const update = {
@@ -248,7 +247,7 @@ io.on("connection", (socket) => {
             Conversation.findByIdAndUpdate(
                 data.id,
                 { $push: { messages: message } },
-                (err) => {
+                (err, doc) => {
                     if (err) {
                         console.log(err);
                         io.sockets.in(data.id).emit("server-error");
@@ -260,6 +259,42 @@ io.on("connection", (socket) => {
             );
         };
     });
+});
+
+const filter = {
+    type: "Bid"
+};
+Auction.find(filter, (err, docs) => {
+    if (err) {
+        console.dir(err);
+    } else {
+        docs.forEach(doc => {
+            if (doc.status === "OnSale") {
+                if (doc.endTime >= new Date().getTime()) {
+                    // console.dir("Timeout started");
+                    setTimeout(() => {
+                        Auction.findOne(filter, (err, doc) => {
+                            if (err) {
+                                console.dir(err);
+                            } else if (doc.highestBidder !== "") {
+                                console.dir("Auction sold");
+                                doc.status = "Sold";
+                            } else {
+                                console.dir("Auction ignored");
+                                doc.status = "Ignored";
+                            }
+                            doc.save();
+                        }
+                        );
+                    }, doc.duration);
+                } else {
+                    console.dir(`Auction { name: ${doc.name} } is aborted`);
+                    doc.status = "Ignored";
+                    doc.save();
+                }
+            }
+        });
+    }
 });
 
 server.listen(port, () => {

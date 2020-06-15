@@ -6,6 +6,7 @@ import Register from "../views/Register.vue";
 import MyBids from "../views/MyBids.vue";
 import MyAuctions from "../views/MyAuctions.vue";
 import AuctionForm from "../views/AuctionForm.vue";
+import AuctionEdit from "../views/AuctionEdit.vue";
 import Conversation from "../views/Conversation.vue";
 import MyConversations from "../views/MyConversations.vue";
 import store from "../store";
@@ -52,6 +53,11 @@ const routes = [
         path: "/auction",
         name: "Auction",
         component: AuctionForm
+    },
+    {
+        path: "/auction-edit",
+        name: "AuctionEdit",
+        component: AuctionEdit
     },
     {
         path: "/conversation",

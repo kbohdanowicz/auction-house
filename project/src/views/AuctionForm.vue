@@ -1,6 +1,5 @@
 <template>
   <div class="auction-form">
-    <!--<h2 class="header-text">Create auction</h2>-->
     <div class="blank"></div>
     <form @submit.prevent="createAuction()">
       <label for="name-input">Name: </label>
@@ -21,14 +20,14 @@
       </div>
       <div v-if="formData.type === 'Bid'">
         <label for="duration-input">Duration: </label>
-        <select v-model="formData.duration" id="type-input">
+        <select v-model="formData.duration" id="duration-input">
           <option v-for="option in options" :key="option.text"
           v-bind:value="option.value">
             {{ option.text }}
           </option>
         </select>
       </div>
-      <label for="jack">Start auction?</label>
+      <label for="checkbox">Start auction?</label>
       <input v-model="isStartAuction" type="checkbox">
       <button type="submit">Create</button>
     </form>

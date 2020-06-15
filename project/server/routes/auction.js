@@ -23,8 +23,8 @@ router.route("/start")
                 doc.status = "OnSale";
                 if (doc.type === "Bid") {
                     const tempTime = doc.duration;
-                    doc.duration = new Date(new Date().getTime() + doc.duration).getTime();
-                    console.dir(doc.duration);
+                    doc.endTime = new Date().getTime() + doc.duration;
+                    console.dir(doc.endTime);
                     doc.save();
 
                     res.json(doc);
@@ -94,6 +94,9 @@ router.route("/auction")
             if (body.name) {
                 update.name = body.name;
             }
+            if (body.price) {
+                update.price = body.price;
+            }
             if (body.type) {
                 update.type = body.type;
             }
@@ -101,12 +104,12 @@ router.route("/auction")
                 update.duration = body.duration;
             }
         }
-        if (body.highestBidder) {
-            update.highestBidder = body.highestBidder;
-        }
-        if (body.status) {
-            update.status = body.status;
-        }
+        // if (body.highestBidder) {
+        //     update.highestBidder = body.highestBidder;
+        // }
+        // if (body.status) {
+        //     update.status = body.status;
+        // }
         console.dir(req.body);
         console.dir(update);
         const filter = req.body.id;
@@ -126,19 +129,24 @@ router.route("/auction")
             _id: req.body.id,
             seller: req.user.username
         };
+        console.log(filter);
         Auction.findOneAndDelete(filter, (err, doc) => {
             if (err) {
                 res.status(500).json(model.processErrors(err));
             } else {
+                let msg;
                 if (doc === null) {
+                    msg = "Could not find auction or you are not an owner";
                     res.json({
-                        message: "Could not find auction or you are not an owner"
+                        message: msg
                     });
                 } else {
+                    msg = "Auction successfully deleted";
                     res.json({
-                        message: "Auction successfully deleted"
+                        message: msg
                     });
                 }
+                console.log(msg);
             }
         }
         );

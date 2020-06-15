@@ -130,13 +130,13 @@ export default {
 }
 
 #btn-next-page {
-    margin: 0 auto 0 6px;
 }
 button {
     color: black;
     background-color: white;
     border-radius: 6px;
     padding: 2px 8px;
+    margin: 0 0 0 6px;
     font-size: 16px;
     cursor: pointer;
 }

@@ -7,12 +7,9 @@
        :mobileView="mobileView"/>
     </div>
     <div v-if="isAuthAndIsOwnerAndIsNotStarted">
-      <button id="btn-edit" @click="showEdit()">
+      <button id="btn-edit" @click="goToEdit()">
         {{ editButtonText }}
       </button>
-    </div>
-    <div v-if="isEditMode">
-      <AuctionEdit :auction="auction" :currUser="currUser"/>
     </div>
     <button v-if="isAuthAndIsNotOwnerAndOnSale" @click="goToConversation()">
       Contact seller
@@ -23,7 +20,6 @@
 <script>
 import axios from "axios";
 import AuctionDetails from "@/components/AuctionDetails";
-import AuctionEdit from "@/components/AuctionEdit";
 import { mapGetters } from "vuex";
 import io from "@/../node_modules/socket.io-client";
 import router from "../router";
@@ -31,8 +27,7 @@ import router from "../router";
 export default {
     name: "Auction",
     components: {
-        AuctionDetails,
-        AuctionEdit
+        AuctionDetails
     },
     props: ["auction", "currUser", "mobileView"],
     data () {
@@ -58,13 +53,11 @@ export default {
         }
     },
     methods: {
-        showEdit () {
-            this.isEditMode = !this.isEditMode;
-            if (this.isEditMode) {
-                this.editButtonText = "Cancel changes";
-            } else {
-                this.editButtonText = "Edit";
-            }
+        goToEdit () {
+            router.push({
+                name: "AuctionEdit",
+                params: { auction: this.auction }
+            });
         },
         goToConversation () {
             const body = {
@@ -119,22 +112,27 @@ export default {
     created () {
         if (this.auction.status === "OnSale" &&
             this.auction.type === "Bid" &&
-            this.auction.duration !== null &&
-            new Date(this.auction.duration).getTime() >= new Date().getTime()) {
+            this.auction.endTime !== null &&
+            this.auction.endTime >= new Date().getTime()) {
             this.timer = setInterval(() => {
                 const now = new Date().getTime();
-                const to = new Date(this.auction.duration);
+                const to = this.auction.endTime;
 
                 const tempTime = to - now;
 
+                const days = Math.floor((tempTime % (1000 * 60 * 60 * 24 * 7)) / (1000 * 60 * 60 * 24));
                 const hours = Math.floor((tempTime % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                 const minutes = Math.floor((tempTime % (1000 * 60 * 60)) / (1000 * 60));
                 const seconds = Math.floor((tempTime % (1000 * 60)) / (1000));
 
+                let daysString = days.toString() + "d ";
                 let hoursString = hours.toString();
                 let minutesString = minutes.toString();
                 let secondsString = seconds.toString();
 
+                if (daysString === "0d ") {
+                    daysString = "";
+                }
                 if (hoursString.length === 1) {
                     hoursString = `0${hoursString}`;
                 }
@@ -144,9 +142,10 @@ export default {
                 if (secondsString.length === 1) {
                     secondsString = `0${secondsString}`;
                 }
-                this.timeLeft = `${hoursString}:${minutesString}:${secondsString}`;
+                this.timeLeft = `${daysString}${hoursString}:${minutesString}:${secondsString}`;
 
                 if (this.timeLeft === "00:00:00") {
+                    console.log("Finished interval");
                     clearInterval(this.timer);
                     setTimeout(() => {
                         this.$emit("refresh-auctions");
@@ -196,6 +195,7 @@ button {
     padding: 2px 8px;
     font-size: 16px;
     cursor: pointer;
+    margin-top: 5px;
 }
 #btn-edit {
     background-color: salmon;
