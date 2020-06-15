@@ -121,7 +121,7 @@ export default {
             case 1000 * 60 * 60 * 24 * 7:
                 return "1 Week";
             default:
-                return "DEFAULT VALUE";// watch out
+                return "DEFAULT VALUE";
             }
         }
     },
@@ -171,7 +171,7 @@ export default {
 <style lang="scss" scoped>
 .auction-details {
     word-break: break-all;
-    width: 300px;
+    width: 250px;
     #error-message {
         color: red;
     }

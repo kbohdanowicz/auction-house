@@ -1,23 +1,20 @@
 <template>
   <div id="navbar">
     <ul>
-      <li v-if="currentUser.isAuth">
-        <div id="welcome-message">Welcome {{currentUser.username}}</div>
-      </li>
       <li>
         <router-link to="/page/1">Home</router-link>
       </li>
       <li v-if="currentUser.isAuth" class="nav-item">
-        <router-link to="/my-bids/page/1">My bids</router-link>
+        <router-link to="/my-bids/page/1">Bids</router-link>
       </li>
       <li v-if="currentUser.isAuth" class="nav-item">
         <router-link to="/my-auctions/page/1">My offers</router-link>
       </li>
       <li v-if="currentUser.isAuth" class="nav-item">
-        <router-link to="/my-history/page/1">My history</router-link>
+        <router-link to="/my-history/page/1">History</router-link>
       </li>
       <li v-if="currentUser.isAuth" class="nav-item">
-        <router-link to="/my-conversations">My conversations</router-link>
+        <router-link to="/my-conversations">Conversations</router-link>
       </li>
       <li v-if="currentUser.isAuth">
         <a class="log-item" @click="logout()">Log out</a>

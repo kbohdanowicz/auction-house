@@ -86,9 +86,9 @@ export default {
                 console.log("Left conversation!");
             }
         },
-        handleView2 () {
-            console.log("Width: " + window.innerWidth);
-            this.mobileView = window.innerWidth <= 782;
+        handleView () {
+            // console.log("Width: " + window.innerWidth);
+            this.mobileView = window.innerWidth <= 680;
         }
     },
     created () {
@@ -102,7 +102,8 @@ export default {
         this.conversation = this.$route.params.conversation;
         this.mobileView = this.$route.params.mobileView;
 
-        this.handleView2();
+        this.handleView();
+        window.addEventListener("resize", this.handleView, false);
 
         if (this.currentUser.isAuth) {
             this.socket.emit("join-conversation", {
@@ -137,19 +138,21 @@ export default {
         if (this.$route.params.conversation !== null) {
             this.leaveSocket();
         }
-    },
-    updated () {
-        window.addEventListener("resize", this.handleView2, false);
     }
 };
 </script>
 
 <style lang="scss" scoped>
 .conversation {
+    .header-text {
+        width: 100vw;
+        word-break: break-all;
+    }
     .container {
         margin: 45px auto;
         ul {
             border-bottom: solid royalblue;
+            margin-top: 48px;
             padding-top: 70px;
             padding-left: 0;
             height: 50vh;

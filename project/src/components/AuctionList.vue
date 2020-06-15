@@ -1,6 +1,6 @@
 <template>
-  <div v-if="auctions !== null" class="auction-list">
-    <ul>
+  <div class="auction-list">
+    <ul v-if="auctions !== null">
       <li v-if="auctions.length <= 0" class="no-content-message">
         <h2>No auctions :(</h2>
       </li>

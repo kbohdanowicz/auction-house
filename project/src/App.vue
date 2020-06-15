@@ -38,7 +38,7 @@ export default {
     },
     methods: {
         handleView () {
-            this.mobileView = window.innerWidth <= 782;
+            this.mobileView = window.innerWidth <= 680;
         },
         swap () {
             this.showSideBar = !this.showSideBar;
@@ -47,13 +47,13 @@ export default {
     },
     created () {
         this.handleView();
+        window.addEventListener("resize", this.handleView, false);
     },
     updated () {
         if (document.getElementsByName("NavbarMobile") &&
             this.mobileView === false) {
             this.showSideBar = false;
         }
-        window.addEventListener("resize", this.handleView, false);
     }
 };
 </script>

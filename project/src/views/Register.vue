@@ -6,7 +6,7 @@
     <form class="login-form" @submit.prevent="handleSubmit()">
       <input class="input-login" v-model="user.username"
       type="text" name="username" id="username"
-      placeholder="Username" minLength="2" required="">
+      placeholder="Username" minLength="2" maxLength="16" required="">
       <br><br>
       <input v-model="user.password" type="password" name="password" id="password"
       placeholder="Password" required="">

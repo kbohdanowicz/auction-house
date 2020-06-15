@@ -1,6 +1,7 @@
 <template>
   <div class="auction-form">
-    <h2>Create auction</h2>
+    <!--<h2 class="header-text">Create auction</h2>-->
+    <div class="blank"></div>
     <form @submit.prevent="createAuction()">
       <label for="name-input">Name: </label>
       <input v-model="formData.name" id="name-input" class="input" type="text"

@@ -3,10 +3,10 @@
     <h2 class="header-text">My offers</h2>
     <AuctionList :apiString="apiString" :mobileView="mobileView"/>
     <div class="btn-create-auction-mobile" v-if="isAuthAndMobile">
-      <button @click="goToAuctionForm()">Create auction</button>
+      <button @click="goToAuctionForm()">New auction</button>
     </div>
     <div class="btn-create-auction-desktop" v-if="isAuthAndDesktop">
-      <button @click="goToAuctionForm()">Create auction</button>
+      <button @click="goToAuctionForm()">New auction</button>
     </div>
   </div>
 </template>
@@ -59,10 +59,8 @@ button {
     color: white;
     background-color: green;
     border-radius: 8px;
-    padding: 3px 2px;
+    padding: 3px 3px;
     font-size: 16px;
     cursor: pointer;
-    display: table;
-    margin: 0 auto;
 }
 </style>

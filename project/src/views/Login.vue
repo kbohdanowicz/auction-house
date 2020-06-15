@@ -4,7 +4,7 @@
     <form class="login-form" @submit.prevent="handleSubmit()" ref="form">
       <input class="input-login" v-model="formData.username"
       type="text" name="username" id="username"
-      placeholder="Username" minLength="3" required="">
+      placeholder="Username" minLength="2" maxLength="16" required="">
       <br><br>
       <input v-model="formData.password" type="password" name="password" id="password"
       placeholder="Password" required="">

@@ -1,7 +1,7 @@
 <template>
-  <div v-if="conversations !== null" class="conversations">
+  <div class="conversations">
     <h2 class="header-text">Conversations</h2>
-    <ul>
+    <ul v-if="conversations !== null">
       <li v-if="conversations.length <= 0" class="no-content-message">
         <h2>No conversations :(</h2>
       </li>
@@ -81,7 +81,11 @@ export default {
         margin-top: 35px;
         padding-left: 0;
         li {
+            text-align: center;
             padding-top: 20px;
+            button {
+                margin: 8px 0;
+            }
         }
     }
 }

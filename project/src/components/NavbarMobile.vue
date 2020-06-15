@@ -1,9 +1,6 @@
 <template>
   <div id="navbar-mobile">
     <ul>
-      <li v-if="currentUser.isAuth">
-        <div id="welcome-message">Welcome <br>{{currentUser.username}}</div>
-      </li>
       <li @click="openOrCloseNavBar()">
         <router-link to="/page/1">Home</router-link>
       </li>
@@ -51,7 +48,7 @@ export default {
     },
     props: ["showSideBar"],
     methods: {
-        ...mapActions(["fetchCurrentUser"]), // raczej useless
+        ...mapActions(["fetchCurrentUser"]),
         openOrCloseNavBar () {
             this.$emit("swap");
         },
@@ -76,7 +73,7 @@ export default {
     ul {
         position: fixed;
         list-style: none;
-        width: 56vw;
+        width: 250px;
         li {
             word-break: break-all;
             font-family: 'Montserrat', sans-serif;
