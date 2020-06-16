@@ -4,7 +4,7 @@
     <form @submit.prevent="updateAuction()">
       <label for="name-input">Name: </label>
       <input v-model="formData.name" id="name-input" class="input" type="text"
-       minLength="3" required="">
+       minLength="3" maxLength="50" required="">
       <label for="price-input">Price ($): </label>
       <input v-model="formData.price" id="price-input"
        class="input" type="number"

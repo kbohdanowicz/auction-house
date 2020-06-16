@@ -6,24 +6,28 @@
     <div v-if="auction.type === 'Buy'">
       <h3>Product</h3>
     </div>
-    Name: {{ auction.name }}<br>
-    Seller: {{ auction.seller }}<br>
+    <strong>Name:</strong> {{ auction.name }}<br>
+    <strong>Seller:</strong> {{ auction.seller }}<br>
     <div v-if="auction.type === 'Bid'">
       <div v-if="auction.status === 'OnSale'">
-        Current price: ${{ auction.price }}<br>
+        <strong>Current price:</strong> ${{ auction.price }}<br>
         <div v-if="isAnyTimeLeft">
-          Time left: {{ timeLeft }}
+          <strong>Time left:</strong> {{ timeLeft }}
         </div>
         <div v-if="auction.highestBidder === ''">
-          No one bid yet!<br>
+          <strong class="green-text">No one bid yet!</strong><br>
         </div>
         <div v-else>
-          Highest bidder: {{ auction.highestBidder }}<br>
+          <strong>Highest bidder:</strong>
+          <span>
+            {{ auction.highestBidder }}<br>
+          </span>
         </div>
         <div v-if="isLoggedAndNotSeller">
           <button id="btn-bid" @click="bidItem()">
             Bid now!
           </button>
+          ($)
           <input v-model="formData.price"
            class="input" type="number"
            min="1" max="999999999" maxlength="9" step="1"
@@ -32,21 +36,21 @@
          </div>
       </div>
       <div v-else-if="auction.status === 'Sold'">
-        Sold for: ${{ auction.price }}<br>
-        Buyer: {{ auction.highestBidder }}
+        <strong>Sold for:</strong> ${{ auction.price }}<br>
+        <strong>Buyer:</strong> {{ auction.highestBidder }}
       </div>
       <div v-else-if="auction.status === 'New'">
-        Starting price: ${{ auction.price }}<br>
-        Duration: {{ getDurationText }}<br>
+        <strong>Starting price:</strong> ${{ auction.price }}<br>
+        <strong>Duration:</strong> {{ getDurationText }}<br>
         <button class="btn-start" @click="startAuction()">Start auction</button>
       </div>
       <div v-else-if="auction.status === 'Ignored'">
-        No buyer<br>
+        <strong>No buyer</strong><br>
       </div>
     </div>
     <div v-else-if="auction.type === 'Buy'">
       <div v-if="auction.status === 'OnSale'">
-        Price: <a class="dollar-sign">$</a>{{ auction.price }}<br>
+        <strong>Price:</strong> <a class="dollar-sign">$</a>{{ auction.price }}<br>
         <div v-if="isLoggedAndNotSeller">
           <button id="btn-buy" @click="buyItem()">
             Buy now!
@@ -54,11 +58,11 @@
         </div>
       </div>
       <div v-else-if="auction.status === 'Sold'">
-        Sold for: ${{ auction.price }}<br>
-        Buyer: {{ auction.highestBidder }}
+        <strong>Sold for:</strong> ${{ auction.price }}<br>
+        <strong>Buyer:</strong> {{ auction.highestBidder }}
       </div>
       <div v-else-if="auction.status === 'New'">
-        Price: ${{ auction.price }}<br>
+        <strong>Price:</strong> ${{ auction.price }}<br>
         <button class="btn-start" @click="startAuction()">Start auction</button>
       </div>
     </div>
@@ -150,6 +154,7 @@ export default {
                     this.errorMessage.isVisible = false;
                 }, 3000);
             } else {
+                this.errorMessage.isVisible = false;
                 this.socket.emit("new-bid", {
                     id: this.auction._id,
                     highestBidder: this.currUser.username,
@@ -174,7 +179,11 @@ export default {
     width: 250px;
     #error-message {
         color: red;
+        margin-bottom: 5px;
     }
+}
+.green-text {
+    color: green;
 }
 input {
     margin-left: 10px;

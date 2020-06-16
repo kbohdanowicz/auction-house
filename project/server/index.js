@@ -95,7 +95,7 @@ io.use(passportSocketIo.authorize({
 let isTransactionInProgress = false;
 
 io.on("connection", (socket) => {
-    console.dir(`Made socket connection: ${socket.id}`);
+    console.log(`Made socket connection: ${socket.id}`);
     const username = socket.request.user.username;
 
     // Auctions
@@ -217,7 +217,6 @@ io.on("connection", (socket) => {
                 (err) => {
                     if (err) {
                         console.log(err);
-                        io.sockets.in(data.id).emit("server-error");
                     } else {
                         console.log(`[Socket]: Messages read by user: ${username}`);
                     }
@@ -249,7 +248,6 @@ io.on("connection", (socket) => {
                 (err, doc) => {
                     if (err) {
                         console.log(err);
-                        io.sockets.in(data.id).emit("server-error");
                     } else {
                         io.sockets.in(data.id).emit("new-message", data);
                         console.dir(`[Socket]: New message from user: ${data.handle}`);

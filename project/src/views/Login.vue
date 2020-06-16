@@ -5,8 +5,9 @@
       <input class="input-login" v-model="formData.username"
       type="text" name="username" id="username"
       placeholder="Username" minLength="2" maxLength="16" required="">
-      <input v-model="formData.password" type="password" name="password" id="password"
-      placeholder="Password" required="">
+      <input v-model="formData.password" type="password"
+      name="password" id="password"
+      placeholder="Password" maxLength="16" required="">
       <button class="btn-submit" type="submit">Log in</button>
       <div id="error-message" v-if="errorMessage.isVisible">
         {{ errorMessage.content }}

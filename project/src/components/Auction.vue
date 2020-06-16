@@ -11,6 +11,9 @@
     <button v-if="isAuthAndIsNotOwnerAndOnSale" @click="goToConversation()">
       Contact seller
     </button>
+    <div class="error-message" v-if="errorMessage.isVisible">
+      {{ errorMessage.content }}
+    </div>
   </div>
 </template>
 
@@ -32,7 +35,11 @@ export default {
             socket: io(),
             isEditMode: false,
             timeLeft: null,
-            addressBar: window.location.href
+            addressBar: window.location.href,
+            errorMessage: {
+                isVisible: false,
+                content: "Server is busy. Try again"
+            }
         };
     },
     computed: {
@@ -103,6 +110,13 @@ export default {
                     username: this.currUser.username
                 });
             }
+        },
+        showErrorMessage (message) {
+            this.errorMessage.content = message;
+            this.errorMessage.isVisible = true;
+            setTimeout(() => {
+                this.errorMessage.isVisible = false;
+            }, 3000);
         }
     },
     created () {
@@ -170,6 +184,16 @@ export default {
             this.auction.highestBidder = data.highestBidder;
         });
 
+        this.socket.on("server-busy", (data) => {
+            console.log("Server is busy");
+            this.showErrorMessage("Server is busy. Try again");
+        });
+
+        this.socket.on("server-error", (data) => {
+            console.log("Server error");
+            this.showErrorMessage("Server error. Try again");
+        });
+
         window.onbeforeunload = () => {
             this.socket.emit("leave-auction", {
                 id: this.auction._id,
@@ -184,6 +208,10 @@ export default {
 </script>
 
 <style lang="scss">
+.error-message {
+    color: red;
+    margin-top: 5px;
+}
 button {
     color: white;
     background-color: royalblue;
@@ -191,7 +219,6 @@ button {
     padding: 2px 8px;
     font-size: 16px;
     cursor: pointer;
-    margin-top: 5px;
 }
 #btn-edit {
     background-color: salmon;

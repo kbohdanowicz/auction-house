@@ -8,7 +8,7 @@
       type="text" name="username" id="username"
       placeholder="Username" minLength="2" maxLength="16" required="">
       <input v-model="user.password" type="password" name="password" id="password"
-      placeholder="Password" required="">
+      placeholder="Password" maxLength="16" required="">
       <button type="submit">Register</button>
       <div id="error-message" v-if="errorMessage.isVisible">
         {{ errorMessage.content }}
