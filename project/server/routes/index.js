@@ -29,16 +29,43 @@ router
     .route("/current-user")
     .get((req, res) => {
         if (req.isAuthenticated()) {
-            res.send({
-                username: req.user.username,
-                isAuth: req.isAuthenticated()
+            const filter = { username: req.user.username };
+            User.findOne(filter, (err, doc) => {
+                if (err) {
+                    res.status(500).send();
+                } else {
+                    res.json({
+                        username: req.user.username,
+                        isAuth: req.isAuthenticated(),
+                        notifications: doc.notifications,
+                        isNewNotification: doc.isNewNotification
+                    });
+                }
             });
         } else {
             res.send({
                 message: "Not logged in"
             });
         }
-    });
+    })
+    .patch(isAuth, (req, res) => {
+        const filter = {
+            username: req.user.username
+        };
+        User.findOneAndUpdate(
+            filter,
+            { isNewNotification: false },
+            (err, doc) => {
+                if (err) {
+                    console.log(err);
+                } else {
+                    res.send(doc);
+                    console.dir("isNewNotification set to false");
+                }
+            }
+        );
+    })
+    .all(rejectMethod);
 
 router
     .route("/login")

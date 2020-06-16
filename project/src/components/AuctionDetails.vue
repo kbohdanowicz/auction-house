@@ -79,7 +79,7 @@ import router from "../router";
 
 export default {
     name: "AuctionDetails",
-    props: ["auction", "currUser", "timeLeft", "socket"],
+    props: ["auction", "currUser", "timeLeft"],
     data () {
         return {
             errorMessage: {
@@ -96,6 +96,9 @@ export default {
     },
     computed: {
         ...mapGetters(["currentUser"]),
+        socket () {
+            return this.$store.getters.socket;
+        },
         isLoggedAndNotSeller () {
             const user = this.currUser;
             return user.isAuth && this.auction.seller !== user.username;

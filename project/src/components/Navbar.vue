@@ -1,6 +1,9 @@
 <template>
   <div id="navbar">
     <ul>
+      <li v-if="currentUser.isAuth">
+        <router-link :class="checkIsNewNotification" to="/notifications">(!)</router-link>
+      </li>
       <li>
         <router-link to="/page/1">Home</router-link>
       </li>
@@ -37,7 +40,15 @@ import { mapGetters, mapActions } from "vuex";
 export default {
     name: "Navbar",
     computed: {
-        ...mapGetters(["currentUser"])
+        ...mapGetters(["currentUser"]),
+        checkIsNewNotification () {
+            console.log("Checking notifications");
+            let str;
+            if (this.$store.getters.currentUser.isNewNotification) {
+                str = "red";
+            }
+            return str;
+        }
     },
     data () {
         return {
@@ -45,6 +56,14 @@ export default {
     },
     methods: {
         ...mapActions(["fetchCurrentUser"]),
+        // checkIsNewNotification () {
+        //     console.log("Checking notifications");
+        //     let str;
+        //     if (this.currentUser.isNewNotification) {
+        //         str = "red";
+        //     }
+        //     return str;
+        // },
         logout () {
             axios
                 .get("/api/logout")
@@ -75,6 +94,12 @@ ul {
     list-style-type: none;
     .log-item {
         float:right;
+    }
+    .white {
+        color: white;
+    }
+    .red {
+        color: red;
     }
     li {
         float: left;

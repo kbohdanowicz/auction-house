@@ -45,9 +45,29 @@ export default {
         swap () {
             this.showSideBar = !this.showSideBar;
         }
-
     },
-    created () {
+    computed: {
+        socket () {
+            return this.$store.getters.socket;
+        },
+        currentUser () {
+            return this.$store.getters.currentUser;
+        }
+    },
+    async created () {
+        await this.$store.dispatch("fetchCurrentUser");
+        if (this.$store.getters.currentUser.isAuth) {
+            this.$store.dispatch("connectSocket");
+            this.socket.emit("join-user-room", {
+                id: this.$store.getters.currentUser.username
+            });
+            this.socket.on("bid-lost", (data) => {
+                if (data.oldHighestBidder !== data.newHighestBidder) {
+                    this.$store.dispatch("setIsNewNotificationTrue");
+                    console.log(`Someone bid higher for ${data.auctionName}!`);
+                }
+            });
+        }
         this.handleView();
         window.addEventListener("resize", this.handleView, false);
     },
@@ -56,6 +76,9 @@ export default {
             this.$store.getters.isMobileView === false) {
             this.showSideBar = false;
         }
+    },
+    beforeDestroy () {
+        // this.$store.dispatch("disConnectSocket");
     }
 };
 </script>

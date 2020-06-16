@@ -21,7 +21,6 @@
 import axios from "axios";
 import AuctionDetails from "@/components/AuctionDetails";
 import { mapGetters } from "vuex";
-import io from "@/../node_modules/socket.io-client";
 import router from "../router";
 
 export default {
@@ -32,7 +31,6 @@ export default {
     props: ["auction", "currUser"],
     data () {
         return {
-            socket: io(),
             isEditMode: false,
             timeLeft: null,
             addressBar: window.location.href,
@@ -44,6 +42,9 @@ export default {
     },
     computed: {
         ...mapGetters(["currentUser"]),
+        socket () {
+            return this.$store.getters.socket;
+        },
         isAuthAndIsOwnerAndIsNotStarted () {
             return this.currUser.isAuth &&
             this.auction.seller === this.currUser.username &&
@@ -172,27 +173,29 @@ export default {
             });
         }
 
-        this.socket.on("new-bid", (data) => {
-            console.log(`New bid from ${data.highestBidder} has arrived!`);
-            this.auction.price = data.price;
-            this.auction.highestBidder = data.highestBidder;
-        });
+        if (this.$store.getters.currentUser.isAuth) {
+            this.socket.on("new-bid", (data) => {
+                console.log(`New bid from ${data.highestBidder} has arrived!`);
+                this.auction.price = data.price;
+                this.auction.highestBidder = data.highestBidder;
+            });
 
-        this.socket.on("new-buy", (data) => {
-            console.log(`A product has been bought by ${data.highestBidder}!`);
-            this.auction.status = "Sold";
-            this.auction.highestBidder = data.highestBidder;
-        });
+            this.socket.on("new-buy", (data) => {
+                console.log(`A product has been bought by ${data.highestBidder}!`);
+                this.auction.status = "Sold";
+                this.auction.highestBidder = data.highestBidder;
+            });
 
-        this.socket.on("server-busy", (data) => {
-            console.log("Server is busy");
-            this.showErrorMessage("Server is busy. Try again");
-        });
+            this.socket.on("server-busy", (data) => {
+                console.log("Server is busy");
+                this.showErrorMessage("Server is busy. Try again");
+            });
 
-        this.socket.on("server-error", (data) => {
-            console.log("Server error");
-            this.showErrorMessage("Server error. Try again");
-        });
+            this.socket.on("server-error", (data) => {
+                console.log("Server error");
+                this.showErrorMessage("Server error. Try again");
+            });
+        }
 
         window.onbeforeunload = () => {
             this.socket.emit("leave-auction", {

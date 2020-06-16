@@ -38,14 +38,12 @@
 
 <script>
 import axios from "axios";
-import io from "@/../node_modules/socket.io-client";
 import router from "../router";
 
 export default {
     name: "AuctionForm",
     data () {
         return {
-            socket: io(),
             options: [
                 { text: "10 Seconds", value: 1000 * 10 },
                 { text: "1 Hour", value: this.calculateData(1) },
@@ -65,6 +63,11 @@ export default {
                 duration: this.calculateData(1)
             }
         };
+    },
+    computed: {
+        socket () {
+            return this.$store.getters.socket;
+        }
     },
     methods: {
         calculateData: function (multiplier) {

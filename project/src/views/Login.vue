@@ -46,6 +46,7 @@ export default {
             axios
                 .post("/api/login", this.formData)
                 .then((res) => {
+                    this.$store.dispatch("connectSocket");
                     router.push({
                         name: "Home",
                         params: { page: 1 }

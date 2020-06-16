@@ -83,6 +83,7 @@ const model = require("./model");
 const Auction = model.Auction;
 const Conversation = model.Conversation;
 const Message = model.Message;
+const User = model.User;
 
 io.use(passportSocketIo.authorize({
     key: "connect.sid",
@@ -97,6 +98,31 @@ let isTransactionInProgress = false;
 io.on("connection", (socket) => {
     console.log(`Made socket connection: ${socket.id}`);
     const username = socket.request.user.username;
+
+    // Notifications
+    socket.on("join-user-room", (data) => {
+        console.dir(`[Socket]: User: "${username}" has JOINED self { ${data.id} }`);
+        socket.join(data.id);
+    });
+
+    socket.on("leave-user-room", (data) => {
+        if (socket.request.user.logged_in) {
+            console.dir(`[Socket]: User: "${username}" has LEFT self { ${data.id} }`);
+            socket.leave(data.id);
+        }
+    });
+
+    socket.on("join-auction", (data) => {
+        console.dir(`[Socket]: User: "${username}" has JOINED { ${data.id} }`);
+        socket.join(data.id);
+    });
+
+    socket.on("leave-auction", (data) => {
+        if (socket.request.user.logged_in) {
+            console.dir(`[Socket]: User: "${username}" has LEFT { ${data.id} }`);
+            socket.leave(data.id);
+        }
+    });
 
     // Auctions
     socket.on("join-auction", (data) => {
@@ -123,10 +149,12 @@ io.on("connection", (socket) => {
             const filter = data.id;
             let oldBidders;
             let oldPrice;
+            let oldHighestBidder;
             try {
                 const doc = await Auction.findById(filter);
                 oldBidders = doc.bidders;
                 oldPrice = doc.price;
+                oldHighestBidder = doc.highestBidder;
             } catch (err) {
                 console.log(err);
             }
@@ -142,15 +170,43 @@ io.on("connection", (socket) => {
                     const updatedBidders = oldBidders;
                     update.bidders = updatedBidders;
                 };
-
+                const tempUpdate = {
+                    price: data.price,
+                    highestBidder: data.highestBidder
+                };
                 Auction.findByIdAndUpdate(filter, update,
-                    (err) => {
+                    (err, doc) => {
                         if (err) {
                             console.log(err);
                             io.sockets.in(data.id).emit("server-error");
                         } else {
-                            io.sockets.in(data.id).emit("new-bid", update);
+                            io.sockets.in(data.id).emit("new-bid", tempUpdate);
                             console.dir(`[Socket]: New bid from user: ${update.highestBidder}`);
+                            io.sockets.in(oldHighestBidder).emit(
+                                "bid-lost", {
+                                    auctionName: doc.name,
+                                    newHighestBidder: update.highestBidder,
+                                    oldHighestBidder: oldHighestBidder
+                                }
+                            );
+                            // push notifications to user
+                            const filter = {
+                                username: oldHighestBidder
+                            };
+                            User.findOneAndUpdate(
+                                filter,
+                                {
+                                    $push: { notifications: `Someone bid higher for ${doc.name}` },
+                                    isNewNotification: true
+                                },
+                                (err, doc) => {
+                                    if (err) {
+                                        console.log(err);
+                                    } else {
+                                        console.dir("Notification pushed");
+                                    }
+                                }
+                            );
                         }
                     }
                 );
@@ -192,13 +248,13 @@ io.on("connection", (socket) => {
     // Conversations
     socket.on("join-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.dir(`[Socket]: User: "${username}" has JOINED { ${data.id} }`);
+            console.dir(`[Socket]: User: "${username}" has JOINED auction { ${data.id} }`);
             socket.join(data.id);
         }
     });
     socket.on("leave-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.dir(`[Socket]: User: "${username}" has LEFT { ${data.id} }`);
+            console.dir(`[Socket]: User: "${username}" has LEFT auction { ${data.id} }`);
             socket.leave(data.id);
         }
     });

@@ -35,13 +35,12 @@
 <script>
 import { mapGetters } from "vuex";
 import router from "../router";
-import io from "@/../node_modules/socket.io-client";
 
 export default {
     name: "Conversation",
     data () {
         return {
-            socket: io(),
+            socket: this.$store.getters.socket,
             messageInput: "",
             conversation: null
         };

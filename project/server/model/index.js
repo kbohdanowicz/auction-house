@@ -36,7 +36,9 @@ const userSchema = new Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    notifications: [{ type: String }],
+    isNewNotification: { type: Boolean }
 });
 
 const auctionSchema = new Schema({

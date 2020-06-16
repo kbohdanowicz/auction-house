@@ -10,6 +10,7 @@ import AuctionEdit from "../views/AuctionEdit.vue";
 import Conversation from "../views/Conversation.vue";
 import MyConversations from "../views/MyConversations.vue";
 import store from "../store";
+import Notifications from "../views/Notifications";
 
 Vue.use(VueRouter);
 
@@ -68,6 +69,11 @@ const routes = [
         path: "/my-conversations",
         name: "MyConversations",
         component: MyConversations
+    },
+    {
+        path: "/notifications",
+        name: "Notifications",
+        component: Notifications
     }
 ];
 
