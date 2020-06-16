@@ -20,7 +20,7 @@
         <li id="bottom-chat"></li>
       </ul>
       <div class="box">
-        <textarea :class="{'mobile':isMobileView()}" maxlength="100"
+        <textarea :class="{'mobile':isMobileView()}" maxlength="200"
          v-model="messageInput" placeholder="Type here"/>
         <div>
           <button @click="sendMessage()">Send</button>

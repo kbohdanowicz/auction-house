@@ -7,10 +7,8 @@
       <input class="input-login" v-model="user.username"
       type="text" name="username" id="username"
       placeholder="Username" minLength="2" maxLength="16" required="">
-      <br><br>
       <input v-model="user.password" type="password" name="password" id="password"
       placeholder="Password" required="">
-      <br><br>
       <button type="submit">Register</button>
       <div id="error-message" v-if="errorMessage.isVisible">
         {{ errorMessage.content }}
@@ -77,25 +75,36 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-h2 {
-    text-align: center;
-}
-#error-message {
-    text-align: center;
-    color: red;
-}
-.login-form {
-    display: table;
-    margin: 0 auto;
-    margin-top: 45px;
-    padding-top: 1px;
-}
-.input-login {
-    margin-top: 60px;
-    padding-top: 1px;
-}
-button[type=submit] {
-    display: table;
-    margin: 0 auto;
+.register {
+    .login-form {
+        display: table;
+        margin: 0 auto;
+        margin-top: 45px;
+        padding-top: 1px;
+        width: 80%;
+        max-width: 300px;
+        input{
+            margin-bottom: 12px;
+            font-size: 17px;
+            border: 2px solid royalblue;
+            border-radius: 4px;
+            width: 100%;
+            padding: 12px 14px;
+            box-sizing: border-box;
+        }
+    }
+    .input-login {
+        margin-top: 60px;
+    }
+    button[type=submit] {
+        display: table;
+        margin: 0 auto;
+        padding: 5px 8px;
+    }
+    #error-message {
+        text-align: center;
+        color: red;
+        margin-top: 12px;
+    }
 }
 </style>
