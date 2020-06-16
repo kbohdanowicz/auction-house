@@ -6,8 +6,7 @@
       </li>
       <li v-for="auction in auctions" :key="auction._id">
         <Auction :auction="auction" :currUser="currUser"
-        :mobileView="mobileView"
-        @refresh-auctions="refreshAuctions()"/>
+         @refresh-auctions="refreshAuctions()"/>
       </li>
       <li class="blank">Blank</li>
     </ul>
@@ -31,7 +30,7 @@ export default {
     components: {
         Auction
     },
-    props: ["apiString", "mobileView"],
+    props: ["apiString"],
     data () {
         return {
             currUser: this.$store.getters.currentUser,

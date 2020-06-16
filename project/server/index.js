@@ -95,24 +95,24 @@ io.use(passportSocketIo.authorize({
 let isTransactionInProgress = false;
 
 io.on("connection", (socket) => {
-    console.log(`Made socket connection: ${socket.id}`);
+    console.dir(`Made socket connection: ${socket.id}`);
     const username = socket.request.user.username;
 
     // Auctions
     socket.on("join-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`[Socket]: User: "${username}" has JOINED { ${data.id} }`);
+            console.dir(`[Socket]: User: "${username}" has JOINED { ${data.id} }`);
             socket.join(data.id);
         }
     });
     socket.on("start-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`[Socket]: New auction socket created, id: { ${data.id} }`);
+            console.dir(`[Socket]: New auction socket created, id: { ${data.id} }`);
         }
     });
     socket.on("leave-auction", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`[Socket]: User: "${username}" has LEFT { ${data.id} }`);
+            console.dir(`[Socket]: User: "${username}" has LEFT { ${data.id} }`);
             socket.leave(data.id);
         }
     });
@@ -150,7 +150,7 @@ io.on("connection", (socket) => {
                             io.sockets.in(data.id).emit("server-error");
                         } else {
                             io.sockets.in(data.id).emit("new-bid", update);
-                            console.log(`[Socket]: New bid from user: ${update.highestBidder}`);
+                            console.dir(`[Socket]: New bid from user: ${update.highestBidder}`);
                         }
                     }
                 );
@@ -178,7 +178,7 @@ io.on("connection", (socket) => {
                         io.sockets.in(data.id).emit("server-error");
                     } else {
                         io.sockets.in(data.id).emit("new-buy", update);
-                        console.log(`[Socket]: Product bought by user: ${update.highestBidder}`);
+                        console.dir(`[Socket]: Product bought by user: ${update.highestBidder}`);
                     }
                 }
             );
@@ -192,13 +192,13 @@ io.on("connection", (socket) => {
     // Conversations
     socket.on("join-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`[Socket]: User: "${username}" has JOINED { ${data.id} }`);
+            console.dir(`[Socket]: User: "${username}" has JOINED { ${data.id} }`);
             socket.join(data.id);
         }
     });
     socket.on("leave-conversation", (data) => {
         if (socket.request.user.logged_in) {
-            console.log(`[Socket]: User: "${username}" has LEFT { ${data.id} }`);
+            console.dir(`[Socket]: User: "${username}" has LEFT { ${data.id} }`);
             socket.leave(data.id);
         }
     });
@@ -213,8 +213,7 @@ io.on("connection", (socket) => {
                 }
             }
             Conversation.update(
-                { _id: data.id },
-                doc,
+                { _id: data.id }, doc,
                 (err) => {
                     if (err) {
                         console.log(err);
@@ -253,7 +252,7 @@ io.on("connection", (socket) => {
                         io.sockets.in(data.id).emit("server-error");
                     } else {
                         io.sockets.in(data.id).emit("new-message", data);
-                        console.log(`[Socket]: New message from user: ${data.handle}`);
+                        console.dir(`[Socket]: New message from user: ${data.handle}`);
                     }
                 }
             );

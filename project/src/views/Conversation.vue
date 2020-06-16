@@ -1,26 +1,33 @@
 <template>
   <div class="conversation">
     <h2 class="header-text">{{ getOtherUser(conversation.participants) }}</h2>
-    <div class="container" :class="{'desktop-view':!mobileView}">
+    <div class="container" :class="{'desktop-view':!isMobileView()}">
       <ul v-if="conversation !== null">
         <li id="no-messages" v-if="conversation.messages.length === 0">
           <h2>Type something!</h2>
         </li>
-        <li id="message" :class="checkCurrentUser(message)"
-        v-else v-for="message in conversation.messages" :key="message._id">
-          <div class="message-handle">{{ message.handle }}</div>
-          <div class="message-content">{{ message.content }}</div>
-        </li>
+        <div :class="{'desktop':!isMobileView()}">
+          <li id="message" :class="checkCurrentUser(message)"
+           v-for="message in conversation.messages" :key="message._id">
+            <div class="message-handle">
+              {{ message.handle }}
+            </div>
+            <div class="message-content">
+             {{ message.content }}
+            </div>
+          </li>
+        </div>
         <li id="bottom-chat"></li>
       </ul>
       <div class="box">
-        <textarea :class="{'desktop-text-area':!mobileView}" maxlength="100"
+        <textarea :class="{'mobile':isMobileView()}" maxlength="100"
          v-model="messageInput" placeholder="Type here"/>
         <div>
           <button @click="sendMessage()">Send</button>
         </div>
       </div>
     </div>
+    <div class="bottom-spacing">B</div>
     <div id="footer"></div>
   </div>
 </template>
@@ -36,14 +43,16 @@ export default {
         return {
             socket: io(),
             messageInput: "",
-            conversation: null,
-            mobileView: true
+            conversation: null
         };
     },
     computed: {
         ...mapGetters(["currentUser"])
     },
     methods: {
+        isMobileView () {
+            return this.$store.getters.isMobileView;
+        },
         checkCurrentUser (message) {
             if (this.$store.getters.currentUser.username === message.handle) {
                 return "message-current-user";
@@ -87,8 +96,7 @@ export default {
             }
         },
         handleView () {
-            // console.log("Width: " + window.innerWidth);
-            this.mobileView = window.innerWidth <= 680;
+            this.$store.dispatch("calculateView", window.innerWidth);
         }
     },
     created () {
@@ -100,7 +108,6 @@ export default {
         }
 
         this.conversation = this.$route.params.conversation;
-        this.mobileView = this.$route.params.mobileView;
 
         this.handleView();
         window.addEventListener("resize", this.handleView, false);
@@ -143,6 +150,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.bottom-spacing {
+    visibility: hidden;
+    height: 20px;
+}
 .conversation {
     .header-text {
         width: 100vw;
@@ -156,7 +167,8 @@ export default {
             padding-top: 70px;
             padding-left: 0;
             height: 50vh;
-            overflow: auto;
+            overflow-x: hidden;
+            overflow-y: auto;
             list-style-type: none;
             li {
                 margin: 5px auto;
@@ -175,11 +187,16 @@ export default {
                 margin: 10vh auto;
             }
             #message {
-                max-width: 250px;
+                width: 70vw;
+                max-width: 400px;
                 background-color: #dfdfdf;
                 border-radius: 6px;
                 margin-bottom: 10px;
                 padding: 5px 0px;
+                .desktop {
+                    //width: 70vw;
+                    //max-width: 200px;
+                }
             }
             .message-other-user {
                 margin-left: 8px;
@@ -188,7 +205,7 @@ export default {
                 }
             }
             .message-current-user {
-                margin-right: 8px;
+                margin-right: 10px;
                 text-align: right;
                 .message-handle {
                     color: royalblue;
@@ -196,12 +213,14 @@ export default {
             }
         }
         .box {
-            display: table;
-            margin: 0 auto;
+            min-width: 630px;
             textarea {
+                display: table;
+                margin: 0 auto;
                 resize: none;
                 height: 13vh;
                 width: 60vw;
+                min-width: 630px;
             }
             button {
                 display: table;
@@ -214,6 +233,12 @@ export default {
                 cursor: pointer;
             }
         }
+        .box {
+            .mobile {
+                min-width: 80vw;
+            }
+            min-width: 0;
+        }
     }
     .container.desktop-view {
         display: table;
@@ -222,8 +247,5 @@ export default {
     #footer {
         left: 0;
     }
-}
-.desktop-text-area{
-    max-width: 30vw;
 }
 </style>

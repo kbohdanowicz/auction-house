@@ -1,5 +1,5 @@
 <template>
-  <div class="auction-details" :class="{'mobile-view':mobileView}">
+  <div class="auction-details">
     <div v-if="auction.type === 'Bid'">
       <h3>Auction</h3>
     </div>
@@ -75,7 +75,7 @@ import router from "../router";
 
 export default {
     name: "AuctionDetails",
-    props: ["auction", "currUser", "timeLeft", "socket", "mobileView"],
+    props: ["auction", "currUser", "timeLeft", "socket"],
     data () {
         return {
             errorMessage: {

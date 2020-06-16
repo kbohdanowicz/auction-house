@@ -1,7 +1,7 @@
 <template>
   <div class="my-auctions">
     <h2 class="header-text">My offers</h2>
-    <AuctionList :apiString="apiString" :mobileView="mobileView"/>
+    <AuctionList :apiString="apiString"/>
     <div class="btn-create-auction-mobile" v-if="isAuthAndMobile">
       <button @click="goToAuctionForm()">New auction</button>
     </div>
@@ -21,7 +21,6 @@ export default {
     components: {
         AuctionList
     },
-    props: ["mobileView"],
     data () {
         return {
             apiString: "/api/my-auctions/page/"
@@ -30,10 +29,10 @@ export default {
     computed: {
         ...mapGetters(["currentUser"]),
         isAuthAndMobile () {
-            return this.currentUser.isAuth && this.mobileView;
+            return this.currentUser.isAuth && this.$store.getters.isMobileView;
         },
         isAuthAndDesktop () {
-            return this.currentUser.isAuth && !this.mobileView;
+            return this.currentUser.isAuth && !this.$store.getters.isMobileView;
         }
     },
     methods: {

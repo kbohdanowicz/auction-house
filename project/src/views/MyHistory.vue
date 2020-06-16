@@ -1,7 +1,7 @@
 <template>
   <div class="my-history">
     <h2 class="header-text">History</h2>
-    <AuctionList :apiString="apiString" :mobileView="mobileView"/>
+    <AuctionList :apiString="apiString"/>
   </div>
 </template>
 
@@ -13,7 +13,6 @@ export default {
     components: {
         AuctionList
     },
-    props: ["mobileView"],
     data () {
         return {
             apiString: "/api/my-history/page/"

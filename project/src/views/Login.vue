@@ -14,6 +14,7 @@
         {{ errorMessage.content }}
       </div>
     </form>
+    <div class="blank"></div>
     <div id="footer"></div>
   </div>
 </template>

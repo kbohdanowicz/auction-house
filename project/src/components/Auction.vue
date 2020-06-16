@@ -3,13 +3,10 @@
     <div v-if="!isEditMode">
       <AuctionDetails
        :auction="auction" :currUser="currUser"
-       :timeLeft="timeLeft" :socket="socket"
-       :mobileView="mobileView"/>
+       :timeLeft="timeLeft" :socket="socket"/>
     </div>
     <div v-if="isAuthAndIsOwnerAndIsNotStarted">
-      <button id="btn-edit" @click="goToEdit()">
-        {{ editButtonText }}
-      </button>
+      <button id="btn-edit" @click="goToEdit()">Edit</button>
     </div>
     <button v-if="isAuthAndIsNotOwnerAndOnSale" @click="goToConversation()">
       Contact seller
@@ -29,12 +26,11 @@ export default {
     components: {
         AuctionDetails
     },
-    props: ["auction", "currUser", "mobileView"],
+    props: ["auction", "currUser"],
     data () {
         return {
             socket: io(),
             isEditMode: false,
-            editButtonText: "Edit",
             timeLeft: null,
             addressBar: window.location.href
         };
@@ -71,7 +67,7 @@ export default {
                     } else {
                         router.push({
                             name: "Conversation",
-                            params: { conversation: res.data, mobileView: this.mobileView }
+                            params: { conversation: res.data }
                         });
                     }
                 })
@@ -89,7 +85,7 @@ export default {
                     if (res.data !== null) {
                         router.push({
                             name: "Conversation",
-                            params: { conversation: res.data, mobileView: this.mobileView }
+                            params: { conversation: res.data }
                         });
                     } else {
                         console.log("Failed to create conversation");

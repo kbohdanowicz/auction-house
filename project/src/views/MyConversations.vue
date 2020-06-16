@@ -34,7 +34,6 @@ export default {
             conversations: null
         };
     },
-    props: ["mobileView"],
     computed: {
         ...mapGetters(["currentUser"])
     },
@@ -53,7 +52,7 @@ export default {
         goToConversation (_conversation) {
             router.push({
                 name: "Conversation",
-                params: { conversation: _conversation, mobileView: this.mobileView }
+                params: { conversation: _conversation }
             });
         }
     },

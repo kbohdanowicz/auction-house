@@ -1,10 +1,10 @@
 <template>
   <div id="app">
     <div>
-      <NavbarMobile v-if="mobileView" :showSideBar="showSideBar" @swap="swap()"/>
+      <NavbarMobile v-if="isMobileVew()" :showSideBar="showSideBar" @swap="swap()"/>
     </div>
     <div class="content" :class="{'open':showSideBar}">
-      <div id="nav-icon" v-if="mobileView">
+      <div id="nav-icon" v-if="isMobileVew()">
         <div id="touch-box" @click="showSideBar = !showSideBar">
           <i>
             <div class="icon-bar"></div>
@@ -13,9 +13,9 @@
           </i>
         </div>
       </div>
-      <router-view :mobileView="mobileView"/>
+      <router-view/>
     </div>
-    <div v-if="!mobileView">
+    <div v-if="!isMobileVew()">
       <Navbar/>
     </div>
   </div>
@@ -32,13 +32,15 @@ export default {
     },
     data () {
         return {
-            mobileView: false,
             showSideBar: false
         };
     },
     methods: {
+        isMobileVew () {
+            return this.$store.getters.isMobileView;
+        },
         handleView () {
-            this.mobileView = window.innerWidth <= 680;
+            this.$store.dispatch("calculateView", window.innerWidth);
         },
         swap () {
             this.showSideBar = !this.showSideBar;
@@ -51,7 +53,7 @@ export default {
     },
     updated () {
         if (document.getElementsByName("NavbarMobile") &&
-            this.mobileView === false) {
+            this.$store.getters.isMobileView === false) {
             this.showSideBar = false;
         }
     }
