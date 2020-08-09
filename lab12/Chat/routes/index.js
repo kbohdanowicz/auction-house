@@ -87,7 +87,7 @@ router
                 }
             })
         }
-        else{
+        else {
             res.redirect("/login");
         }
     })

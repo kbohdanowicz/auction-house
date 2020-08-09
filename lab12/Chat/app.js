@@ -104,13 +104,6 @@ io.on('error', (err) => {
 io.on("connection", (socket) => {
     console.log(`Made socket connection: ${socket.id}`);
 
-    // socket.on("room", (roomName) => {
-    //     if (socket.request.user && socket.request.user.logged_in) {
-    //         socket.join("roomName");
-    //         console.log("Room created");
-    //     };
-    // });
-
     socket.on("chatMessage", (data) => {
         // user data from the socket.io passport middleware
         if (socket.request.user && socket.request.user.logged_in) {
